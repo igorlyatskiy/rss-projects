@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
-import '../css/style.sass';
+import { App } from './app';
 import '../css/main.sass';
-import '../css/style.css';
-import { a } from '../ts/error'
 
-console.log(a);
+window.onload = () => {
+  new App(document.querySelector("body"));
+}
