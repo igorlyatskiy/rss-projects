@@ -10,8 +10,8 @@ export class Wrapper extends BaseComponent {
     this.headerRightWrapper = new headerRightWrapper();
     this.element.innerHTML = `
       <a class="header__match-match">
-        <button class="btn-main btn-main_empty">match</button>
-        <button class="btn-main btn-main_filled">match</button>
+        <button class="btn-match btn-match_empty">match</button>
+        <button class="btn-match btn-match_filled">match</button>
       </a>
     `;
     this.element.append(this.Nav.element)

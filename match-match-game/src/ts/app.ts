@@ -1,12 +1,12 @@
 import { Header } from './../components/header/header';
-import { CardsField } from './../components/cards-field/cards-field';
+import { Field } from '../components/field/field';
 export class App {
-  private readonly CardsField: CardsField;
+  private readonly Field: Field;
   public readonly Header: Header;
   constructor(private readonly rootElement: HTMLElement) {
-    this.CardsField = new CardsField();
+    this.Field = new Field();
     this.Header = new Header();
     this.rootElement.append(this.Header.element);
-    this.rootElement.append(this.CardsField.element);
+    this.rootElement.append(this.Field.element);
   }
 }

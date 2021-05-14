@@ -1,6 +1,8 @@
 export class Model {
   private user = "guest";
   constructor() {
-    this.user
+  }
+  setUser(newUser: string) {
+    this.user = newUser;
   }
 }
