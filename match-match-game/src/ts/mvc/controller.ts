@@ -1,7 +1,7 @@
+import { Model } from './model';
 import { Router } from './../../components/Router';
 import { Validation } from './../../components/validation';
 import { Constants } from './../../components/constants';
-import { Model } from './../../Model/Model';
 import { View } from './view';
 
 export class Controller {
@@ -22,6 +22,8 @@ export class Controller {
     clearRegistrationButton.addEventListener("click", () => this.clearPopapInputs());
     inputs.forEach((e) => e.element.addEventListener("input", () => this.checkInputs()));
     this.initRouter();
+    this.clickMainButton();
+    this.checkRegisterButton()
   }
 
 
@@ -46,6 +48,7 @@ export class Controller {
       (!e.element.classList.contains("input_active")) ? this.View.Field.CardsField.RegisterPopap.lockButton() : this.View.Field.CardsField.RegisterPopap.unlockButton();
     });
   }
+  
   initRouter() {
     window.location.hash = "#/about";
     window.addEventListener("hashchange", () => {
@@ -54,15 +57,27 @@ export class Controller {
     });
     this.controlRouter();
   }
-
   controlRouter() {
     this.Constants.NavImages.forEach((e, index) => {
       this.View.Header.Wrapper.Nav.navElementsList[index].element.addEventListener("click", () => {
-        this.View.Header.Wrapper.Nav.navElementsList.forEach((el) => el.element.classList.remove("nav__element_active"));
-        this.View.Header.Wrapper.Nav.navElementsList[index].element.classList.add("nav__element_active");
+        this.View.Header.Wrapper.Nav.changeActiveElement(index);
         window.location.hash = `/${this.Constants.NavLinks[index]}`
       }
       );
+    });
+  }
+
+  checkRegisterButton() {
+    this.View.Field.CardsField.RegisterPopap.addUserButton.element.addEventListener("click", () => {
+      window.location.hash = `/game`;
+      this.View.Field.deactivateShadowBox();
+    });
+  }
+
+  clickMainButton() {
+    this.View.Header.Wrapper.logo.addEventListener("click", () => {
+      window.location.hash = `/${this.Constants.NavLinks[0]}`;
+      this.View.Header.Wrapper.Nav.changeActiveElement(0);
     });
   }
 

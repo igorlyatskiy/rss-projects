@@ -34,6 +34,7 @@ export class CardsField extends BaseComponent {
     }
 
     this.element.append(this.RegisterPopap.element);
+    this.RegisterPopap.element.classList.remove("register-popap_active")
   }
 
   makeGamePage() {
@@ -42,8 +43,7 @@ export class CardsField extends BaseComponent {
 
   makeSettingsPage() {
     this.clearComponent();
-    this.element.append(this.RegisterPopap.element);
-    this.element.append(this.settingsPage.element);
+    this.element.append(this.RegisterPopap.element, this.settingsPage.element);
   }
 
   makeBestScorePage() {

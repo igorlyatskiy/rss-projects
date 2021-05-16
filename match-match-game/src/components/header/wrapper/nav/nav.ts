@@ -15,8 +15,12 @@ export class Nav extends BaseComponent {
       this.navElementsList.push(
         new navElement(this.Constants.NavImages[index], this.Constants.NavText[index], this.Constants.NavClass[index])
       )
-      this.navElementsList[0].element.classList.add("nav__element_active");
+      this.changeActiveElement(0);
       this.element.append(this.navElementsList[index].element);
     });
+  }
+  changeActiveElement(index: number) {
+    this.navElementsList.forEach((el) => el.element.classList.remove("nav__element_active"));
+    this.navElementsList[index].element.classList.add("nav__element_active");
   }
 }

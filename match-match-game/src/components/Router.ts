@@ -7,6 +7,7 @@ export class Router {
         break;
       case "#/game":
         field.makeGamePage();
+
         break;
       case "#/settings":
         field.makeSettingsPage();
