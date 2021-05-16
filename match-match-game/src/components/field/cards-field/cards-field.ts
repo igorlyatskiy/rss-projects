@@ -1,31 +1,36 @@
+import { registerButton } from './../../header/wrapper/headerRightWrapper/buttons/registerButton';
+import { RegisterPopap } from './popap/popap';
+import { Constants } from './../../constants';
+import { App } from './../../../ts/app';
 import { InfoItem } from './info-item/info-item';
 import { BaseComponent } from './../../base-component';
 import './cards-field.sass';
 import './img/first.png'
 import './img/second.png'
 import './img/third.png'
+import { Field } from '../field';
 export class CardsField extends BaseComponent {
-  private readonly firstRule: InfoItem;
-  private readonly secondRule: InfoItem;
-  private readonly thirdRule: InfoItem;
+  public readonly Rules: Array<BaseComponent>
+  public readonly Constants: Constants;
+  public readonly RegisterPopap: RegisterPopap;
   constructor() {
     super("div", ["cards-field"]);
-
-    const p = document.createElement("p");
-    p.classList.add("info-item__title");
-    this.element.append(p);
+    this.Constants = new Constants();
+    this.RegisterPopap = new RegisterPopap();
+    const p = this.makeElement("p", ["info-item__title"], "How to play?");
     p.innerHTML = "How to play?";
 
-    this.firstRule = new InfoItem(1, "Register new player in game", './img/first.png');
-    this.element.append(this.firstRule.element);
+    this.Rules = [];
+    for (let i = 0; i < this.Constants.infoCardsNumber; i++) {
+      this.Rules[i] = new InfoItem(i + 1, this.Constants.infoCardsText[i], this.Constants.infoCardsImages[i]);
+      this.element.append(this.Rules[i].element);
+    }
 
-    this.secondRule = new InfoItem(2, "Register new player in game", './img/second.png');
-    this.element.append(this.secondRule.element);
-
-    this.thirdRule = new InfoItem(3, "Register new player in game", './img/third.png');
-    this.element.append(this.thirdRule.element);
+    this.element.append(this.RegisterPopap.element);
   }
+
   showField() {
 
   }
+
 }

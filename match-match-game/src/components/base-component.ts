@@ -17,4 +17,11 @@ export class BaseComponent {
   clearComponent() {
     this.element.innerHTML = '';
   }
+
+  makeElement(element: string, classList: string[] = [], text: string) {
+    const el = document.createElement(element);
+    el.classList.add(...classList);
+    (text) ? el.innerHTML = text : 0;
+    return el;
+  }
 }

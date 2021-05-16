@@ -2,5 +2,5 @@ import { App } from './app';
 import '../css/main.sass';
 
 window.onload = () => {
-  new App(document.querySelector("body"));
+  new App();
 }

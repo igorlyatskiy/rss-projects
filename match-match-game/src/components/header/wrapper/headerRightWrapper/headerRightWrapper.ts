@@ -3,8 +3,8 @@ import { registerButton } from './buttons/registerButton';
 import { BaseComponent } from './../../../base-component';
 import './headerRightWrapper.sass';
 export class headerRightWrapper extends BaseComponent {
-  private readonly registerButton: registerButton;
-  private readonly startGameButton: startGameButton;
+  public readonly registerButton: registerButton;
+  public readonly startGameButton: startGameButton;
   constructor() {
     super('div', ['header__right-wrapper']);
 

@@ -2,7 +2,7 @@ import { headerRightWrapper } from './headerRightWrapper/headerRightWrapper';
 import { Nav } from './nav/nav';
 import { BaseComponent } from '../../base-component';
 export class Wrapper extends BaseComponent {
-  private readonly Nav: Nav;
+  public readonly Nav: Nav;
   public headerRightWrapper: headerRightWrapper;
   constructor() {
     super('div', ['wrapper']);
