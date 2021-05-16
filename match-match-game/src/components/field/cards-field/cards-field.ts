@@ -1,3 +1,4 @@
+import { settingsPage } from './settings/settingsPage';
 import { registerButton } from './../../header/wrapper/headerRightWrapper/buttons/registerButton';
 import { RegisterPopap } from './popap/popap';
 import { Constants } from './../../constants';
@@ -10,13 +11,19 @@ import './img/second.png'
 import './img/third.png'
 import { Field } from '../field';
 export class CardsField extends BaseComponent {
-  public readonly Rules: Array<BaseComponent>
+  public Rules: Array<BaseComponent>
   public readonly Constants: Constants;
-  public readonly RegisterPopap: RegisterPopap;
+  public RegisterPopap: RegisterPopap = new RegisterPopap();
+  public settingsPage: settingsPage = new settingsPage();
   constructor() {
     super("div", ["cards-field"]);
     this.Constants = new Constants();
-    this.RegisterPopap = new RegisterPopap();
+
+    this.makeAboutPage();
+  }
+
+  makeAboutPage() {
+    this.clearComponent();
     const p = this.makeElement("p", ["info-item__title"], "How to play?");
     p.innerHTML = "How to play?";
 
@@ -29,8 +36,19 @@ export class CardsField extends BaseComponent {
     this.element.append(this.RegisterPopap.element);
   }
 
-  showField() {
+  makeGamePage() {
+    this.clearComponent();
+  }
 
+  makeSettingsPage() {
+    this.clearComponent();
+    this.element.append(this.RegisterPopap.element);
+    this.element.append(this.settingsPage.element);
+  }
+
+  makeBestScorePage() {
+    this.clearComponent();
+    this.element.append(this.RegisterPopap.element);
   }
 
 }

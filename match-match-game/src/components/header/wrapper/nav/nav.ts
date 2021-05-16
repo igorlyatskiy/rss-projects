@@ -1,3 +1,4 @@
+import { Constants } from './../../../constants';
 import { navElement } from './navElement/navElement';
 import { BaseComponent } from '../../../base-component';
 import './nav.sass';
@@ -6,16 +7,16 @@ import './img/bestScore.svg'
 import './img/gameSettings.svg'
 
 export class Nav extends BaseComponent {
-  private readonly aboutGame: navElement;
-  private readonly bestScore: navElement;
-  private readonly gameSettings: navElement;
+  public readonly navElementsList: navElement[] = [];
+  public readonly Constants: Constants = new Constants();
   constructor() {
     super('nav', ['nav']);
-    this.aboutGame = new navElement("./img/aboutGame.svg", "About Game", "aboutGame");
-    this.bestScore = new navElement("./img/bestScore.svg", "Best Score", "bestScore");
-    this.gameSettings = new navElement("./img/gameSettings.svg", "Game Settings", "gameSettings");
-    this.element.append(this.aboutGame.element);
-    this.element.append(this.bestScore.element);
-    this.element.append(this.gameSettings.element);
+    this.Constants.NavImages.forEach((e, index) => {
+      this.navElementsList.push(
+        new navElement(this.Constants.NavImages[index], this.Constants.NavText[index], this.Constants.NavClass[index])
+      )
+      this.navElementsList[0].element.classList.add("nav__element_active");
+      this.element.append(this.navElementsList[index].element);
+    });
   }
 }

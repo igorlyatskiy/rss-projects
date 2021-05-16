@@ -5,6 +5,4 @@ import { Field } from '../components/field/field';
 
 export class App {
   public Controller: Controller = new Controller();
-  constructor() {
-  }
 }

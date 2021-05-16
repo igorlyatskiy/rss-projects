@@ -31,6 +31,8 @@ export class RegisterPopap extends BaseComponent {
 
     this.element.append(this.addUserButton.element);
     this.element.append(this.cancelButton.element);
+
+    this.lockButton();
   }
 
   showPopap() {
@@ -48,7 +50,7 @@ export class RegisterPopap extends BaseComponent {
       const div = this.makeElement("div", ["container"], "");
       this.div.push(div);
       inputsContainer.append(this.div[index]);
-      const input = new Input();
+      const input = new Input(this.Constants.registerInfo[index]);
       this.div[index].append(input.element);
       this.inputs.push(input);
       const checkbox = new Checkbox();
@@ -56,5 +58,13 @@ export class RegisterPopap extends BaseComponent {
       this.Checkbox.push(checkbox);
       this.div[index].append(this.makeElement("p", ["popap__p"], e));
     });
+  }
+
+  lockButton() {
+    this.addUserButton.element.classList.add("button_locked");
+  }
+
+  unlockButton() {
+    this.addUserButton.element.classList.remove("button_locked");
   }
 }
