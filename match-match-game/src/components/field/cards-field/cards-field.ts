@@ -1,5 +1,5 @@
+import { Timer } from './../../timer/timer';
 import { settingsPage } from './settings/settingsPage';
-import { registerButton } from './../../header/wrapper/headerRightWrapper/buttons/registerButton';
 import { RegisterPopap } from './popap/popap';
 import { Constants } from './../../constants';
 import { App } from './../../../ts/app';
@@ -15,6 +15,7 @@ export class CardsField extends BaseComponent {
   public readonly Constants: Constants;
   public RegisterPopap: RegisterPopap = new RegisterPopap();
   public settingsPage: settingsPage = new settingsPage();
+  public Timer: Timer;
   constructor() {
     super("div", ["cards-field"]);
     this.Constants = new Constants();
@@ -39,6 +40,8 @@ export class CardsField extends BaseComponent {
 
   makeGamePage() {
     this.clearComponent();
+    this.Timer = new Timer();
+    this.element.append(this.Timer.element);
   }
 
   makeSettingsPage() {

@@ -1,28 +1,29 @@
-import { startGameButton } from './buttons/startGameButton';
-import { registerButton } from './buttons/registerButton';
+import { Image } from './../../../image/image';
+import { Button } from './../../../defaultButton/defaultButton';
 import { BaseComponent } from './../../../base-component';
 import './headerRightWrapper.sass';
 export class headerRightWrapper extends BaseComponent {
-  public readonly registerButton: registerButton;
-  public readonly startGameButton: startGameButton;
+  public readonly headerButton: Button;
+  public headerImage: Image;
   constructor() {
     super('div', ['header__right-wrapper']);
 
-    this.registerButton = new registerButton();
-    this.startGameButton = new startGameButton();
+    this.headerButton = new Button("register new player");
 
     this.showGuest();
   }
 
   showGuest() {
     this.clearComponent();
-    this.element.append(this.registerButton.element)
+    this.element.append(this.headerButton.element)
   }
 
-  showUser() {
+  showPlayer(url?: string) {
+    this.headerImage = new Image(url)
+    this.headerImage.element.classList.add("header__avatar");
     this.clearComponent();
-    this.element.append(this.startGameButton.element);
-    // this.element.append(this.image)
+    this.element.append(this.headerButton.element, this.headerImage.element);
+    this.headerButton.element.innerText = "Start game";
   }
 
 

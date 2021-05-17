@@ -51,12 +51,10 @@ export class RegisterPopap extends BaseComponent {
       this.div.push(div);
       inputsContainer.append(this.div[index]);
       const input = new Input(this.Constants.registerInfo[index]);
-      this.div[index].append(input.element);
-      this.inputs.push(input);
       const checkbox = new Checkbox();
-      this.div[index].append(checkbox.element);
+      this.div[index].append(input.element, checkbox.element, this.makeElement("p", ["popap__p"], e), this.makeElement("span", ["p_wrong"], "this field isn't correct"));
+      this.inputs.push(input);
       this.Checkbox.push(checkbox);
-      this.div[index].append(this.makeElement("p", ["popap__p"], e));
     });
   }
 
