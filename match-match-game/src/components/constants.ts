@@ -13,6 +13,14 @@ export class Constants {
   public readonly SettingsTitle: string[] = ["Game cards", "Difficulty"];
   public readonly SettingsContent: string[] = ["select game cards type", "select game type"];
   public readonly SettingsOptions: string[][] = [["Animals", "Cars"], ["4x4", "6x6"]];
+  public readonly settingsDefault: string[] = ["select game cards type"];
+  public readonly pictures: string[] = [
+    "../../img/deer.png",
+    "../../img/cow.png",
+    "../../img/crab.png",
+    "../../img/frog.png",
+    "../../img/pig.png",
+    "../../img/turtle.png"]
 
   constructor() {
     this.cardTimeout = 200;

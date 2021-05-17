@@ -21,6 +21,9 @@ export class Nav extends BaseComponent {
   }
   changeActiveElement(index: number) {
     this.navElementsList.forEach((el) => el.element.classList.remove("nav__element_active"));
-    this.navElementsList[index].element.classList.add("nav__element_active");
+    if (this.navElementsList[index]) {
+      this.navElementsList[index].element.classList.add("nav__element_active");
+    }
+
   }
 }

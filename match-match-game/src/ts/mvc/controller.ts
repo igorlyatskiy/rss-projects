@@ -57,7 +57,7 @@ export class Controller {
     window.location.hash = "#/about";
     window.addEventListener("hashchange", () => {
       const location = window.location.hash;
-      console.log(location);
+      this.View.Header.Wrapper.Nav.changeActiveElement(this.Constants.NavLinks.indexOf(location.substr(2, +location.length - 1)));
       (location && location !== "#/game" || location && location === "#/game" && this.Model.role === "player") ? this.Router.changeLocation(location, this.View.Field.CardsField) : 0;
     });
     this.controlRouter();
@@ -65,7 +65,6 @@ export class Controller {
   controlRouter() {
     this.Constants.NavImages.forEach((e, index) => {
       this.View.Header.Wrapper.Nav.navElementsList[index].element.addEventListener("click", () => {
-        this.View.Header.Wrapper.Nav.changeActiveElement(index);
         window.location.hash = `/${this.Constants.NavLinks[index]}`
       }
       );
@@ -78,7 +77,7 @@ export class Controller {
       this.View.Field.deactivateShadowBox();
       this.View.Field.CardsField.RegisterPopap.hidePopap()
       this.headerButton.removeEventListener("click", this.registerFunction);
-      this.View.Header.Wrapper.headerRightWrapper.showPlayer()
+      this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer()
       this.Model.role = "player";
       // this.addUser2DataBase();
       this.headerButton.addEventListener("click", this.startGame, { once: true });
@@ -97,7 +96,6 @@ export class Controller {
     inputs.forEach((e, index) => {
       e.element.addEventListener("change", () => {
         this.Model.settings[inputs.indexOf(e)] = e.element.value;
-        console.log(this.Model);
       });
     })
   }
@@ -106,8 +104,17 @@ export class Controller {
 
   }
 
-  startGame() {
+  startGame = () => {
+    this.View.Header.Wrapper.Nav.changeActiveElement(5)
     window.location.hash = `/game`;
+    this.View.Header.Wrapper.headerRightWrapper.showActivePlayer()
+    this.headerButton.addEventListener("click", this.stopGame, { once: true });
+  }
+
+  stopGame = () => {
+    window.location.hash = `/about`;
+    this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer();
+    this.headerButton.addEventListener("click", this.startGame, { once: true });
   }
 
 }

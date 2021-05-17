@@ -9,8 +9,12 @@ export class Timer extends BaseComponent {
     this.startTimer();
   }
 
-  startTimer() {
+  startTimer = () => {
     const interval = setInterval(this.addSecond, 1000);
+  }
+
+  stopTimer() {
+    // clearInterval(this.interval);
   }
 
   addSecond = () => {
