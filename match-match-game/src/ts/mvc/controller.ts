@@ -101,7 +101,7 @@ export class Controller {
   }
 
   addUser2DataBase() {
-
+    // TODO remove event listener from the popap
   }
 
   startGame = () => {

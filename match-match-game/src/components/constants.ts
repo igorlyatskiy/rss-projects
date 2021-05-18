@@ -1,5 +1,5 @@
 export class Constants {
-  public readonly cardTimeout: number;
+  // public readonly cardTimeout: number=200;
   public readonly infoCardsNumber: number;
   public readonly infoCardsImages: string[];
   public readonly infoCardsText: string[];
@@ -15,6 +15,9 @@ export class Constants {
   public readonly SettingsOptions: string[][] = [["Animals", "Cars"], ["4x4", "6x6"]];
   public readonly settingsDefault: string[] = ["select game cards type"];
   public readonly picturesClasses: string[] = ["card-container_big", "card-container_small",];
+  public readonly cardWaitingTime: number = 3000;
+  public readonly cardRotationTime: number = 800;
+  public readonly finalPopapText: string = "Congratulations! You successfully found all matches on 1.21 minutes.";
 
   public readonly pictures: string[] = [
     "../../img/beetle.png",
@@ -39,7 +42,6 @@ export class Constants {
   ]
 
   constructor() {
-    this.cardTimeout = 200;
     this.infoCardsNumber = 3;
     this.infoCardsImages = ["./img/first.png", "./img/second.png", "./img/third.png"];
     this.infoCardsText = ["Register new player in game", "Configure your game settings", "Start you new game! Remember card positions and match it before times up."];

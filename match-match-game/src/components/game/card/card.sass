@@ -14,6 +14,16 @@
     width: 140px
     height: 140px
     margin: 0 23px 35px
+  &_blocked,
+  &_guessed
+    pointer-events: none
+
+  &_guessed
+    .card
+      transform: rotateY(180deg) translateX(-100%)
+      border-color: #00bc00
+      transform-origin: right
+
   .card
     position: relative
     width: 100%
@@ -28,8 +38,6 @@
       transform: rotateY(180deg) translateX(100%)
       border: 1px solid #2196F3
       transform-origin: right
-    &_blocked
-      pointer-events: none
 
     &__front,
     &__back

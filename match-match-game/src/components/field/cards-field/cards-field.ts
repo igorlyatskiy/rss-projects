@@ -61,4 +61,5 @@ export class CardsField extends BaseComponent {
     this.element.append(this.RegisterPopap.element);
   }
 
+
 }
