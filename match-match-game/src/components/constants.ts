@@ -64,4 +64,8 @@ export class Constants {
         break;
     }
   }
+
+  getFinalPopapText(text:string){
+    return `Congratulations! You successfully found all matches on ${text} minutes.`
+  }
 }

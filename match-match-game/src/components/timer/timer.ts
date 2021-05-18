@@ -31,4 +31,9 @@ export class Timer extends BaseComponent {
     const seconds = (String(this.seconds).length === 1) ? "0" + String(this.seconds) : String(this.seconds);
     this.element.innerText = `${minutes}:${seconds}`;
   }
+
+  getTime = () => {
+    console.log(this.minutes, this.seconds);
+    return `${this.minutes + +(this.seconds / 100).toFixed(2)}`;
+  }
 }

@@ -19,7 +19,7 @@ export class Controller {
     const inputs = this.View.Field.CardsField.RegisterPopap.inputs;
 
     this.headerButton.addEventListener("click", this.registerFunction);
-    shadow.addEventListener("click", () => this.hideRegistrationPopap());
+    shadow.addEventListener("click", this.hideRegistrationPopap);
     clearRegistrationButton.addEventListener("click", () => this.clearPopapInputs());
     inputs.forEach((e) => e.element.addEventListener("input", () => this.checkInputs()));
 
@@ -27,14 +27,15 @@ export class Controller {
     this.clickHomeButton();
     this.registerUser()
     this.checkSettingsPage()
+
   }
 
 
-  showRegistrationPopap() {
+  showRegistrationPopap = () => {
     this.View.Field.activateShadowBox();
     this.View.Field.CardsField.RegisterPopap.showPopap()
   }
-  hideRegistrationPopap() {
+  hideRegistrationPopap = () => {
     this.View.Field.deactivateShadowBox();
     this.View.Field.CardsField.RegisterPopap.hidePopap()
   }
@@ -70,7 +71,6 @@ export class Controller {
       );
     });
   }
-
   registerUser = () => {
     this.View.Field.CardsField.RegisterPopap.addUserButton.element.addEventListener("click", () => {
       window.location.hash = `/about`;
@@ -101,18 +101,27 @@ export class Controller {
   }
 
   addUser2DataBase() {
-    // TODO remove event listener from the popap
+    // TODO add another type of cards
   }
 
   startGame = () => {
     this.View.Header.Wrapper.Nav.changeActiveElement(5)
     window.location.hash = `/game`;
     this.View.Header.Wrapper.headerRightWrapper.showActivePlayer()
-    this.headerButton.addEventListener("click", this.stopGame, { once: true });
+    this.View.Field.shadowBox.removeEventListener("click", this.hideRegistrationPopap);
+    this.headerButton.addEventListener("click", () => this.stopGame(), { once: true });
+
   }
 
-  stopGame = () => {
-    window.location.hash = `/about`;
+  initFinalButtonListener = () => {
+    const finishGameButton = this.View.Field.CardsField.Game.popap.finalPopapButton.element;
+    finishGameButton.addEventListener("click", () => this.stopGame(true));
+  }
+
+  stopGame = (result?: boolean) => {
+    this.View.Field.CardsField.Game.removeVictoryPopap();
+    window.location.hash = (result) ? `/score` : `/about`;
+
     this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer();
     this.headerButton.addEventListener("click", this.startGame, { once: true });
   }

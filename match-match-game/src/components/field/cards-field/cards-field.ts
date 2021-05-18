@@ -29,7 +29,7 @@ export class CardsField extends BaseComponent {
     this.element.classList.remove("cards-field_active");
     this.clearComponent();
     const p = this.makeElement("p", ["info-item__title"], "How to play?");
-    p.innerHTML = "How to play?";
+    p.innerText = "How to play?";
 
     this.Rules = [];
     for (let i = 0; i < this.Constants.infoCardsNumber; i++) {

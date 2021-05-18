@@ -1,13 +1,17 @@
+import { App } from './../../../ts/app';
 import { Constants } from './../../constants';
 import { Button } from './../../defaultButton/defaultButton';
 import { BaseComponent } from "../../base-component";
 import "./popap.sass";
+import { app } from '../../../ts/index'
 export class finalPopap extends BaseComponent {
   public finalPopapButton: Button = new Button("ok");
+  public p: HTMLElement = this.makeElement("p", ["final-popap__text"], "");
   public Constants: Constants = new Constants();
+  public app: App = app;
   constructor() {
     super("div", ["final-popap"]);
-    this.element.append(this.makeElement("p", ["final-popap__text"], this.Constants.finalPopapText), this.finalPopapButton.element);
+    this.element.append(this.p, this.finalPopapButton.element);
     this.finalPopapButton.element.classList.add("final-popap__button");
   }
 }

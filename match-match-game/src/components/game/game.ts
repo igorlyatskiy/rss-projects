@@ -87,5 +87,12 @@ export class Game extends BaseComponent {
   showVictoryPopap() {
     this.element.append(this.popap.element);
     this.app.Controller.View.Field.activateShadowBox();
+    this.popap.p.innerText = this.Constants.getFinalPopapText(this.app.Controller.View.Field.CardsField.Timer.getTime())
+    this.app.Controller.initFinalButtonListener();
+  }
+
+  removeVictoryPopap = () => {
+    this.popap.element.classList.add("popap_hidden");
+    this.app.Controller.View.Field.deactivateShadowBox();
   }
 }
