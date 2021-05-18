@@ -14,13 +14,29 @@ export class Constants {
   public readonly SettingsContent: string[] = ["select game cards type", "select game type"];
   public readonly SettingsOptions: string[][] = [["Animals", "Cars"], ["4x4", "6x6"]];
   public readonly settingsDefault: string[] = ["select game cards type"];
+  public readonly picturesClasses: string[] = ["card-container_big", "card-container_small",];
+
   public readonly pictures: string[] = [
+    "../../img/beetle.png",
+    "../../img/buffalo.png",
+    "../../img/bullfinch.png",
+    "../../img/butterfly.png",
+    "../../img/cat.png",
     "../../img/deer.png",
     "../../img/cow.png",
     "../../img/crab.png",
     "../../img/frog.png",
     "../../img/pig.png",
-    "../../img/turtle.png"]
+    "../../img/turtle.png",
+    "../../img/lion.png",
+    "../../img/owl.png",
+    "../../img/parrot.png",
+    "../../img/rhino.png",
+    "../../img/snake.png",
+    "../../img/spider.png",
+    "../../img/squid.png",
+
+  ]
 
   constructor() {
     this.cardTimeout = 200;
@@ -31,5 +47,19 @@ export class Constants {
     this.registerInfo = ["text", "text", "email"];
     this.forbiddenSymbols = "(~ ! @ # $ % * () _ — + = | : ; ' ` < > , . ? / ^)".split(" ");
     this.forbiddenSymbols.push(`"`);
+  }
+
+  getPicturesClasses(number: number) {
+    switch ((number)) {
+      case 4:
+        return this.picturesClasses[0]
+        break;
+      case 6:
+        return this.picturesClasses[1]
+        break;
+      default:
+        return this.picturesClasses[0]
+        break;
+    }
   }
 }

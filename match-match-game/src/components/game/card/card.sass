@@ -1,37 +1,52 @@
 .card-container
-  width: 168px
-  height: 168px
+  width: 100px
+  height: 100px
+  margin: 0 12px 19px
   display: flex
   align-items: center
-  justify-content: space-aroun
-  border-radius: 4px
-  &:hover
-    transform: translateZ(20px)
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14)
-  .card_flipped
-
-.card
-  position: relative
-  width: 168px
-  height: 168px
-  &_flipped
-    transform: rotateY(180deg) translateX(-100%)
+  justify-content: space-around
+  perspective: 160px
+  &_small
+    width: 100px
+    height: 100px
+    margin: 0 12px 19px
+  &_big
+    width: 140px
+    height: 140px
+    margin: 0 23px 35px
+  .card
+    position: relative
+    width: 100%
+    height: 100%
+    transition: all linear 800ms
+    cursor: pointer
+    transform-style: preserve-3d
     transform-origin: left
+    background-color: rgba(0,0,0,.05)
+    border-radius: 10px
+    &_flipped
+      transform: rotateY(180deg) translateX(100%)
+      border: 1px solid #2196F3
+      transform-origin: right
+    &_blocked
+      pointer-events: none
 
-  &__front,
-  &__back
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
+    &__front,
+    &__back
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      backface-visibility: hidden
+      border-radius: 10px
 
-  &__front
-    background-color: green
+    &__back
+      background-size: contain
+      background-position: center center
+      transform: rotateY(180deg)
 
-  &__back
-    background-color: gray
-    // background-image: url("../../img/");
-    background-position: center
-    object-fit: cover
-    transform: rotate(180deg)
+    &__front
+      background: url("../../../img/default.png") no-repeat
+      background-size: cover
+      background-position: center center
