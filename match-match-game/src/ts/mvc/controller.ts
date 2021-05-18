@@ -102,6 +102,7 @@ export class Controller {
 
   addUser2DataBase() {
     // TODO add another type of cards
+    // TODO fix timer.stopTimer()
   }
 
   startGame = () => {

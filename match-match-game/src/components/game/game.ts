@@ -88,6 +88,7 @@ export class Game extends BaseComponent {
     this.element.append(this.popap.element);
     this.app.Controller.View.Field.activateShadowBox();
     this.popap.p.innerText = this.Constants.getFinalPopapText(this.app.Controller.View.Field.CardsField.Timer.getTime())
+    this.app.Controller.View.Field.CardsField.Timer.stopTimer();
     this.app.Controller.initFinalButtonListener();
   }
 
