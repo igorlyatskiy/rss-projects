@@ -24,13 +24,11 @@ export class RegisterPopap extends BaseComponent {
     this.initInputs();
 
     this.UserImage = new UserImage();
-    this.element.append(this.UserImage.element);
 
     this.addUserButton.element.classList.add("popap__add-user");
     this.cancelButton.element.classList.add("popap__cancel");
 
-    this.element.append(this.addUserButton.element);
-    this.element.append(this.cancelButton.element);
+    this.element.append(this.UserImage.element,this.addUserButton.element,this.cancelButton.element);
 
     this.lockButton();
   }

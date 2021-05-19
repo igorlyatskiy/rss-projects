@@ -7,6 +7,8 @@ export class View {
   public readonly Header: Header;
   public Constants: Constants;
   constructor(private readonly rootElement: HTMLElement) {
+    rootElement.classList.add("root");
+    document.body.append(rootElement);
     this.Field = new Field();
     this.Header = new Header();
     this.Constants = new Constants();

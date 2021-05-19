@@ -5,7 +5,7 @@ import { Constants } from './../../components/constants';
 import { View } from './view';
 
 export class Controller {
-  public readonly View: View = new View(document.body);
+  public readonly View: View = new View(document.createElement("div"));
   public readonly Model: Model = new Model();
   public readonly Constants: Constants = new Constants();
   public readonly Validation: Validation = new Validation();

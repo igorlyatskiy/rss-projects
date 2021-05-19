@@ -7,10 +7,8 @@ export class Field extends BaseComponent {
   constructor() {
     super('main', ['field']);
     this.CardsField = new CardsField();
-    this.element.append(this.CardsField.element);
-
     this.shadowBox = this.makeElement("div", ["shadow-box"], "");
-    this.element.append(this.shadowBox);
+    this.element.append(this.CardsField.element, this.shadowBox);
   }
 
   activateShadowBox() {
