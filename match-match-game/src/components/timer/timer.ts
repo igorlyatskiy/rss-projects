@@ -3,6 +3,7 @@ import "./timer.sass";
 export class Timer extends BaseComponent {
   public minutes = 0;
   public seconds = 0;
+  private interval: number;
   constructor() {
     super("div", ["timer"]);
     this.element.innerText = "00:00";
@@ -10,11 +11,11 @@ export class Timer extends BaseComponent {
   }
 
   startTimer = () => {
-    const interval = setInterval(this.addSecond, 1000);
+    this.interval = window.setInterval(this.addSecond, 1000);
   }
 
-  stopTimer() {
-    // clearInterval(this.interval);
+  stopTimer = () => {
+    window.clearInterval(this.interval);
   }
 
   addSecond = () => {

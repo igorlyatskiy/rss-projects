@@ -24,7 +24,6 @@ export class Card extends BaseComponent {
   }
 
   flipToBack() {
-    console.log(this.card.classList);
     (!this.element.classList.contains(this.Constants.GUESSED_CLASS)) ?
       this.card.classList.remove(this.Constants.FLIPPED_CLASS) : 0;
   }
