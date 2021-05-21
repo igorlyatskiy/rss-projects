@@ -33,7 +33,7 @@ export class Card extends BaseComponent {
   }
 
   flipCard = (flag?: boolean) => {
-    this.card.classList.toggle("card_flipped");
+    this.card.classList.toggle(this.Constants.FLIPPED_CLASS);
     this.freezeCard();
     const Model = this.app.Controller.Model;
     const activeCardsNumber = Model.activeCards.length;
@@ -47,19 +47,19 @@ export class Card extends BaseComponent {
       this.app.Controller.Model.guessedCards.push(this.url);
       this.app.Controller.View.Field.CardsField.Game.removeGuessedCards(this.url);
     } else {
-      this.app.Controller.View.Field.CardsField.Game.highlightWrongCards(this.url, firstElement);
+      this.app.Controller.View.Field.CardsField.Game.highlightWrongCards();
     }
     this.app.Controller.Model.activeCards = [];
   }
 
   freezeCard() {
-    this.element.classList.add("card-container_blocked");
+    this.element.classList.add(this.Constants.BLOCKED_CLASS);
   }
   unfreezeCard(element: HTMLElement) {
     if (element) {
-      element.classList.add("card-container_blocked");
+      element.classList.add(this.Constants.BLOCKED_CLASS);
     } else {
-      this.element.classList.add("card-container_blocked");
+      this.element.classList.add(this.Constants.BLOCKED_CLASS);
     }
   }
 

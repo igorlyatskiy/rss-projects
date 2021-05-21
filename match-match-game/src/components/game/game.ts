@@ -85,8 +85,8 @@ export class Game extends BaseComponent {
   }
 
   freezePictures() {
-    this.cards.forEach((e) => e.element.classList.add("card-container_blocked"));
-    setTimeout(() => this.cards.forEach((e) => e.element.classList.remove("card-container_blocked")), this.Constants.cardWaitingTime);
+    this.cards.forEach((e) => e.element.classList.add(this.Constants.BLOCKED_CLASS));
+    setTimeout(() => this.cards.forEach((e) => e.element.classList.remove(this.Constants.BLOCKED_CLASS)), this.Constants.cardWaitingTime);
     setTimeout(() => this.hideAllCards(), this.Constants.cardWaitingTime - this.Constants.cardRotationTime);
   }
 
@@ -102,11 +102,11 @@ export class Game extends BaseComponent {
     });
   }
 
-  highlightWrongCards(url1: string, url2:string){
+  highlightWrongCards(){
     this.cards.forEach((e, index) => {
       if (e.card.classList.contains(this.Constants.FLIPPED_CLASS) && !e.element.classList.contains(this.Constants.GUESSED_CLASS)) {
-        e.card.classList.add("card_wrong");
-        setTimeout(()=>e.card.classList.remove("card_wrong"), this.Constants.cardWaitingTime-this.Constants.cardRotationTime);
+        e.card.classList.add(this.Constants.WRONG_CLASS);
+        setTimeout(()=>e.card.classList.remove(this.Constants.WRONG_CLASS), this.Constants.cardWaitingTime-this.Constants.cardRotationTime);
       }
     });
   }
@@ -121,7 +121,7 @@ export class Game extends BaseComponent {
   }
 
   removeVictoryPopap = () => {
-    this.popap.element.classList.add("popap_hidden");
+    this.popap.element.classList.add(this.Constants.HIDDEN_FINAL_POPAP_CLASS);
     this.app.Controller.View.Field.deactivateShadowBox();
   }
 }

@@ -8,6 +8,11 @@ interface pages {
 export class Constants {
   public readonly FLIPPED_CLASS: string = "card_flipped";
   public readonly GUESSED_CLASS: string = "card-container_guessed";
+  public readonly WRONG_CLASS: string = "card_wrong";
+  public readonly BLOCKED_CLASS: string = "card-container_blocked";
+
+  HIDDEN_FINAL_POPAP_CLASS: string = "popap_hidden";
+
   public readonly infoCardsNumber: number;
   public readonly infoCardsImages: string[];
   public readonly infoCardsText: string[];
