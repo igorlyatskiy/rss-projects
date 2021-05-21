@@ -13,10 +13,14 @@ export class Card extends BaseComponent {
     super("div", ["card-container"]);
     this.url = url;
     this.element.append(this.card);
-    this.card.innerHTML = `
-    <div class="card__front"></div>
-    <div class="card__back" style="background-image: url('${url}')"></div>
-    `;
+
+    const cardBack = this.makeElement("div", ["card__back"], "");
+    cardBack.setAttribute("style", `background-image: url('${url}')`);
+
+    this.card.append(
+      this.makeElement("div", ["card__front"], ""),
+      cardBack
+    );
   }
 
   flipToBack() {

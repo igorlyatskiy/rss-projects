@@ -19,7 +19,7 @@ export class Constants {
   public readonly NavLinks: string[] = ["about", "score", "settings"];
   public readonly SettingsTitle: string[] = ["Game cards", "Difficulty"];
   public readonly SettingsContent: string[] = ["select game cards type", "select game type"];
-  public readonly SettingsOptions: string[][] = [["Animals", "Cars"], ["4x4", "6x6"]];
+  public readonly SettingsOptions: string[][] = [["Animals", "Transport"], ["4x4", "6x6"]];
   public readonly settingsDefault: string[] = ["select game cards type"];
   public readonly picturesClasses: string[] = ["card-container_big", "card-container_small",];
   public readonly cardWaitingTime: number = 3000;
@@ -32,7 +32,7 @@ export class Constants {
     GAME_PAGE: "#/game",
   }
 
-  public readonly pictures: string[] = [
+  public readonly animalPictures: string[] = [
     "../../img/beetle.png",
     "../../img/buffalo.png",
     "../../img/bullfinch.png",
@@ -51,7 +51,27 @@ export class Constants {
     "../../img/snake.png",
     "../../img/spider.png",
     "../../img/squid.png",
+  ]
 
+  public readonly TransportPictures: string[] = [
+    "../../img/bike.png",
+    "../../img/trailer.png",
+    "../../img/porsche.png",
+    "../../img/scooter.png",
+    "../../img/skateboard.png",
+    "../../img/mustang.png",
+    "../../img/volkswagen.png",
+    "../../img/truck.png",
+    "../../img/airplane.png",
+    "../../img/tanker-truck.png",
+    "../../img/helicopter.png",
+    "../../img/ship.png",
+    "../../img/zeppelin.png",
+    "../../img/dragster.png",
+    "../../img/jet-ski.png",
+    "../../img/crane.png",
+    "../../img/hot-air-balloon.png",
+    "../../img/yacht.png",
   ]
 
   constructor() {
@@ -80,5 +100,21 @@ export class Constants {
 
   getFinalPopapText(text: string) {
     return `Congratulations! You successfully found all matches on ${text} minutes.`
+  }
+
+  getAnimalPictures = (type: string) => {
+    switch (type) {
+      case "Animals":
+        return this.animalPictures;
+        break;
+
+      case "Transport":
+        return this.TransportPictures;
+        break;
+
+      default:
+        return this.animalPictures;
+        break;
+    }
   }
 }

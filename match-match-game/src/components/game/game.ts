@@ -31,6 +31,25 @@ import "../../img/snake.png";
 import "../../img/spider.png";
 import "../../img/squid.png";
 
+import "../../img/bike.png";
+import "../../img/trailer.png";
+import "../../img/porsche.png";
+import "../../img/scooter.png";
+import "../../img/skateboard.png";
+import "../../img/mustang.png";
+import "../../img/volkswagen.png";
+import "../../img/truck.png";
+import "../../img/airplane.png";
+import "../../img/tanker-truck.png";
+import "../../img/helicopter.png";
+import "../../img/ship.png";
+import "../../img/zeppelin.png";
+import "../../img/dragster.png";
+import "../../img/jet-ski.png";
+import "../../img/crane.png";
+import "../../img/hot-air-balloon.png";
+import "../../img/yacht.png";
+
 export class Game extends BaseComponent {
   public cards: Card[] = [];
   public popap: finalPopap = new finalPopap();
@@ -59,9 +78,9 @@ export class Game extends BaseComponent {
   }
 
   initPictures() {
-    this.pictures = this.Constants.pictures
+    this.pictures = this.Constants.getAnimalPictures(this.cardsType)
       .slice(0, this.unicCardsNumber ** 2 / 2)
-      .concat(this.Constants.pictures.slice(0, this.unicCardsNumber ** 2 / 2))
+      .concat(this.Constants.getAnimalPictures(this.cardsType).slice(0, this.unicCardsNumber ** 2 / 2))
       .sort(() => Math.random() - 0.5);
   }
 
