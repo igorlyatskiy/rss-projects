@@ -12,7 +12,7 @@ export class Card extends BaseComponent {
   constructor(public url: string) {
     super("div", ["card-container"]);
     this.url = url;
-    this.element.append(this.card);
+    this.element.append(this.card, this.makeElement("div", ["card-container__shadow"], ""));
 
     const cardBack = this.makeElement("div", ["card__back"], "");
     cardBack.setAttribute("style", `background-image: url('${url}')`);
@@ -24,7 +24,9 @@ export class Card extends BaseComponent {
   }
 
   flipToBack() {
-    this.card.classList.remove("card_flipped");
+    console.log(this.card.classList);
+    (!this.element.classList.contains(this.Constants.GUESSED_CLASS)) ?
+      this.card.classList.remove(this.Constants.FLIPPED_CLASS) : 0;
   }
   flipToFront() {
     return this.flipCard();
@@ -34,7 +36,7 @@ export class Card extends BaseComponent {
     this.card.classList.toggle("card_flipped");
     this.freezeCard();
     const Model = this.app.Controller.Model;
-    const activeCardsNumber = this.app.Controller.Model.activeCards.length;
+    const activeCardsNumber = Model.activeCards.length;
     (activeCardsNumber === 0) ? Model.activeCards.push(this.url) : this.compareCards(Model.activeCards[0]);
     this.checkGameStatus()
   }
@@ -44,6 +46,8 @@ export class Card extends BaseComponent {
     if (firstElement === this.url) {
       this.app.Controller.Model.guessedCards.push(this.url);
       this.app.Controller.View.Field.CardsField.Game.removeGuessedCards(this.url);
+    } else {
+      this.app.Controller.View.Field.CardsField.Game.highlightWrongCards(this.url, firstElement);
     }
     this.app.Controller.Model.activeCards = [];
   }

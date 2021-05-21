@@ -97,7 +97,16 @@ export class Game extends BaseComponent {
   removeGuessedCards(url: string) {
     this.cards.forEach((e, index) => {
       if (e.url === url) {
-        e.element.classList.add("card-container_guessed");
+        e.element.classList.add(this.Constants.GUESSED_CLASS);
+      }
+    });
+  }
+
+  highlightWrongCards(url1: string, url2:string){
+    this.cards.forEach((e, index) => {
+      if (e.card.classList.contains(this.Constants.FLIPPED_CLASS) && !e.element.classList.contains(this.Constants.GUESSED_CLASS)) {
+        e.card.classList.add("card_wrong");
+        setTimeout(()=>e.card.classList.remove("card_wrong"), this.Constants.cardWaitingTime-this.Constants.cardRotationTime);
       }
     });
   }

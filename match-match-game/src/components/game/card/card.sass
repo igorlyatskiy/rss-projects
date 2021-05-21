@@ -18,12 +18,6 @@
   &_guessed
     pointer-events: none
 
-  &_guessed
-    .card
-      transform: rotateY(180deg) translateX(-100%)
-      border-color: #00bc00
-      transform-origin: right
-
   .card
     position: relative
     width: 100%
@@ -38,6 +32,18 @@
       transform: rotateY(180deg) translateX(100%)
       border: 1px solid #2196F3
       transform-origin: right
+
+    &_wrong ~ .card-container__shadow
+      transition: all linear 0ms
+      transition-delay: 500ms
+      background: rgba(360, 0, 0, 0.2)
+      z-index: 35
+      position: absolute
+      left: 0
+      right: 0
+      bottom: 0
+      top: 0
+      border-radius: 10px
 
     &__front,
     &__back
@@ -58,3 +64,16 @@
       background: url("../../../img/default.png") no-repeat
       background-size: cover
       background-position: center center
+
+  &_guessed
+    .card-container__shadow
+      transition: all linear 1500ms
+      transition-delay: 300ms
+      background: rgba(0,228,64,0.3)
+      z-index: 35
+      position: absolute
+      left: 0
+      right: 0
+      bottom: 0
+      top: 0
+      border-radius: 10px

@@ -6,6 +6,8 @@ interface pages {
 }
 
 export class Constants {
+  public readonly FLIPPED_CLASS: string = "card_flipped";
+  public readonly GUESSED_CLASS: string = "card-container_guessed";
   public readonly infoCardsNumber: number;
   public readonly infoCardsImages: string[];
   public readonly infoCardsText: string[];
