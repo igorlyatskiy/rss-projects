@@ -129,8 +129,8 @@ export class Controller {
     if (result) {
       this.Model.secondsFromGameStart = this.View.Field.CardsField.Timer.minutes * 60 + this.View.Field.CardsField.Timer.seconds;
       this.Model.countUserScore()
+      this.addUser2DataBase()
     }
-    this.addUser2DataBase()
     this.View.Field.CardsField.Game.removeVictoryPopap();
     window.location.hash = (result) ? `/score` : `/about`;
 

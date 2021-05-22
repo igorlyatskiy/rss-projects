@@ -7,7 +7,6 @@ export class Database {
   public readonly Constants: Constants = new Constants();
   public app: App;
   constructor() {
-    window.addEventListener("load", () => this.app = app);
 
     let openRequest = indexedDB.open("igorlyatskiy", 1);
 
@@ -24,12 +23,17 @@ export class Database {
   }
 
   addUser = () => {
+    this.app = app;
     const transaction = this.db.transaction("users", "readwrite");
     const users = transaction.objectStore("users");
     const newUser = this.app.Controller.Model.user;
     const request = users.add(newUser, `${newUser.name} ${newUser.surname}`);
 
-    request.addEventListener("error", () => console.log("error at the user to the DB adding", request.error, users));
+    request.addEventListener("error", () => {
+      console.log("error at the user to the DB adding", request.error)
+      users.delete(`${newUser.name} ${newUser.surname}`);
+      const newRequest = users.add(newUser, `${newUser.name} ${newUser.surname}`);
+    })
   };
 
   pullUsersList = () => {

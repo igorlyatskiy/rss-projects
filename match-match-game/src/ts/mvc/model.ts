@@ -16,7 +16,7 @@ export class Model {
     surname: "",
     email: "",
     score: 0,
-    avatar: ""
+    avatar: "../../img/user.png"
   };
   public comparissonNumber: number = 0;
   public wrongComparissonNumber: number = 0;
