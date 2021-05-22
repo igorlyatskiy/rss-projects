@@ -13,6 +13,7 @@ export class Constants {
 
   HIDDEN_FINAL_POPAP_CLASS: string = "popap_hidden";
 
+  public readonly topPlayersNumber: number = 10;
   public readonly infoCardsNumber: number;
   public readonly infoCardsImages: string[];
   public readonly infoCardsText: string[];

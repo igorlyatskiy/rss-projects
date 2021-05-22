@@ -105,7 +105,10 @@ export class Controller {
 
   addUser2DataBase() {
     this.Database.addUser();
-    // console.log(this.Database.getUsersList())
+  }
+
+  pullUsersFromDataBase() {
+    return this.Database.pullUsersList();
   }
 
   startGame = () => {
@@ -123,11 +126,11 @@ export class Controller {
   }
 
   stopGame = (result?: boolean) => {
-    this.addUser2DataBase()
     if (result) {
       this.Model.secondsFromGameStart = this.View.Field.CardsField.Timer.minutes * 60 + this.View.Field.CardsField.Timer.seconds;
       this.Model.countUserScore()
     }
+    this.addUser2DataBase()
     this.View.Field.CardsField.Game.removeVictoryPopap();
     window.location.hash = (result) ? `/score` : `/about`;
 

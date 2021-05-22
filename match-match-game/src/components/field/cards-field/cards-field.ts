@@ -1,3 +1,4 @@
+import { Score } from './Score/score';
 import { Game } from './../../game/game';
 import { Timer } from './../../timer/timer';
 import { settingsPage } from './settings/settingsPage';
@@ -18,6 +19,7 @@ export class CardsField extends BaseComponent {
   public settingsPage: settingsPage = new settingsPage();
   public Timer: Timer;
   public Game: Game;
+  public Score: Score;
   constructor() {
     super("div", ["cards-field"]);
     this.Constants = new Constants();
@@ -56,9 +58,11 @@ export class CardsField extends BaseComponent {
   }
 
   makeBestScorePage() {
+    this.Score = new Score();
     this.element.classList.remove("cards-field_active");
     this.clearComponent();
     this.element.append(this.RegisterPopap.element);
+    this.element.append(this.Score.element);
   }
 
 

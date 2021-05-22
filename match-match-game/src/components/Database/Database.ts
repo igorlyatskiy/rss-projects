@@ -1,6 +1,7 @@
 import { App } from './../../ts/app';
 import { Constants } from './../constants';
 import { app } from './../../ts/index'
+import { reject } from 'lodash';
 export class Database {
   public db: IDBDatabase;
   public readonly Constants: Constants = new Constants();
@@ -29,14 +30,19 @@ export class Database {
     const request = users.add(newUser, `${newUser.name} ${newUser.surname}`);
 
     request.addEventListener("error", () => console.log("error at the user to the DB adding", request.error, users));
-
-    const allUsers = users.getAll();
-    allUsers.addEventListener("success", () => this.app.Controller.Model.players = allUsers.result);
-    allUsers.addEventListener("error", () => console.log("Error at the users Info getting"));
   };
 
-  getUsersList = () => {
-    const transaction = this.db.transaction("users", "readwrite");
-    return transaction.objectStore("users");
+  pullUsersList = () => {
+    return new Promise((resolve) => {
+      const transaction = this.db.transaction("users", "readonly");
+      const users = transaction.objectStore("users");
+      const allUsers = users.getAll();
+      allUsers.addEventListener("success", () => {
+        const res = allUsers.result;
+        resolve(res);
+      });
+      allUsers.addEventListener("error", () => console.log("Error at the users Info getting"));
+
+    });
   }
 }

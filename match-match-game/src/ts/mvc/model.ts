@@ -7,7 +7,6 @@ interface user {
 }
 
 export class Model {
-  public players: string[] = [];
   public role: string = "guest";
   public settings: string[] = ["Animals", "4x4"];
   public activeCards: string[] = [];
