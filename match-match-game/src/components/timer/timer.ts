@@ -34,7 +34,6 @@ export class Timer extends BaseComponent {
   }
 
   getTime = () => {
-    console.log(this.minutes, this.seconds);
     return `${this.minutes + +(this.seconds / 100).toFixed(2)}`;
   }
 }

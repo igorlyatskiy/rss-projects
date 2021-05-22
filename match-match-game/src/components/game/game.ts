@@ -68,6 +68,8 @@ export class Game extends BaseComponent {
   initField = () => {
     this.app.Controller.Model.activeCards = [];
     this.app.Controller.Model.guessedCards = [];
+    this.app.Controller.Model.comparissonNumber = 0;
+    this.app.Controller.Model.wrongComparissonNumber = 0;
     this.pictures.forEach((e, index) => {
       this.cards.push(new Card(e))
       this.element.append(this.cards[index].element)
@@ -102,11 +104,11 @@ export class Game extends BaseComponent {
     });
   }
 
-  highlightWrongCards(){
+  highlightWrongCards() {
     this.cards.forEach((e, index) => {
       if (e.card.classList.contains(this.Constants.FLIPPED_CLASS) && !e.element.classList.contains(this.Constants.GUESSED_CLASS)) {
         e.card.classList.add(this.Constants.WRONG_CLASS);
-        setTimeout(()=>e.card.classList.remove(this.Constants.WRONG_CLASS), this.Constants.cardWaitingTime-this.Constants.cardRotationTime);
+        setTimeout(() => e.card.classList.remove(this.Constants.WRONG_CLASS), this.Constants.cardWaitingTime - this.Constants.cardRotationTime);
       }
     });
   }

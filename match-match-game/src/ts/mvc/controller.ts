@@ -1,3 +1,4 @@
+import { Database } from './../../components/Database/Database';
 import { Model } from './model';
 import { Router } from './../../components/Router';
 import { Validation } from './../../components/validation';
@@ -12,7 +13,7 @@ export class Controller {
   public readonly Router: Router = new Router();
   public readonly registerFunction: () => void = () => this.showRegistrationPopap()
   public readonly headerButton: HTMLElement = this.View.Header.Wrapper.headerRightWrapper.headerButton.element;
-
+  public readonly Database: Database = new Database();
   constructor() {
     const shadow = this.View.Field.shadowBox;
     const clearRegistrationButton = this.View.Field.CardsField.RegisterPopap.cancelButton.element;
@@ -79,7 +80,9 @@ export class Controller {
       this.headerButton.removeEventListener("click", this.registerFunction);
       this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer()
       this.Model.role = "player";
-      // this.addUser2DataBase();
+      this.Model.setUserName(this.View.Field.CardsField.RegisterPopap.inputs[0].element.value)
+      this.Model.setUserSurname(this.View.Field.CardsField.RegisterPopap.inputs[1].element.value)
+      this.Model.setUserEmail(this.View.Field.CardsField.RegisterPopap.inputs[2].element.value)
       this.headerButton.addEventListener("click", this.startGame, { once: true });
     }, { once: true });
   }
@@ -101,8 +104,8 @@ export class Controller {
   }
 
   addUser2DataBase() {
-    // TODO add another type of cards
-    // TODO fix timer.stopTimer()
+    this.Database.addUser();
+    // console.log(this.Database.getUsersList())
   }
 
   startGame = () => {
@@ -120,6 +123,11 @@ export class Controller {
   }
 
   stopGame = (result?: boolean) => {
+    this.addUser2DataBase()
+    if (result) {
+      this.Model.secondsFromGameStart = this.View.Field.CardsField.Timer.minutes * 60 + this.View.Field.CardsField.Timer.seconds;
+      this.Model.countUserScore()
+    }
     this.View.Field.CardsField.Game.removeVictoryPopap();
     window.location.hash = (result) ? `/score` : `/about`;
 

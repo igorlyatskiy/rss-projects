@@ -47,8 +47,10 @@ export class Card extends BaseComponent {
       this.app.Controller.View.Field.CardsField.Game.removeGuessedCards(this.url);
     } else {
       this.app.Controller.View.Field.CardsField.Game.highlightWrongCards();
+      this.app.Controller.Model.wrongComparissonNumber++;
     }
     this.app.Controller.Model.activeCards = [];
+    this.app.Controller.Model.comparissonNumber++;
   }
 
   freezeCard() {
