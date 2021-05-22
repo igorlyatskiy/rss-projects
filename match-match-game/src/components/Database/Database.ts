@@ -27,12 +27,10 @@ export class Database {
     const transaction = this.db.transaction("users", "readwrite");
     const users = transaction.objectStore("users");
     const newUser = this.app.Controller.Model.user;
-    const request = users.add(newUser, `${newUser.name} ${newUser.surname}`);
+    const request = users.put(newUser, `${newUser.name} ${newUser.surname}`);
 
     request.addEventListener("error", () => {
       console.log("error at the user to the DB adding", request.error)
-      users.delete(`${newUser.name} ${newUser.surname}`);
-      const newRequest = users.add(newUser, `${newUser.name} ${newUser.surname}`);
     })
   };
 
