@@ -1,44 +1,51 @@
-import { Constants } from './../../constants';
-import { App } from './../../../ts/app';
-import { BaseComponent } from "../../base-component";
-import "./card.sass";
-import "../../../img/default.png"
-import { app } from '../../../ts/index'
+import { Constants } from '../../constants';
+import { App } from '../../../ts/app';
+import { BaseComponent } from '../../base-component';
+import './card.sass';
+import '../../../img/default.png';
+import { app } from '../../../ts/index';
+
 export class Card extends BaseComponent {
   public Constants: Constants = new Constants();
-  public isFlipped: boolean;
-  public card: HTMLElement = this.makeElement("div", ["card"], "");
-  public app: App = app;
-  constructor(public url: string) {
-    super("div", ["card-container"]);
-    this.url = url;
-    this.element.append(this.card, this.makeElement("div", ["card-container__shadow"], ""));
 
-    const cardBack = this.makeElement("div", ["card__back"], "");
-    cardBack.setAttribute("style", `background-image: url('${url}')`);
+  public isFlipped: boolean;
+
+  public card: HTMLElement = this.makeElement('div', ['card'], '');
+
+  public app: App = app;
+
+  constructor(public url: string) {
+    super('div', ['card-container']);
+    this.url = url;
+    this.element.append(this.card, this.makeElement('div', ['card-container__shadow'], ''));
+
+    const cardBack = this.makeElement('div', ['card__back'], '');
+    cardBack.setAttribute('style', `background-image: url('${url}')`);
 
     this.card.append(
-      this.makeElement("div", ["card__front"], ""),
-      cardBack
+      this.makeElement('div', ['card__front'], ''),
+      cardBack,
     );
   }
 
   flipToBack() {
-    (!this.element.classList.contains(this.Constants.GUESSED_CLASS)) ?
-      this.card.classList.remove(this.Constants.FLIPPED_CLASS) : 0;
-  }
-  flipToFront() {
-    return this.flipCard();
+    if (!this.element.classList.contains(this.Constants.GUESSED_CLASS)) {
+      this.card.classList.remove(this.Constants.FLIPPED_CLASS);
+    }
   }
 
-  flipCard = (flag?: boolean) => {
+  flipCard = () => {
     this.card.classList.toggle(this.Constants.FLIPPED_CLASS);
     this.freezeCard();
-    const Model = this.app.Controller.Model;
+    const { Model } = this.app.Controller;
     const activeCardsNumber = Model.activeCards.length;
-    (activeCardsNumber === 0) ? Model.activeCards.push(this.url) : this.compareCards(Model.activeCards[0]);
-    this.checkGameStatus()
-  }
+    if (activeCardsNumber === 0) {
+      Model.activeCards.push(this.url);
+    } else {
+      this.compareCards(Model.activeCards[0]);
+    }
+    this.checkGameStatus();
+  };
 
   compareCards = (firstElement: string) => {
     this.app.Controller.View.Field.CardsField.Game.freezePictures();
@@ -47,15 +54,16 @@ export class Card extends BaseComponent {
       this.app.Controller.View.Field.CardsField.Game.removeGuessedCards(this.url);
     } else {
       this.app.Controller.View.Field.CardsField.Game.highlightWrongCards();
-      this.app.Controller.Model.wrongComparissonNumber++;
+      this.app.Controller.Model.wrongComparissonNumber += 1;
     }
     this.app.Controller.Model.activeCards = [];
-    this.app.Controller.Model.comparissonNumber++;
-  }
+    this.app.Controller.Model.comparissonNumber += 1;
+  };
 
   freezeCard() {
     this.element.classList.add(this.Constants.BLOCKED_CLASS);
   }
+
   unfreezeCard(element: HTMLElement) {
     if (element) {
       element.classList.add(this.Constants.BLOCKED_CLASS);
@@ -71,6 +79,6 @@ export class Card extends BaseComponent {
   }
 
   checkVictory() {
-    return this.app.Controller.View.Field.CardsField.Game.cards.length / 2 === this.app.Controller.Model.guessedCards.length
+    return this.app.Controller.View.Field.CardsField.Game.cards.length / 2 === this.app.Controller.Model.guessedCards.length;
   }
 }

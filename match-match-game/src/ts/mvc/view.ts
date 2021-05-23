@@ -1,13 +1,16 @@
 import { Constants } from '../../components/constants';
 import { Header } from '../../components/header/header';
-import { Field } from "../../components/field/field";
+import { Field } from '../../components/field/field';
 
 export class View {
   public readonly Field: Field;
+
   public readonly Header: Header;
+
   public Constants: Constants;
+
   constructor(private readonly rootElement: HTMLElement) {
-    rootElement.classList.add("root");
+    rootElement.classList.add('root');
     document.body.append(rootElement);
     this.Field = new Field();
     this.Header = new Header();

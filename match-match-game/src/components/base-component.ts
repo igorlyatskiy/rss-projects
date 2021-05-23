@@ -1,4 +1,4 @@
-export class BaseComponent {
+class BaseComponent {
   readonly element: HTMLElement;
 
   constructor(el: keyof HTMLElementTagNameMap = 'div', classes: string[] = []) {
@@ -6,22 +6,17 @@ export class BaseComponent {
     this.element.classList.add(...classes);
   }
 
-  append(where: HTMLElement, what: HTMLElement) {
-    where.append(what);
-  }
-
-  prepend(where: HTMLElement, what: HTMLElement) {
-    where.prepend(what);
-  }
-
   clearComponent() {
     this.element.innerHTML = '';
   }
 
-  makeElement(element: string, classList: string[] = [], text: string) {
+  makeElement = (element: string, classList: string[] = [], text: string) => {
     const el = document.createElement(element);
     el.classList.add(...classList);
-    (text) ? el.innerHTML = text : 0;
+    el.innerHTML = (text) || '';
     return el;
-  }
+  };
+
 }
+
+export { BaseComponent };

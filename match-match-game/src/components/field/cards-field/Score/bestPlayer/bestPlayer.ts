@@ -1,31 +1,26 @@
-import { BaseComponent } from './../../../../base-component';
-import "../../../../../img/userDark.png"
-import "./bestPlayer.sass";
-interface userType {
-  name: string,
-  surname: string,
-  email: string,
-  score: number,
-  avatar: string
-}
+import { UserType } from '../../../../constants';
+import { BaseComponent } from '../../../../base-component';
+import '../../../../../img/userDark.png';
+import './bestPlayer.sass';
+
 export class BestPlayer extends BaseComponent {
-  constructor(user: userType) {
-    super("div", ["top-player"]);
-    const DEFAULT_USER_LINK = "../../../../../img/userDark.png";
+  constructor(user: UserType) {
+    super('div', ['top-player']);
+    const DEFAULT_USER_LINK = '../../../../../img/userDark.png';
 
-    const img = this.makeElement("img", ["top-player__img"], "");
-    img.setAttribute("src", (user.avatar !== "") ? user.avatar : DEFAULT_USER_LINK);
-    img.setAttribute("crossorigin", "anonymous");
+    const img = this.makeElement('img', ['top-player__img'], '');
+    img.setAttribute('src', (user.avatar !== '') ? user.avatar : DEFAULT_USER_LINK);
+    img.setAttribute('crossorigin', 'anonymous');
 
-    const wrapper = this.makeElement("div", ["top-player__wrapper"], "");
-    const textWrapper = this.makeElement("div", ["top-player__text-wrapper"], "");
+    const wrapper = this.makeElement('div', ['top-player__wrapper'], '');
+    const textWrapper = this.makeElement('div', ['top-player__text-wrapper'], '');
 
 
-    const name = this.makeElement("h3", ["top-player__name"], `${user.name} ${user.surname}`);
-    const email = this.makeElement("p", ["top-player__email"], user.email);
+    const name = this.makeElement('h3', ['top-player__name'], `${user.name} ${user.surname}`);
+    const email = this.makeElement('p', ['top-player__email'], user.email);
 
-    const score = this.makeElement("span", ["top-player__score"], "Score: ");
-    score.append(this.makeElement("b", ["top-player__score-number"], `${user.score}`));
+    const score = this.makeElement('span', ['top-player__score'], 'Score: ');
+    score.append(this.makeElement('b', ['top-player__score-number'], `${user.score}`));
 
 
     this.element.append(wrapper, score);
