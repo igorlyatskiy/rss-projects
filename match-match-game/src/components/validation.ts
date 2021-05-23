@@ -3,7 +3,7 @@ import { Constants } from './constants';
 export class Validation {
   public readonly Constants: Constants = new Constants();
 
-  private readonly emailexpr: RegExp = new RegExp("^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]{1}(\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+\.([a-zA-Z0-9]{2,6})$");
+  private readonly emailexpr: RegExp = new RegExp("^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]{1}(.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+.([a-zA-Z0-9]{2,6})$");
 
   checkEmail(input: HTMLInputElement) {
     if (this.emailexpr.test(input.value)) {

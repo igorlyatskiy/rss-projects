@@ -18,7 +18,5 @@ module.exports = {
 
   },
   "rules": {
-    "import/prefer-default-export": "off",
-    // временное решение для дебага
   }
 };

@@ -1,12 +1,12 @@
+import { Card } from '../../components/game/card/card';
 import { Database } from '../../components/Database/Database';
 import { Model } from './model';
-import { Router } from '../../components/Router';
 import { Validation } from '../../components/validation';
 import { Constants } from '../../components/constants';
 import { View } from './view';
 
 export class Controller {
-  public readonly View: View = new View(document.createElement('div'));
+  public readonly View: View;
 
   public readonly Model: Model = new Model();
 
@@ -14,15 +14,16 @@ export class Controller {
 
   public readonly Validation: Validation = new Validation();
 
-  public readonly Router: Router = new Router();
-
   public readonly registerFunction: () => void = () => this.showRegistrationPopap();
 
-  public readonly headerButton: HTMLElement = this.View.Header.Wrapper.headerRightWrapper.headerButton.element;
+  public readonly headerButton: HTMLElement;
 
   public readonly Database: Database = new Database();
 
-  constructor() {
+  constructor(rootElement: HTMLElement) {
+    this.View = new View(rootElement);
+    this.headerButton = this.View.Header.Wrapper.headerRightWrapper.headerButton.element;
+
     const shadow = this.View.Field.shadowBox;
     const clearRegistrationButton = this.View.Field.CardsField.RegisterPopap.cancelButton.element;
     const { inputs } = this.View.Field.CardsField.RegisterPopap;
@@ -43,6 +44,8 @@ export class Controller {
   showRegistrationPopap = () => {
     this.View.Field.activateShadowBox();
     this.View.Field.CardsField.RegisterPopap.showPopap();
+    const avatar = this.View.Field.CardsField.RegisterPopap.UserImage;
+    this.loadImage(avatar.input, avatar.img);
   };
 
   hideRegistrationPopap = () => {
@@ -50,13 +53,13 @@ export class Controller {
     this.View.Field.CardsField.RegisterPopap.hidePopap();
   };
 
-  clearPopapInputs() {
+  clearPopapInputs = () => {
     this.View.Field.CardsField.RegisterPopap.inputs.forEach((e) => {
       e.element.value = '';
       e.element.classList.remove('input_active');
       this.View.Field.CardsField.RegisterPopap.lockButton();
     });
-  }
+  };
 
   checkInputs() {
     this.View.Field.CardsField.RegisterPopap.unlockButton();
@@ -85,7 +88,7 @@ export class Controller {
       this.View.Header.Wrapper.Nav.changeActiveElement(this.Constants.NavLinks.indexOf(location.substr(2, +location.length - 1)));
 
       if (location && location !== this.Constants.Pages.GAME_PAGE || location && location === this.Constants.Pages.GAME_PAGE && this.Model.role === PLAYER_ROLE_NAME) {
-        this.Router.changeLocation(location, this.View.Field.CardsField);
+        this.changeLocation(location);
       }
     });
     this.controlRouter();
@@ -106,7 +109,7 @@ export class Controller {
       this.View.Field.deactivateShadowBox();
       this.View.Field.CardsField.RegisterPopap.hidePopap();
       this.headerButton.removeEventListener('click', this.registerFunction);
-      this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer();
+      this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer(this.Model.user.avatar);
       this.Model.role = 'player';
       this.Model.setUserName(this.View.Field.CardsField.RegisterPopap.inputs[0].element.value);
       this.Model.setUserSurname(this.View.Field.CardsField.RegisterPopap.inputs[1].element.value);
@@ -132,7 +135,7 @@ export class Controller {
   }
 
   addUser2DataBase() {
-    this.Database.addUser();
+    this.Database.addUser(this.Model.user);
   }
 
   pullUsersFromDataBase() {
@@ -159,11 +162,141 @@ export class Controller {
       this.Model.countUserScore();
       this.addUser2DataBase();
     }
-    this.View.Field.CardsField.Game.removeVictoryPopap();
+    this.removeVictoryPopap();
     window.location.hash = (result) ? '/score' : '/about';
 
-    this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer();
+    this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer(this.Model.user.avatar);
     this.headerButton.addEventListener('click', this.startGame, { once: true });
+  };
+
+  changeLocation = (location: string) => {
+    const cardsType = (this.Model.settings[0] !== this.Constants.settingsDefault[0]) ? this.Model.settings[0] : this.Constants.SettingsOptions[0][0];
+    const settingsCardsNumber = +this.Model.settings[1].split('x')[0];
+
+    switch (location) {
+
+      case this.Constants.Pages.ABOUT_PAGE:
+        this.View.Field.CardsField.makeAboutPage();
+        break;
+
+      case this.Constants.Pages.GAME_PAGE:
+        this.View.Field.CardsField.makeGamePage(cardsType, settingsCardsNumber);
+        this.initGameField();
+        break;
+
+      case this.Constants.Pages.SETTINGS_PAGE:
+        this.View.Field.CardsField.makeSettingsPage();
+        break;
+
+      case this.Constants.Pages.SCORE_PAGE:
+        this.View.Field.CardsField.makeBestScorePage();
+        this.getUsers();
+        break;
+
+      default:
+        this.View.Field.CardsField.makeAboutPage();
+        break;
+    }
+  };
+
+  initGameField = () => {
+    this.Model.activeCards = [];
+    this.Model.guessedCards = [];
+    this.Model.comparissonNumber = 0;
+    this.Model.wrongComparissonNumber = 0;
+
+    const { Game } = this.View.Field.CardsField;
+    Game.pictures.forEach((e, index) => {
+      Game.cards.push(new Card(e));
+      Game.element.append(Game.cards[index].element);
+      Game.cards[index].element.addEventListener('click', () => this.flipCard(Game.cards[index]));
+      Game.cards[index].element.classList.remove(...this.Constants.picturesClasses);
+      Game.cards[index].element.classList.add(this.Constants.getPicturesClasses(Game.unicCardsNumber));
+    });
+  };
+
+  flipCard = (CardClass: Card) => {
+    CardClass.card.classList.toggle(this.Constants.FLIPPED_CLASS);
+    CardClass.freezeCard();
+    const activeCardsNumber = this.Model.activeCards.length;
+    if (activeCardsNumber === 0) {
+      this.Model.activeCards.push(CardClass.url);
+    } else {
+      this.compareCards(this.Model.activeCards[0], CardClass.url);
+    }
+    this.checkGameStatus();
+  };
+
+  compareCards = (firstElement: string, secondElement: string) => {
+    this.View.Field.CardsField.Game.freezePictures();
+    if (firstElement === secondElement) {
+      this.Model.guessedCards.push(secondElement);
+      this.View.Field.CardsField.Game.removeGuessedCards(secondElement);
+    } else {
+      this.View.Field.CardsField.Game.highlightWrongCards();
+      this.Model.wrongComparissonNumber += 1;
+    }
+    this.Model.activeCards = [];
+    this.Model.comparissonNumber += 1;
+  };
+
+  checkGameStatus = () => {
+    if (this.checkVictory()) {
+      setTimeout(() => this.showVictoryPopap(), this.Constants.cardRotationTime + this.Constants.cardWaitingTime);
+    }
+  };
+
+  checkVictory = () => {
+    return this.View.Field.CardsField.Game.cards.length / 2 === this.Model.guessedCards.length;
+  };
+
+
+  showVictoryPopap() {
+    const { Game } = this.View.Field.CardsField;
+    Game.element.append(Game.popap.element);
+    this.View.Field.activateShadowBox();
+    Game.popap.p.textContent = this.Constants.getFinalPopapText(this.View.Field.CardsField.Timer.getTime());
+    this.View.Field.CardsField.Timer.stopTimer();
+    this.initFinalButtonListener();
+  }
+
+  removeVictoryPopap = () => {
+    const { Game } = this.View.Field.CardsField;
+    Game.popap.element.classList.add(this.Constants.HIDDEN_FINAL_POPAP_CLASS);
+    this.View.Field.deactivateShadowBox();
+  };
+
+
+  getUsers = () => {
+    this.pullUsersFromDataBase().then((res) => this.View.Field.CardsField.Score.drawBestScorePage(res));
+  };
+
+  loadImage = (input: HTMLInputElement, image: HTMLImageElement) => {
+    input.addEventListener('change', () => {
+      const img = image;
+      const fileInput = input;
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.src = String(reader.result);
+      };
+      reader.readAsDataURL(file);
+      fileInput.value = null; // обнуляет значение input, чтобы можно было загрузить картинку дважды подряд
+      this.addImage2Model(img);
+    });
+  };
+
+  addImage2Model = (image: HTMLImageElement) => {
+    const img = image;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    img.addEventListener('load', () => {
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+      const dataURL = canvas.toDataURL();
+      this.Model.user.avatar = dataURL;
+    });
   };
 
 }

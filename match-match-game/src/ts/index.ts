@@ -1,8 +1,11 @@
-import { App } from './app';
+import { Controller } from './mvc/controller';
 import '../css/main.sass';
 
-let app: App;
 window.onload = () => {
-  app = new App();
+  const rootElement = document.getElementById('root');
+  if (rootElement !== null) {
+    const controller = new Controller(rootElement);
+  } else {
+    throw new Error('Root element does not exist');
+  }
 };
-export { app };

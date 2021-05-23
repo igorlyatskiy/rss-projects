@@ -21,8 +21,8 @@ export class HeaderRightWrapper extends BaseComponent {
     this.element.append(this.headerButton.element);
   }
 
-  showWaitingPlayer() {
-    this.headerImage = new Image();
+  showWaitingPlayer(url: string) {
+    this.headerImage = new Image(url);
     this.headerImage.element.classList.add('header__avatar');
     this.clearComponent();
     this.element.append(this.headerButton.element, this.headerImage.element);

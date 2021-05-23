@@ -1,12 +1,9 @@
 import { UserType, Constants } from '../../../constants';
 import { BestPlayer } from './bestPlayer/bestPlayer';
 
-import { App } from '../../../../ts/app';
 import { BaseComponent } from '../../../base-component';
-import { app } from '../../../../ts/index';
 
 export class Score extends BaseComponent {
-  public app: App = app;
 
   public users: UserType[] = [];
 
@@ -14,12 +11,8 @@ export class Score extends BaseComponent {
 
   constructor() {
     super('div', ['score-page']);
-    this.getUsers();
   }
 
-  getUsers = () => {
-    this.app.Controller.pullUsersFromDataBase().then((res) => this.drawBestScorePage(res));
-  };
 
   drawBestScorePage = (res: unknown) => {
     this.element.append(this.makeElement('h2', ['title'], 'Best players'));

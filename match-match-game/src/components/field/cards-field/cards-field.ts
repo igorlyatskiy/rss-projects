@@ -12,7 +12,7 @@ import './img/second.png';
 import './img/third.png';
 
 export class CardsField extends BaseComponent {
-  public Rules: Array<BaseComponent>;
+  public Rules: BaseComponent[] = [];
 
   public readonly Constants: Constants;
 
@@ -37,9 +37,8 @@ export class CardsField extends BaseComponent {
     this.element.classList.remove('cards-field_active');
     this.clearComponent();
     const p = this.makeElement('p', ['info-item__title'], 'How to play?');
-    p.innerText = 'How to play?';
+    p.textContent = 'How to play?';
 
-    this.Rules = [];
     for (let i = 0; i < this.Constants.infoCardsNumber; i += 1) {
       this.Rules[i] = new InfoItem(i + 1, this.Constants.infoCardsText[i], this.Constants.infoCardsImages[i]);
       this.element.append(this.Rules[i].element);
@@ -49,9 +48,9 @@ export class CardsField extends BaseComponent {
     this.RegisterPopap.element.classList.remove('register-popap_active');
   }
 
-  makeGamePage() {
-    this.Game = new Game();
+  makeGamePage(typeOfCards: string, settingsCardsNumber: number) {
     this.clearComponent();
+    this.Game = new Game(typeOfCards, settingsCardsNumber);
     this.element.classList.add('cards-field_active');
     this.Timer = new Timer();
     this.element.append(this.Timer.element, this.Game.element);
@@ -67,9 +66,7 @@ export class CardsField extends BaseComponent {
     this.Score = new Score();
     this.element.classList.remove('cards-field_active');
     this.clearComponent();
-    this.element.append(this.RegisterPopap.element);
-    this.element.append(this.Score.element);
+    this.element.append(this.RegisterPopap.element, this.Score.element);
   }
-
 
 }

@@ -1,16 +1,11 @@
-import { App } from '../../ts/app';
-import { Constants } from '../constants';
-import { app } from '../../ts/index';
+import { Constants, UserType } from '../constants';
 
 export class Database {
   public db: IDBDatabase;
 
   public readonly Constants: Constants = new Constants();
 
-  public app: App;
-
   constructor() {
-
     const openRequest = indexedDB.open('igorlyatskiy', 1);
 
     openRequest.addEventListener('upgradeneeded', () => {
@@ -27,11 +22,9 @@ export class Database {
     });
   }
 
-  addUser = () => {
-    this.app = app;
+  addUser = (newUser: UserType) => {
     const transaction = this.db.transaction('users', 'readwrite');
     const users = transaction.objectStore('users');
-    const newUser = this.app.Controller.Model.user;
     const request = users.put(newUser, `${newUser.name} ${newUser.surname}`);
 
     request.addEventListener('error', () => {

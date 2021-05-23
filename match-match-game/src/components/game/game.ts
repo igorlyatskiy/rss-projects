@@ -1,9 +1,7 @@
 import { FinalPopap } from './popap/popap';
 import { Constants } from '../constants';
-import { App } from '../../ts/app';
 import { Card } from './card/card';
 import { BaseComponent } from '../base-component';
-import { app } from '../../ts/index';
 import './game.sass';
 
 import '../../img/deer.png';
@@ -17,8 +15,6 @@ import '../../img/buffalo.png';
 import '../../img/bullfinch.png';
 import '../../img/butterfly.png';
 import '../../img/cat.png';
-
-
 import '../../img/lion.png';
 import '../../img/owl.png';
 import '../../img/parrot.png';
@@ -51,39 +47,24 @@ export class Game extends BaseComponent {
 
   public popap: FinalPopap = new FinalPopap();
 
-  public app: App = app;
-
   public Constants: Constants = new Constants();
 
   public pictures: string[] = [];
 
-  public cardsType: string = (this.app.Controller.Model.settings[0] !== this.Constants.settingsDefault[0]) ? this.app.Controller.Model.settings[0] : this.Constants.SettingsOptions[0][0];
+  public cardsType: string;
 
   public unicCardsNumber: number;
 
-  constructor() {
+  constructor(typeOfCards: string, settingsCardsNumber: number) {
     super('div', ['game']);
 
-    const settingsCardsNumber = +this.app.Controller.Model.settings[1].split('x')[0];
+    this.cardsType = typeOfCards;
+
+
     this.unicCardsNumber = (!Number.isNaN(settingsCardsNumber)) ? settingsCardsNumber : this.Constants.DEFAULT_CARDS_NUMBER;
 
     this.initPictures();
-    this.initField();
   }
-
-  initField = () => {
-    this.app.Controller.Model.activeCards = [];
-    this.app.Controller.Model.guessedCards = [];
-    this.app.Controller.Model.comparissonNumber = 0;
-    this.app.Controller.Model.wrongComparissonNumber = 0;
-    this.pictures.forEach((e, index) => {
-      this.cards.push(new Card(e));
-      this.element.append(this.cards[index].element);
-      this.cards[index].element.addEventListener('click', () => this.cards[index].flipCard());
-      this.cards[index].element.classList.remove(...this.Constants.picturesClasses);
-      this.cards[index].element.classList.add(this.Constants.getPicturesClasses(this.unicCardsNumber));
-    });
-  };
 
   initPictures() {
     this.pictures = this.Constants.getAnimalPictures(this.cardsType)
@@ -119,17 +100,4 @@ export class Game extends BaseComponent {
     });
   }
 
-
-  showVictoryPopap() {
-    this.element.append(this.popap.element);
-    this.app.Controller.View.Field.activateShadowBox();
-    this.popap.p.innerText = this.Constants.getFinalPopapText(this.app.Controller.View.Field.CardsField.Timer.getTime());
-    this.app.Controller.View.Field.CardsField.Timer.stopTimer();
-    this.app.Controller.initFinalButtonListener();
-  }
-
-  removeVictoryPopap = () => {
-    this.popap.element.classList.add(this.Constants.HIDDEN_FINAL_POPAP_CLASS);
-    this.app.Controller.View.Field.deactivateShadowBox();
-  };
 }
