@@ -148,7 +148,7 @@ export class Controller {
     this.View.Header.Wrapper.headerRightWrapper.showActivePlayer();
     this.View.Field.shadowBox.removeEventListener('click', this.hideRegistrationPopap);
     this.headerButton.addEventListener('click', () => this.stopGame(), { once: true });
-
+    this.View.Header.Wrapper.Nav.element.addEventListener('click', () => this.stopGame(false, false), { once: true });
   };
 
   initFinalButtonListener = () => {
@@ -156,14 +156,16 @@ export class Controller {
     finishGameButton.addEventListener('click', () => this.stopGame(true));
   };
 
-  stopGame = (result?: boolean) => {
+  stopGame = (result?: boolean, defaultUrl?: boolean) => {
     if (result) {
       this.Model.secondsFromGameStart = this.View.Field.CardsField.Timer.minutes * 60 + this.View.Field.CardsField.Timer.seconds;
       this.Model.countUserScore();
       this.addUser2DataBase();
     }
     this.removeVictoryPopap();
-    window.location.hash = (result) ? '/score' : '/about';
+    if (defaultUrl === undefined || defaultUrl === true) {
+      window.location.hash = (result) ? '/score' : '/about';
+    }
 
     this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer(this.Model.user.avatar);
     this.headerButton.addEventListener('click', this.startGame, { once: true });
@@ -182,6 +184,7 @@ export class Controller {
       case this.Constants.Pages.GAME_PAGE:
         this.View.Field.CardsField.makeGamePage(cardsType, settingsCardsNumber);
         this.initGameField();
+        this.startViewAllCards();
         break;
 
       case this.Constants.Pages.SETTINGS_PAGE:
@@ -297,6 +300,22 @@ export class Controller {
       const dataURL = canvas.toDataURL();
       this.Model.user.avatar = dataURL;
     });
+  };
+
+  startViewAllCards = () => {
+    this.View.Field.CardsField.Game.cards.forEach((e) => {
+      e.flipToFront();
+      e.freezeCard();
+    });
+    const timeout = window.setTimeout(() => this.View.Field.CardsField.Game.cards.forEach((e) => {
+      e.flipToBack();
+      e.unfreezeCard(e.element);
+    }), 30000);
+    this.removeStartTimeout(timeout);
+  };
+
+  removeStartTimeout = (timeout: number) => {
+    window.addEventListener('hashchange', () => window.clearTimeout(timeout), { once: true });
   };
 
 }

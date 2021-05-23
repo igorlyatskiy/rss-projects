@@ -24,6 +24,10 @@ export class Card extends BaseComponent {
     );
   }
 
+  flipToFront = () => {
+    this.card.classList.add(this.Constants.FLIPPED_CLASS);
+  };
+
   flipToBack() {
     if (!this.element.classList.contains(this.Constants.GUESSED_CLASS)) {
       this.card.classList.remove(this.Constants.FLIPPED_CLASS);
@@ -36,9 +40,9 @@ export class Card extends BaseComponent {
 
   unfreezeCard(element: HTMLElement) {
     if (element) {
-      element.classList.add(this.Constants.BLOCKED_CLASS);
+      element.classList.remove(this.Constants.BLOCKED_CLASS);
     } else {
-      this.element.classList.add(this.Constants.BLOCKED_CLASS);
+      this.element.classList.remove(this.Constants.BLOCKED_CLASS);
     }
   }
 

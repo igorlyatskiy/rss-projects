@@ -121,7 +121,7 @@ export class Constants {
     this.infoCardsText = ['Register new player in game', 'Configure your game settings', 'Start you new game! Remember card positions and match it before times up.'];
     this.popapTitles = ['First Name', 'Last Name', 'E-mail'];
     this.registerInfo = ['text', 'text', 'email'];
-    this.forbiddenSymbols = "(~ ! @ # $ % * () _ — + = | : ; ' ` < > , . ? / ^)".split(' ');
+    this.forbiddenSymbols = "( ~ ! @ # $ % * () _ — + = | : ; ' ` < > , . ? / ^ )".split(' ');
     this.forbiddenSymbols.push('"');
   }
 
