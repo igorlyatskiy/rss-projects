@@ -14,6 +14,8 @@ export interface UserType {
 }
 
 export class Constants {
+  public readonly TIME_BEFORE_GAME_STARTS = 30000;
+
   public readonly DEFAULT_CARDS_NUMBER: number = 4;
 
   public readonly FLIPPED_CLASS: string = 'card_flipped';

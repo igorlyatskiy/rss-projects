@@ -310,7 +310,7 @@ export class Controller {
     const timeout = window.setTimeout(() => this.View.Field.CardsField.Game.cards.forEach((e) => {
       e.flipToBack();
       e.unfreezeCard(e.element);
-    }), 30000);
+    }), this.Constants.TIME_BEFORE_GAME_STARTS);
     this.removeStartTimeout(timeout);
   };
 
