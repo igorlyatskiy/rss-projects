@@ -1,12 +1,12 @@
-import { Constants } from '../../../constants';
-import { NavElement } from './navElement/navElement';
-import { BaseComponent } from '../../../base-component';
+import Constants from '../../../constants';
+import  NavElement  from './navElement/navElement';
+import  BaseComponent  from '../../../base-component';
 import './nav.sass';
 import './img/aboutGame.svg';
 import './img/bestScore.svg';
 import './img/gameSettings.svg';
 
-export class Nav extends BaseComponent {
+class Nav extends BaseComponent {
   public readonly navElementsList: NavElement[] = [];
 
   public readonly Constants: Constants = new Constants();
@@ -30,3 +30,5 @@ export class Nav extends BaseComponent {
 
   }
 }
+
+export { Nav as default };

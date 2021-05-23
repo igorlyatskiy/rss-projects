@@ -1,11 +1,11 @@
-import { Card } from '../../components/game/card/card';
-import { Database } from '../../components/Database/Database';
-import { Model } from './model';
-import { Validation } from '../../components/validation';
-import { Constants } from '../../components/constants';
-import { View } from './view';
+import Card from '../../components/game/card/card';
+import Database from '../../components/Database/Database';
+import Model from './model';
+import Validation from '../../components/validation';
+import Constants from '../../components/constants';
+import View from './view';
 
-export class Controller {
+class Controller {
   public readonly View: View;
 
   public readonly Model: Model = new Model();
@@ -319,3 +319,5 @@ export class Controller {
   };
 
 }
+
+export { Controller as default };

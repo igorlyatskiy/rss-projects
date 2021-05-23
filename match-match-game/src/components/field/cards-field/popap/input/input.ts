@@ -1,4 +1,4 @@
-export class Input {
+class Input {
   public element: HTMLInputElement;
 
   constructor(type: string) {
@@ -10,3 +10,5 @@ export class Input {
   }
 
 }
+
+export { Input as default };

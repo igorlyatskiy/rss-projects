@@ -1,7 +1,7 @@
-import { Header } from '../../components/header/header';
-import { Field } from '../../components/field/field';
+import Header from '../../components/header/header';
+import Field from '../../components/field/field';
 
-export class View {
+class View {
   public readonly Field: Field = new Field();
 
   public readonly Header: Header = new Header();
@@ -10,3 +10,5 @@ export class View {
     this.rootElement.append(this.Header.element, this.Field.element);
   }
 }
+
+export { View as default };

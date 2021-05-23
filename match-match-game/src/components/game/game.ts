@@ -1,7 +1,7 @@
-import { FinalPopap } from './popap/popap';
-import { Constants } from '../constants';
-import { Card } from './card/card';
-import { BaseComponent } from '../base-component';
+import FinalPopap from './popap/popap';
+import Constants from '../constants';
+import Card from './card/card';
+import BaseComponent from '../base-component';
 import './game.sass';
 
 import '../../img/deer.png';
@@ -42,7 +42,7 @@ import '../../img/crane.png';
 import '../../img/hot-air-balloon.png';
 import '../../img/yacht.png';
 
-export class Game extends BaseComponent {
+class Game extends BaseComponent {
   public cards: Card[] = [];
 
   public popap: FinalPopap = new FinalPopap();
@@ -101,3 +101,5 @@ export class Game extends BaseComponent {
   }
 
 }
+
+export { Game as default };

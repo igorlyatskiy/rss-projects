@@ -1,9 +1,9 @@
-import { UserType, Constants } from '../../../constants';
-import { BestPlayer } from './bestPlayer/bestPlayer';
+import Constants, { UserType } from '../../../constants';
+import BestPlayer from './bestPlayer/bestPlayer';
 
-import { BaseComponent } from '../../../base-component';
+import BaseComponent from '../../../base-component';
 
-export class Score extends BaseComponent {
+class Score extends BaseComponent {
 
   public users: UserType[] = [];
 
@@ -39,3 +39,5 @@ export class Score extends BaseComponent {
     this.users.sort((a, b) => b.score - a.score);
   };
 }
+
+export { Score as default };

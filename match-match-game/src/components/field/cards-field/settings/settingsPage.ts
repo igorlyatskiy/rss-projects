@@ -1,9 +1,9 @@
-import { Constants } from '../../../constants';
-import { SettingsInput } from './settingsInput/settingsInput';
-import { BaseComponent } from '../../../base-component';
+import Constants from '../../../constants';
+import SettingsInput from './settingsInput/settingsInput';
+import BaseComponent from '../../../base-component';
 import './settingsPage.sass';
 
-export class SettingsPage extends BaseComponent {
+class SettingsPage extends BaseComponent {
   public readonly Inputs: SettingsInput[] = [];
 
   public readonly Constants: Constants = new Constants();
@@ -17,3 +17,5 @@ export class SettingsPage extends BaseComponent {
     });
   }
 }
+
+export { SettingsPage as default };

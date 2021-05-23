@@ -1,8 +1,8 @@
-import { Wrapper } from './wrapper/wrapper';
-import { BaseComponent } from '../base-component';
+import Wrapper from './wrapper/wrapper';
+import BaseComponent from '../base-component';
 import './header.sass';
 
-export class Header extends BaseComponent {
+class Header extends BaseComponent {
   public readonly Wrapper: Wrapper;
 
   constructor() {
@@ -11,3 +11,5 @@ export class Header extends BaseComponent {
     this.element.append(this.Wrapper.element);
   }
 }
+
+export { Header as default };

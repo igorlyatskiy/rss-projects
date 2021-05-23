@@ -6,7 +6,7 @@ interface User {
   avatar: string
 }
 
-export class Model {
+class Model {
   public role: string = 'guest';
 
   public settings: string[] = ['Animals', '4x4'];
@@ -47,3 +47,5 @@ export class Model {
     this.user.score = (firstPoints > 0) ? firstPoints : 0;
   };
 }
+
+export { Model as default };

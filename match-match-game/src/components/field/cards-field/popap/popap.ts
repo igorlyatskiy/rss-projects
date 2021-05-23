@@ -1,13 +1,13 @@
-import { Checkbox } from './checkbox/checkbox';
-import { Button } from '../../../defaultButton/defaultButton';
-import { UserImage } from './userImage';
-import { Input } from './input/input';
-import { Constants } from '../../../constants';
-import { BaseComponent } from '../../../base-component';
+import Checkbox from './checkbox/checkbox';
+import Button from '../../../defaultButton/defaultButton';
+import UserImage from './userImage';
+import Input from './input/input';
+import Constants from '../../../constants';
+import BaseComponent from '../../../base-component';
 import './assets/bootstrap.css';
 import './popap.sass';
 
-export class RegisterPopap extends BaseComponent {
+class RegisterPopap extends BaseComponent {
   public readonly Constants: Constants;
 
   public readonly inputs: Input[] = [];
@@ -72,3 +72,5 @@ export class RegisterPopap extends BaseComponent {
     this.addUserButton.element.classList.remove('button_locked');
   }
 }
+
+export { RegisterPopap as default };

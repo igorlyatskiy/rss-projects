@@ -1,9 +1,9 @@
-import { Constants } from '../../constants';
-import { BaseComponent } from '../../base-component';
+import Constants from '../../constants';
+import BaseComponent from '../../base-component';
 import './card.sass';
 import '../../../img/default.png';
 
-export class Card extends BaseComponent {
+class Card extends BaseComponent {
   public Constants: Constants = new Constants();
 
   public isFlipped: boolean;
@@ -47,3 +47,5 @@ export class Card extends BaseComponent {
   }
 
 }
+
+export { Card as default };

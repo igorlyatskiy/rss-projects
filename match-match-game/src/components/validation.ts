@@ -1,6 +1,6 @@
-import { Constants } from './constants';
+import Constants from './constants';
 
-export class Validation {
+class Validation {
   public readonly Constants: Constants = new Constants();
 
   checkEmail(input: HTMLInputElement) {
@@ -9,6 +9,7 @@ export class Validation {
     } else {
       input.classList.remove('input_active');
     }
+    return this;
   }
 
   checkText(input: HTMLInputElement) {
@@ -24,3 +25,5 @@ export class Validation {
   }
 
 }
+
+export { Validation as default };

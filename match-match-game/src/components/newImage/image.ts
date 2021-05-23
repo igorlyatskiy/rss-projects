@@ -1,6 +1,6 @@
 import '../../img/user.png';
 
-export class Image {
+class Image {
 
   public element: HTMLImageElement = document.createElement('img');
 
@@ -11,3 +11,5 @@ export class Image {
   }
 
 }
+
+export { Image as default };

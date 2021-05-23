@@ -13,7 +13,8 @@ export interface UserType {
   avatar: string
 }
 
-export class Constants {
+class Constants {
+
   public readonly TIME_BEFORE_GAME_STARTS = 30000;
 
   public readonly DEFAULT_CARDS_NUMBER: number = 4;
@@ -161,3 +162,5 @@ export class Constants {
     }
   };
 }
+
+export { Constants as default };

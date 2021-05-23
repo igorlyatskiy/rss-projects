@@ -1,9 +1,9 @@
-import { Image } from '../../../newImage/image';
-import { Button } from '../../../defaultButton/defaultButton';
-import { BaseComponent } from '../../../base-component';
+import  Image  from '../../../newImage/image';
+import  Button from '../../../defaultButton/defaultButton';
+import  BaseComponent  from '../../../base-component';
 import './headerRightWrapper.sass';
 
-export class HeaderRightWrapper extends BaseComponent {
+class HeaderRightWrapper extends BaseComponent {
   public readonly headerButton: Button;
 
   public headerImage: Image;
@@ -32,6 +32,6 @@ export class HeaderRightWrapper extends BaseComponent {
   showActivePlayer() {
     this.headerButton.element.innerText = 'STOP GAMe';
   }
-
-
 }
+
+export { HeaderRightWrapper as default };

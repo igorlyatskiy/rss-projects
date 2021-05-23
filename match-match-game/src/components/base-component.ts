@@ -19,4 +19,4 @@ class BaseComponent {
 
 }
 
-export { BaseComponent };
+export { BaseComponent as default };

@@ -1,8 +1,8 @@
-import { CardsField } from './cards-field/cards-field';
-import { BaseComponent } from '../base-component';
+import CardsField from './cards-field/cards-field';
+import BaseComponent from '../base-component';
 import './field.sass';
 
-export class Field extends BaseComponent {
+class Field extends BaseComponent {
   public readonly CardsField: CardsField;
 
   public readonly shadowBox: HTMLElement;
@@ -21,6 +21,6 @@ export class Field extends BaseComponent {
   deactivateShadowBox() {
     this.shadowBox.classList.remove('shadow-box_active');
   }
-
-
 }
+
+export { Field as default };

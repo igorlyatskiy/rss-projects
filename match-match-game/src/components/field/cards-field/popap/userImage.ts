@@ -1,6 +1,6 @@
 import './img/userDark.png';
 
-export class UserImage {
+class UserImage {
   public input: HTMLInputElement;
 
   public img: HTMLImageElement;
@@ -19,3 +19,5 @@ export class UserImage {
     this.img.setAttribute('alt', 'User image');
   }
 }
+
+export { UserImage as default };

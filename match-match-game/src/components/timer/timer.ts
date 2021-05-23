@@ -1,7 +1,7 @@
-import { BaseComponent } from '../base-component';
+import BaseComponent from '../base-component';
 import './timer.sass';
 
-export class Timer extends BaseComponent {
+class Timer extends BaseComponent {
   public minutes = 0;
 
   public seconds = 0;
@@ -41,3 +41,5 @@ export class Timer extends BaseComponent {
     return `${this.minutes + +(this.seconds / 100).toFixed(2)}`;
   };
 }
+
+export { Timer as default };

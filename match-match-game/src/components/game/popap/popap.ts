@@ -1,9 +1,9 @@
-import { Constants } from '../../constants';
-import { Button } from '../../defaultButton/defaultButton';
-import { BaseComponent } from '../../base-component';
+import Constants from '../../constants';
+import  Button  from '../../defaultButton/defaultButton';
+import  BaseComponent  from '../../base-component';
 import './popap.sass';
 
-export class FinalPopap extends BaseComponent {
+class FinalPopap extends BaseComponent {
   public finalPopapButton: Button = new Button('ok');
 
   public p: HTMLElement = this.makeElement('p', ['final-popap__text'], '');
@@ -16,3 +16,5 @@ export class FinalPopap extends BaseComponent {
     this.finalPopapButton.element.classList.add('final-popap__button');
   }
 }
+
+export { FinalPopap as default };

@@ -1,6 +1,6 @@
-import { Constants, UserType } from '../constants';
+import Constants, { UserType } from '../constants';
 
-export class Database {
+class Database {
   public db: IDBDatabase;
 
   public readonly Constants: Constants = new Constants();
@@ -47,3 +47,5 @@ export class Database {
     });
   };
 }
+
+export { Database as default };

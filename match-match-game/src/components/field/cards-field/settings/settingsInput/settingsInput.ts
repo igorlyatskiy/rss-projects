@@ -1,6 +1,6 @@
 import './settingsInput.sass';
 
-export class SettingsInput {
+class SettingsInput {
   public element: HTMLSelectElement;
 
   constructor(title: string, options: string[]) {
@@ -19,3 +19,5 @@ export class SettingsInput {
     });
   }
 }
+
+export { SettingsInput as default };

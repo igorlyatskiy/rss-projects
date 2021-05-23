@@ -1,6 +1,6 @@
 import './navElement.sass';
 
-export class NavElement {
+class NavElement {
   public element: HTMLElement;
 
   constructor(imgSrc: string, private text: string, private name: string) {
@@ -12,3 +12,5 @@ export class NavElement {
     `;
   }
 }
+
+export { NavElement as default };

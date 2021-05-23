@@ -1,8 +1,8 @@
-import { HeaderRightWrapper } from './headerRightWrapper/headerRightWrapper';
-import { Nav } from './nav/nav';
-import { BaseComponent } from '../../base-component';
+import HeaderRightWrapper from './headerRightWrapper/headerRightWrapper';
+import Nav from './nav/nav';
+import BaseComponent from '../../base-component';
 
-export class Wrapper extends BaseComponent {
+class Wrapper extends BaseComponent {
   public readonly Nav: Nav = new Nav();
 
   public headerRightWrapper: HeaderRightWrapper = new HeaderRightWrapper();
@@ -27,3 +27,5 @@ export class Wrapper extends BaseComponent {
   }
 
 }
+
+export { Wrapper as default };

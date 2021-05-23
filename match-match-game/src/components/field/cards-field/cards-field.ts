@@ -1,17 +1,17 @@
-import { Score } from './Score/score';
-import { Game } from '../../game/game';
-import { Timer } from '../../timer/timer';
-import { SettingsPage } from './settings/settingsPage';
-import { RegisterPopap } from './popap/popap';
-import { Constants } from '../../constants';
-import { InfoItem } from './info-item/info-item';
-import { BaseComponent } from '../../base-component';
+import Score from './Score/score';
+import Game from '../../game/game';
+import Timer from '../../timer/timer';
+import SettingsPage from './settings/settingsPage';
+import RegisterPopap from './popap/popap';
+import Constants from '../../constants';
+import InfoItem from './info-item/info-item';
+import BaseComponent from '../../base-component';
 import './cards-field.sass';
 import './img/first.png';
 import './img/second.png';
 import './img/third.png';
 
-export class CardsField extends BaseComponent {
+class CardsField extends BaseComponent {
   public Rules: BaseComponent[] = [];
 
   public readonly Constants: Constants;
@@ -70,3 +70,4 @@ export class CardsField extends BaseComponent {
   }
 
 }
+export { CardsField as default };

@@ -1,9 +1,9 @@
 import { UserType } from '../../../../constants';
-import { BaseComponent } from '../../../../base-component';
+import BaseComponent from '../../../../base-component';
 import '../../../../../img/userDark.png';
 import './bestPlayer.sass';
 
-export class BestPlayer extends BaseComponent {
+class BestPlayer extends BaseComponent {
   constructor(user: UserType) {
     super('div', ['top-player']);
     const DEFAULT_USER_LINK = '../../../../../img/userDark.png';
@@ -28,3 +28,5 @@ export class BestPlayer extends BaseComponent {
     textWrapper.append(name, email);
   }
 }
+
+export { BestPlayer as default };

@@ -1,8 +1,8 @@
-import { Constants } from '../../../constants';
-import { BaseComponent } from '../../../base-component';
+import Constants from '../../../constants';
+import BaseComponent from '../../../base-component';
 import './info-item.sass';
 
-export class InfoItem extends BaseComponent {
+class InfoItem extends BaseComponent {
   public Constants: Constants = new Constants();
 
   constructor(number: number, text: string, img: string) {
@@ -21,3 +21,5 @@ export class InfoItem extends BaseComponent {
     container.style.height = this.Constants.infoCardsHeight[number - 1];
   }
 }
+
+export { InfoItem as default };

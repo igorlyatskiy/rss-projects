@@ -1,7 +1,7 @@
 import '../img/marker.png';
 import './checkbox.sass';
 
-export class Checkbox {
+class Checkbox {
   public element: HTMLImageElement;
 
   constructor() {
@@ -11,3 +11,5 @@ export class Checkbox {
     this.element.setAttribute('alt', 'Marker');
   }
 }
+
+export { Checkbox as default };
