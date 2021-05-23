@@ -1,9 +1,12 @@
-import  Image  from '../../../newImage/image';
-import  Button from '../../../defaultButton/defaultButton';
-import  BaseComponent  from '../../../base-component';
+import Image from '../../../newImage/image';
+import Button from '../../../defaultButton/defaultButton';
+import BaseComponent from '../../../base-component';
+import Constants from '../../../constants'
 import './headerRightWrapper.sass';
 
 class HeaderRightWrapper extends BaseComponent {
+  public readonly Constants: Constants = new Constants();
+
   public readonly headerButton: Button;
 
   public headerImage: Image;
@@ -11,7 +14,7 @@ class HeaderRightWrapper extends BaseComponent {
   constructor() {
     super('div', ['header__right-wrapper']);
 
-    this.headerButton = new Button('register new player');
+    this.headerButton = new Button(this.Constants.DEFAULT_HEADER_BUTTON_CONTENT);
 
     this.showGuest();
   }
@@ -26,11 +29,11 @@ class HeaderRightWrapper extends BaseComponent {
     this.headerImage.element.classList.add('header__avatar');
     this.clearComponent();
     this.element.append(this.headerButton.element, this.headerImage.element);
-    this.headerButton.element.innerText = 'Start game';
+    this.headerButton.element.textContent = this.Constants.waitingPlayerHeaderButtonContent;
   }
 
   showActivePlayer() {
-    this.headerButton.element.innerText = 'STOP GAMe';
+    this.headerButton.element.textContent = this.Constants.activePlayerHeaderButtonContent;
   }
 }
 

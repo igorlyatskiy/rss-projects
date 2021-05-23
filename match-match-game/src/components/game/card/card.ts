@@ -6,8 +6,6 @@ import '../../../img/default.png';
 class Card extends BaseComponent {
   public Constants: Constants = new Constants();
 
-  public isFlipped: boolean;
-
   public card: HTMLElement = this.makeElement('div', ['card'], '');
 
   constructor(public url: string) {

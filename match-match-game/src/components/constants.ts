@@ -15,6 +15,14 @@ export interface UserType {
 
 class Constants {
 
+  public readonly DEFAULT_HEADER_BUTTON_CONTENT = 'register new player';
+
+  public readonly activePlayerHeaderButtonContent = 'STOP GAMe';
+
+  public readonly waitingPlayerHeaderButtonContent = 'Start game';
+
+  public readonly REGISTER_AVATAR_LOADING_TITLE: string = 'Choose a file';
+
   public readonly TIME_BEFORE_GAME_STARTS = 30000;
 
   public readonly DEFAULT_CARDS_NUMBER: number = 4;
@@ -146,7 +154,7 @@ class Constants {
     return `Congratulations! You successfully found all matches on ${text} minutes.`;
   };
 
-  getAnimalPictures = (type: string) => {
+  getPictures = (type: string) => {
     switch (type) {
       case 'Animals':
         return this.animalPictures;

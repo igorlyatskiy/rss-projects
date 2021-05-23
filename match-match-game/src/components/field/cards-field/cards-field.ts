@@ -14,7 +14,7 @@ import './img/third.png';
 class CardsField extends BaseComponent {
   public Rules: BaseComponent[] = [];
 
-  public readonly Constants: Constants;
+  public readonly Constants: Constants = new Constants();
 
   public RegisterPopap: RegisterPopap = new RegisterPopap();
 
@@ -28,7 +28,6 @@ class CardsField extends BaseComponent {
 
   constructor() {
     super('div', ['cards-field']);
-    this.Constants = new Constants();
 
     this.makeAboutPage();
   }
@@ -37,7 +36,7 @@ class CardsField extends BaseComponent {
     this.element.classList.remove('cards-field_active');
     this.clearComponent();
     const p = this.makeElement('p', ['info-item__title'], 'How to play?');
-    p.textContent = 'How to play?';
+    this.element.append(p);
 
     for (let i = 0; i < this.Constants.infoCardsNumber; i += 1) {
       this.Rules[i] = new InfoItem(i + 1, this.Constants.infoCardsText[i], this.Constants.infoCardsImages[i]);

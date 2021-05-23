@@ -12,6 +12,7 @@ class InfoItem extends BaseComponent {
 
     const image = document.createElement('img');
     image.setAttribute('src', img);
+    image.setAttribute('alt', 'The tutorial picture');
 
     const p = this.makeElement('p', ['info-item__text'], text);
 

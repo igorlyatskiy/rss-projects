@@ -7,13 +7,13 @@ class BaseComponent {
   }
 
   clearComponent() {
-    this.element.innerHTML = '';
+    this.element.textContent = '';
   }
 
   makeElement = (element: string, classList: string[] = [], text: string) => {
     const el = document.createElement(element);
     el.classList.add(...classList);
-    el.innerHTML = (text) || '';
+    el.textContent = (text) || '';
     return el;
   };
 

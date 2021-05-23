@@ -10,7 +10,7 @@ class Timer extends BaseComponent {
 
   constructor() {
     super('div', ['timer']);
-    this.element.innerText = '00:00';
+    this.element.textContent = '00:00';
     this.startTimer();
   }
 
@@ -34,7 +34,7 @@ class Timer extends BaseComponent {
   drawTime() {
     const minutes = (String(this.minutes).length === 1) ? `0${String(this.minutes)}` : String(this.minutes);
     const seconds = (String(this.seconds).length === 1) ? `0${String(this.seconds)}` : String(this.seconds);
-    this.element.innerText = `${minutes}:${seconds}`;
+    this.element.textContent = `${minutes}:${seconds}`;
   }
 
   getTime = () => {

@@ -8,11 +8,11 @@ import './assets/bootstrap.css';
 import './popap.sass';
 
 class RegisterPopap extends BaseComponent {
-  public readonly Constants: Constants;
+  public readonly Constants: Constants = new Constants();
 
   public readonly inputs: Input[] = [];
 
-  public readonly div: HTMLElement[] = [];
+  public readonly containersForEachInput: HTMLElement[] = [];
 
   public readonly addUserButton: Button = new Button('Add user');
 
@@ -24,7 +24,6 @@ class RegisterPopap extends BaseComponent {
 
   constructor() {
     super('div', ['register-popap']);
-    this.Constants = new Constants();
 
     const title = this.makeElement('p', ['popap__title'], 'Register new Player');
     this.element.append(title);
@@ -52,13 +51,14 @@ class RegisterPopap extends BaseComponent {
   initInputs() {
     const inputsContainer = this.makeElement('div', ['inputs-container'], '');
     this.element.append(inputsContainer);
+    
     this.Constants.popapTitles.forEach((e, index) => {
       const div = this.makeElement('div', ['container'], '');
-      this.div.push(div);
-      inputsContainer.append(this.div[index]);
+      this.containersForEachInput.push(div);
+      inputsContainer.append(this.containersForEachInput[index]);
       const input = new Input(this.Constants.registerInfo[index]);
       const checkbox = new Checkbox();
-      this.div[index].append(input.element, checkbox.element, this.makeElement('p', ['popap__p'], e), this.makeElement('span', ['p_wrong'], "this field isn't correct"));
+      this.containersForEachInput[index].append(input.element, checkbox.element, this.makeElement('p', ['popap__p'], e), this.makeElement('span', ['p_wrong'], "this field isn't correct"));
       this.inputs.push(input);
       this.Checkbox.push(checkbox);
     });
