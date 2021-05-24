@@ -1,4 +1,4 @@
-import '../../img/user.png';
+import './img/user.png';
 
 class Image {
 
@@ -6,7 +6,6 @@ class Image {
 
   constructor(url: string) {
     this.element.setAttribute('alt', 'Image');
-    this.element.setAttribute('crossOrigin', 'anonymous');
     this.element.setAttribute('src', url);
   }
 

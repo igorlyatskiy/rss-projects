@@ -5,8 +5,11 @@ interface User {
   score: number,
   avatar: string
 }
-
+import Constants from '../../components/constants';
 class Model {
+
+  public Constants: Constants = new Constants();
+
   public role: string = 'guest';
 
   public settings: string[] = ['Animals', '4x4'];
@@ -20,7 +23,7 @@ class Model {
     surname: '',
     email: '',
     score: 0,
-    avatar: '../../img/user.png',
+    avatar: this.Constants.DEFAULT_USER_LINK,
   };
 
   public comparissonNumber: number = 0;

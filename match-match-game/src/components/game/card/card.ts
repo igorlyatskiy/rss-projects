@@ -1,7 +1,7 @@
 import Constants from '../../constants';
 import BaseComponent from '../../base-component';
 import './card.sass';
-import '../../../img/default.png';
+import './img/default.png';
 
 class Card extends BaseComponent {
   public Constants: Constants = new Constants();

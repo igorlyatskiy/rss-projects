@@ -15,7 +15,11 @@ export interface UserType {
 
 class Constants {
 
+  public readonly DEFAULT_USER_LINK_dark = './img/userDark.png';
+
   public readonly PLAYER_ROLE_NAME = 'player';
+
+  public readonly DEFAULT_USER_LINK = './img/user.png';
 
   public readonly DEFAULT_HEADER_BUTTON_CONTENT = 'register new player';
 
@@ -89,45 +93,45 @@ class Constants {
   };
 
   public readonly animalPictures: string[] = [
-    '../../img/beetle.png',
-    '../../img/buffalo.png',
-    '../../img/bullfinch.png',
-    '../../img/butterfly.png',
-    '../../img/cat.png',
-    '../../img/deer.png',
-    '../../img/cow.png',
-    '../../img/crab.png',
-    '../../img/frog.png',
-    '../../img/pig.png',
-    '../../img/turtle.png',
-    '../../img/lion.png',
-    '../../img/owl.png',
-    '../../img/parrot.png',
-    '../../img/rhino.png',
-    '../../img/snake.png',
-    '../../img/spider.png',
-    '../../img/squid.png',
+    './img/beetle.png',
+    './img/buffalo.png',
+    './img/bullfinch.png',
+    './img/butterfly.png',
+    './img/cat.png',
+    './img/deer.png',
+    './img/cow.png',
+    './img/crab.png',
+    './img/frog.png',
+    './img/pig.png',
+    './img/turtle.png',
+    './img/lion.png',
+    './img/owl.png',
+    './img/parrot.png',
+    './img/rhino.png',
+    './img/snake.png',
+    './img/spider.png',
+    './img/squid.png',
   ];
 
   public readonly TransportPictures: string[] = [
-    '../../img/bike.png',
-    '../../img/trailer.png',
-    '../../img/porsche.png',
-    '../../img/scooter.png',
-    '../../img/skateboard.png',
-    '../../img/mustang.png',
-    '../../img/volkswagen.png',
-    '../../img/truck.png',
-    '../../img/airplane.png',
-    '../../img/tanker-truck.png',
-    '../../img/helicopter.png',
-    '../../img/ship.png',
-    '../../img/zeppelin.png',
-    '../../img/dragster.png',
-    '../../img/jet-ski.png',
-    '../../img/crane.png',
-    '../../img/hot-air-balloon.png',
-    '../../img/yacht.png',
+    './img/bike.png',
+    './img/trailer.png',
+    './img/porsche.png',
+    './img/scooter.png',
+    './img/skateboard.png',
+    './img/mustang.png',
+    './img/volkswagen.png',
+    './img/truck.png',
+    './img/airplane.png',
+    './img/tanker-truck.png',
+    './img/helicopter.png',
+    './img/ship.png',
+    './img/zeppelin.png',
+    './img/dragster.png',
+    './img/jet-ski.png',
+    './img/crane.png',
+    './img/hot-air-balloon.png',
+    './img/yacht.png',
   ];
 
   constructor() {
