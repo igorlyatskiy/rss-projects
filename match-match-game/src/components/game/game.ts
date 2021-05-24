@@ -65,7 +65,7 @@ class Game extends BaseComponent {
   }
 
   initPictures() {
-    const pictures=this.Constants.getPictures(this.cardsType)
+    const pictures = this.Constants.getPictures(this.cardsType);
     this.pictures = pictures
       .slice(0, this.unicCardsNumber ** 2 / 2)
       .concat(pictures.slice(0, this.unicCardsNumber ** 2 / 2))

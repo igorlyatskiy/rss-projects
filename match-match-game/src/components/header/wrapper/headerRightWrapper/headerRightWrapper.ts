@@ -1,7 +1,7 @@
 import Image from '../../../newImage/image';
 import Button from '../../../defaultButton/defaultButton';
 import BaseComponent from '../../../base-component';
-import Constants from '../../../constants'
+import Constants from '../../../constants';
 import './headerRightWrapper.sass';
 
 class HeaderRightWrapper extends BaseComponent {

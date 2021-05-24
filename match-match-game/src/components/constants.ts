@@ -15,6 +15,8 @@ export interface UserType {
 
 class Constants {
 
+  public readonly PLAYER_ROLE_NAME = 'player';
+
   public readonly DEFAULT_HEADER_BUTTON_CONTENT = 'register new player';
 
   public readonly activePlayerHeaderButtonContent = 'STOP GAMe';
@@ -36,6 +38,8 @@ class Constants {
   public readonly BLOCKED_CLASS: string = 'card-container_blocked';
 
   public readonly HIDDEN_FINAL_POPAP_CLASS: string = 'popap_hidden';
+
+  public readonly INPUT_ACTIVE_CLASS = 'input_active';
 
   public readonly topPlayersNumber: number = 10;
 

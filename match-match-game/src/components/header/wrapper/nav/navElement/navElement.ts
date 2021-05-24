@@ -1,7 +1,7 @@
 import './navElement.sass';
 
 class NavElement {
-  public element: HTMLElement=document.createElement('nav');
+  public element: HTMLElement = document.createElement('nav');
 
   constructor(imgSrc: string, private text: string, private name: string) {
     this.element.classList.add('nav__element');

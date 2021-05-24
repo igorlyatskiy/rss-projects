@@ -56,7 +56,7 @@ class Controller {
   clearPopapInputs = () => {
     this.View.Field.CardsField.RegisterPopap.inputs.forEach((e) => {
       e.element.value = '';
-      e.element.classList.remove('input_active');
+      e.element.classList.remove(this.Constants.INPUT_ACTIVE_CLASS);
       this.View.Field.CardsField.RegisterPopap.lockButton();
     });
   };
@@ -71,7 +71,7 @@ class Controller {
         this.Validation.checkEmail(e.element);
       }
 
-      if (!e.element.classList.contains('input_active')) {
+      if (!e.element.classList.contains(this.Constants.INPUT_ACTIVE_CLASS)) {
         this.View.Field.CardsField.RegisterPopap.lockButton();
       }
     });
@@ -81,13 +81,11 @@ class Controller {
     window.location.hash = this.Constants.Pages.ABOUT_PAGE;
     window.addEventListener('hashchange', () => {
 
-      const PLAYER_ROLE_NAME = 'player';
       const location = window.location.hash;
-
 
       this.View.Header.Wrapper.Nav.changeActiveElement(this.Constants.NavLinks.indexOf(location.substr(2, +location.length - 1)));
 
-      if (location && location !== this.Constants.Pages.GAME_PAGE || location && location === this.Constants.Pages.GAME_PAGE && this.Model.role === PLAYER_ROLE_NAME) {
+      if (location && location !== this.Constants.Pages.GAME_PAGE || location && location === this.Constants.Pages.GAME_PAGE && this.Model.role === this.Constants.PLAYER_ROLE_NAME) {
         this.changeLocation(location);
       }
     });
@@ -105,12 +103,12 @@ class Controller {
 
   registerUser = () => {
     this.View.Field.CardsField.RegisterPopap.addUserButton.element.addEventListener('click', () => {
-      window.location.hash = '/about';
+      window.location.hash = this.Constants.Pages.ABOUT_PAGE;
       this.View.Field.deactivateShadowBox();
       this.View.Field.CardsField.RegisterPopap.hidePopap();
       this.headerButton.removeEventListener('click', this.registerFunction);
       this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer(this.Model.user.avatar);
-      this.Model.role = 'player';
+      this.Model.role = this.Constants.PLAYER_ROLE_NAME;
       this.Model.setUserName(this.View.Field.CardsField.RegisterPopap.inputs[0].element.value);
       this.Model.setUserSurname(this.View.Field.CardsField.RegisterPopap.inputs[1].element.value);
       this.Model.setUserEmail(this.View.Field.CardsField.RegisterPopap.inputs[2].element.value);
@@ -120,7 +118,7 @@ class Controller {
 
   clickHomeButton() {
     this.View.Header.Wrapper.logo.addEventListener('click', () => {
-      window.location.hash = `/${this.Constants.NavLinks[0]}`;
+      window.location.hash = this.Constants.Pages.ABOUT_PAGE;
       this.View.Header.Wrapper.Nav.changeActiveElement(0);
     });
   }
@@ -144,7 +142,7 @@ class Controller {
 
   startGame = () => {
     this.View.Header.Wrapper.Nav.changeActiveElement(5);
-    window.location.hash = '/game';
+    window.location.hash = this.Constants.Pages.GAME_PAGE;
     this.View.Header.Wrapper.headerRightWrapper.showActivePlayer();
     this.View.Field.shadowBox.removeEventListener('click', this.hideRegistrationPopap);
     this.headerButton.addEventListener('click', () => this.stopGame(), { once: true });
@@ -164,7 +162,7 @@ class Controller {
     }
     this.removeVictoryPopap();
     if (defaultUrl === undefined || defaultUrl === true) {
-      window.location.hash = (result) ? '/score' : '/about';
+      window.location.hash = (result) ? this.Constants.Pages.SCORE_PAGE : this.Constants.Pages.ABOUT_PAGE;
     }
 
     this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer(this.Model.user.avatar);
