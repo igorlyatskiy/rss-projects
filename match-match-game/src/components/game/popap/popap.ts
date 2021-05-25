@@ -1,9 +1,10 @@
 import Constants from '../../constants';
-import  Button  from '../../defaultButton/defaultButton';
-import  BaseComponent  from '../../base-component';
+import Button from '../../defaultButton/defaultButton';
+import BaseComponent from '../../base-component';
 import './popap.sass';
+import Popap from '../../popap/popap';
 
-class FinalPopap extends BaseComponent {
+class FinalPopap extends Popap {
   public finalPopapButton: Button = new Button('ok');
 
   public p: HTMLElement = this.makeElement('p', ['final-popap__text'], '');
@@ -11,7 +12,8 @@ class FinalPopap extends BaseComponent {
   public Constants: Constants = new Constants();
 
   constructor() {
-    super('div', ['final-popap']);
+    super(['final-popap']);
+
     this.element.append(this.p, this.finalPopapButton.element);
     this.finalPopapButton.element.classList.add('final-popap__button');
   }

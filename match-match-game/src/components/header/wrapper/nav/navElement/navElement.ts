@@ -5,10 +5,17 @@ class NavElement {
 
   constructor(imgSrc: string, private text: string, private name: string) {
     this.element.classList.add('nav__element');
-    this.element.innerHTML = `
-    <img src="${imgSrc}" alt="image" class="nav__img nav__img_${name}"></img>
-    <p class="nav__text nav__text__${name}">${text}</p>
-    `;
+
+    const img = document.createElement("img");
+    img.setAttribute("alt", "image");
+    img.setAttribute("src", imgSrc);
+    img.classList.add(...["nav__img", `nav__img_${name}`]);
+
+    const p = document.createElement("p");
+    p.classList.add(...["nav__text", `nav__text__${name}`]);
+    p.textContent = text;
+
+    this.element.append(img, p);
   }
 }
 

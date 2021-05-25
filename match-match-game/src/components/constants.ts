@@ -83,7 +83,15 @@ class Constants {
 
   public readonly cardRotationTime: number = 300;
 
-  public readonly finalPopapText: string = 'Congratulations! You successfully found all matches on 1.21 minutes.';
+  public readonly SMALL_FIELD_UNIC_CARDS_NUMBER = 8;
+
+  public readonly BIG_FIELD_UNIC_CARDS_NUMBER = 18;
+
+  public readonly REGISTER_POPAP_ACTIVE_CLASS = 'register-popap_active';
+
+  public readonly REGISTER_POPAP_BUTTON_BLOCKED_CLASS = 'button_locked';
+
+
 
   public readonly Pages: Pages = {
     ABOUT_PAGE: '#/about',
@@ -146,10 +154,10 @@ class Constants {
 
   getPicturesClasses(number: number) {
     switch ((number)) {
-      case 4:
+      case this.SMALL_FIELD_UNIC_CARDS_NUMBER:
         return this.picturesClasses[0];
         break;
-      case 6:
+      case this.BIG_FIELD_UNIC_CARDS_NUMBER:
         return this.picturesClasses[1];
         break;
       default:
@@ -164,11 +172,11 @@ class Constants {
 
   getPictures = (type: string) => {
     switch (type) {
-      case 'Animals':
+      case this.SettingsOptions[0][0]:
         return this.animalPictures;
         break;
 
-      case 'Transport':
+      case this.SettingsOptions[0][1]:
         return this.TransportPictures;
         break;
 

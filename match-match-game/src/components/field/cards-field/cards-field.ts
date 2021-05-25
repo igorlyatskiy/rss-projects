@@ -44,7 +44,7 @@ class CardsField extends BaseComponent {
     }
 
     this.element.append(this.RegisterPopap.element);
-    this.RegisterPopap.element.classList.remove('register-popap_active');
+    this.RegisterPopap.hidePopap();
   }
 
   makeGamePage(typeOfCards: string, settingsCardsNumber: number) {

@@ -6,8 +6,9 @@ import Constants from '../../../constants';
 import BaseComponent from '../../../base-component';
 import './assets/bootstrap.css';
 import './popap.sass';
+import Popap from '../../../popap/popap';
 
-class RegisterPopap extends BaseComponent {
+class RegisterPopap extends Popap {
   public readonly Constants: Constants = new Constants();
 
   public readonly inputs: Input[] = [];
@@ -23,7 +24,7 @@ class RegisterPopap extends BaseComponent {
   public readonly Checkbox: Checkbox[] = [];
 
   constructor() {
-    super('div', ['register-popap']);
+    super(['register-popap']);
 
     const title = this.makeElement('p', ['popap__title'], 'Register new Player');
     this.element.append(title);
@@ -41,17 +42,17 @@ class RegisterPopap extends BaseComponent {
   }
 
   showPopap() {
-    this.element.classList.add('register-popap_active');
+    this.element.classList.add(this.Constants.REGISTER_POPAP_ACTIVE_CLASS);
   }
 
   hidePopap() {
-    this.element.classList.remove('register-popap_active');
+    this.element.classList.remove(this.Constants.REGISTER_POPAP_ACTIVE_CLASS);
   }
 
   initInputs() {
     const inputsContainer = this.makeElement('div', ['inputs-container'], '');
     this.element.append(inputsContainer);
-    
+
     this.Constants.popapTitles.forEach((e, index) => {
       const div = this.makeElement('div', ['container'], '');
       this.containersForEachInput.push(div);
@@ -65,11 +66,11 @@ class RegisterPopap extends BaseComponent {
   }
 
   lockButton() {
-    this.addUserButton.element.classList.add('button_locked');
+    this.addUserButton.element.classList.add(this.Constants.REGISTER_POPAP_BUTTON_BLOCKED_CLASS);
   }
 
   unlockButton() {
-    this.addUserButton.element.classList.remove('button_locked');
+    this.addUserButton.element.classList.remove(this.Constants.REGISTER_POPAP_BUTTON_BLOCKED_CLASS);
   }
 }
 

@@ -59,16 +59,16 @@ class Game extends BaseComponent {
     super('div', ['game']);
 
     this.cardsType = typeOfCards;
-    this.unicCardsNumber = (!Number.isNaN(settingsCardsNumber)) ? settingsCardsNumber : this.Constants.DEFAULT_CARDS_NUMBER;
-
+    const CARDS_IN_ONE_LINE = (!Number.isNaN(settingsCardsNumber)) ? settingsCardsNumber : this.Constants.DEFAULT_CARDS_NUMBER;
+    this.unicCardsNumber = CARDS_IN_ONE_LINE ** 2 / 2;
     this.initPictures();
   }
 
   initPictures() {
     const pictures = this.Constants.getPictures(this.cardsType);
     this.pictures = pictures
-      .slice(0, this.unicCardsNumber ** 2 / 2)
-      .concat(pictures.slice(0, this.unicCardsNumber ** 2 / 2))
+      .slice(0, this.unicCardsNumber)
+      .concat(pictures.slice(0, this.unicCardsNumber))
       .sort(() => Math.random() - 0.5);
   }
 
