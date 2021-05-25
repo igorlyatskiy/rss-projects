@@ -1,3 +1,5 @@
+import Constants from '../../components/constants';
+
 interface User {
   name: string,
   surname: string,
@@ -5,7 +7,6 @@ interface User {
   score: number,
   avatar: string
 }
-import Constants from '../../components/constants';
 class Model {
 
   public Constants: Constants = new Constants();

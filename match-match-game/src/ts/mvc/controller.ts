@@ -37,7 +37,6 @@ class Controller {
     this.clickHomeButton();
     this.registerUser();
     this.checkSettingsPage();
-
   }
 
 
@@ -133,11 +132,19 @@ class Controller {
   }
 
   addUser2DataBase() {
-    this.Database.addUser(this.Model.user);
+    this.Database.insert('users',
+      {
+        'name': this.Model.user.name,
+        'surname': this.Model.user.surname,
+        'email': this.Model.user.email,
+        'avatar': this.Model.user.avatar,
+        'score': this.Model.user.score,
+      },
+    );
   }
 
   pullUsersFromDataBase() {
-    return this.Database.pullUsersList();
+    return this.Database.getData('users');
   }
 
   startGame = () => {

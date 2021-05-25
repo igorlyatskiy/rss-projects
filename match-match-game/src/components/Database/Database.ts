@@ -1,11 +1,22 @@
-import Constants, { UserType } from '../constants';
+import Constants from '../constants';
+
+const { v4: uuidv4 } = require('uuid');
+
 
 class Database {
   public db: IDBDatabase;
 
   public readonly Constants: Constants = new Constants();
 
+  private static instance: Database;
+
   constructor() {
+
+    if (Database.instance) {
+      return Database.instance;
+    }
+    Database.instance = this;
+
     const openRequest = indexedDB.open('igorlyatskiy', 1);
 
     openRequest.addEventListener('upgradeneeded', () => {
@@ -22,27 +33,28 @@ class Database {
     });
   }
 
-  addUser = (newUser: UserType) => {
-    const transaction = this.db.transaction('users', 'readwrite');
-    const users = transaction.objectStore('users');
-    const request = users.put(newUser, `${newUser.name} ${newUser.surname}`);
+  insert = (objectStore: string, value: object) => {
+    const transaction = this.db.transaction(objectStore, 'readwrite');
+    const selectedStore = transaction.objectStore(objectStore);
+    const key = uuidv4();
+    const request = selectedStore.put(value, key);
 
     request.addEventListener('error', () => {
-      throw new Error('error at the user to the DB adding');
+      throw new Error(`Error at the value to the ${objectStore} adding`);
     });
   };
 
-  pullUsersList = () => {
+  getData = (objectStore: string) => {
     return new Promise((resolve) => {
-      const transaction = this.db.transaction('users', 'readonly');
-      const users = transaction.objectStore('users');
-      const allUsers = users.getAll();
-      allUsers.addEventListener('success', () => {
-        const res = allUsers.result;
-        resolve(res);
+      const transaction = this.db.transaction(objectStore, 'readonly');
+      const selectedStore = transaction.objectStore(objectStore);
+      const allData = selectedStore.getAll();
+      allData.addEventListener('success', () => {
+        const { result } = allData;
+        resolve(result);
       });
-      allUsers.addEventListener('error', () => {
-        throw new Error('Error at the users Info getting');
+      allData.addEventListener('error', () => {
+        throw new Error(`Error at the ${objectStore} Info getting`);
       });
     });
   };

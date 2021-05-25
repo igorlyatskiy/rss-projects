@@ -3,7 +3,6 @@ import Button from '../../../defaultButton/defaultButton';
 import UserImage from './userImage';
 import Input from './input/input';
 import Constants from '../../../constants';
-import BaseComponent from '../../../base-component';
 import './assets/bootstrap.css';
 import './popap.sass';
 import Popap from '../../../popap/popap';

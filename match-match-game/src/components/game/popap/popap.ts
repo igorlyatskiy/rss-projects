@@ -1,6 +1,5 @@
 import Constants from '../../constants';
 import Button from '../../defaultButton/defaultButton';
-import BaseComponent from '../../base-component';
 import './popap.sass';
 import Popap from '../../popap/popap';
 

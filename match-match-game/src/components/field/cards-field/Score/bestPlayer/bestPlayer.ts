@@ -1,11 +1,12 @@
-import { UserType } from '../../../../constants';
+import Constants, { UserType } from '../../../../constants';
 import BaseComponent from '../../../../base-component';
-import Constants from '../../../../constants'
+
 import './img/userDark.png';
 import './bestPlayer.sass';
 
 class BestPlayer extends BaseComponent {
   Constants: Constants = new Constants();
+
   constructor(user: UserType) {
     super('div', ['top-player']);
 

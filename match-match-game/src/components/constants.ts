@@ -79,7 +79,7 @@ class Constants {
 
   public readonly picturesClasses: string[] = ['card-container_big', 'card-container_small'];
 
-  public readonly cardWaitingTime: number = 3000;
+  public readonly cardWaitingTime: number = 2000;
 
   public readonly cardRotationTime: number = 300;
 
