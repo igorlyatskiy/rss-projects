@@ -19,6 +19,10 @@ class UserImage {
     this.img.setAttribute('src', DEFAULT_DARK_USER_URL);
     this.img.setAttribute('alt', 'User image');
   }
+
+  changeSrc = (url: string) => {
+    this.img.setAttribute('src', url);
+  };
 }
 
 export { UserImage as default };

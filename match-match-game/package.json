@@ -31,6 +31,7 @@
     "css-mqpacker": "^7.0.0",
     "cssnano": "^4.1.10",
     "del-cli": "^3.0.1",
+    "dotenv-webpack": "^7.0.2",
     "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",

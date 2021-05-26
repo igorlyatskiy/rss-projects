@@ -4,43 +4,6 @@ import Card from './card/card';
 import BaseComponent from '../base-component';
 import './game.sass';
 
-import './img/deer.png';
-import './img/cow.png';
-import './img/crab.png';
-import './img/frog.png';
-import './img/pig.png';
-import './img/turtle.png';
-import './img/beetle.png';
-import './img/buffalo.png';
-import './img/bullfinch.png';
-import './img/butterfly.png';
-import './img/cat.png';
-import './img/lion.png';
-import './img/owl.png';
-import './img/parrot.png';
-import './img/rhino.png';
-import './img/snake.png';
-import './img/spider.png';
-import './img/squid.png';
-
-import './img/bike.png';
-import './img/trailer.png';
-import './img/porsche.png';
-import './img/scooter.png';
-import './img/skateboard.png';
-import './img/mustang.png';
-import './img/volkswagen.png';
-import './img/truck.png';
-import './img/airplane.png';
-import './img/tanker-truck.png';
-import './img/helicopter.png';
-import './img/ship.png';
-import './img/zeppelin.png';
-import './img/dragster.png';
-import './img/jet-ski.png';
-import './img/crane.png';
-import './img/hot-air-balloon.png';
-import './img/yacht.png';
 
 class Game extends BaseComponent {
   public cards: Card[] = [];

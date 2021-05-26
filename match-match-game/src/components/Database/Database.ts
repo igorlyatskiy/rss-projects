@@ -17,12 +17,12 @@ class Database {
     }
     Database.instance = this;
 
-    const openRequest = indexedDB.open('igorlyatskiy', 1);
+    const openRequest = indexedDB.open(process.env.DB_NAME, 1);
 
     openRequest.addEventListener('upgradeneeded', () => {
       this.db = openRequest.result;
-      if (!this.db.objectStoreNames.contains('users')) {
-        this.db.createObjectStore('users');
+      if (!this.db.objectStoreNames.contains(process.env.DB_STORAGE_NAME)) {
+        this.db.createObjectStore(process.env.DB_STORAGE_NAME);
       }
     });
     openRequest.addEventListener('error', () => {

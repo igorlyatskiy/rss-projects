@@ -29,10 +29,8 @@ class Score extends BaseComponent {
   makeTopUsersList = (res: unknown) => {
     if (Array.isArray(res)) {
       res.forEach((e) => {
-        if (typeof e === 'object') {
-          if (this.isTypeofUser(e)) {
-            this.users.push(e);
-          }
+        if (typeof e === 'object' && this.isTypeofUser(e)) {
+          this.users.push(e);
         }
       });
     }

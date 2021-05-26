@@ -4,6 +4,7 @@ import Model from './model';
 import Validation from '../../components/validation';
 import Constants from '../../components/constants';
 import View from './view';
+import userImage from '../../components/field/cards-field/popap/userImage';
 
 class Controller {
   public readonly View: View;
@@ -44,7 +45,7 @@ class Controller {
     this.View.Field.activateShadowBox();
     this.View.Field.CardsField.RegisterPopap.showPopap();
     const avatar = this.View.Field.CardsField.RegisterPopap.UserImage;
-    this.loadImage(avatar.input, avatar.img);
+    this.loadImage(avatar);
   };
 
   hideRegistrationPopap = () => {
@@ -279,14 +280,14 @@ class Controller {
     this.pullUsersFromDataBase().then((res) => this.View.Field.CardsField.Score.drawBestScorePage(res));
   };
 
-  loadImage = (input: HTMLInputElement, image: HTMLImageElement) => {
-    input.addEventListener('change', () => {
-      const img = image;
-      const fileInput = input;
+  loadImage = (avatar: userImage) => {
+    avatar.input.addEventListener('change', () => {
+      const { img } = avatar;
+      const fileInput = avatar.input;
       const file = fileInput.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        img.src = String(reader.result);
+        avatar.changeSrc(String(reader.result));
       };
       reader.readAsDataURL(file);
       fileInput.value = null; // обнуляет значение input, чтобы можно было загрузить картинку дважды подряд

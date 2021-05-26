@@ -3,6 +3,8 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+
 
 const ENV = process.env.npm_lifecycle_event;
 const isDev = ENV === 'dev';
@@ -157,9 +159,10 @@ const config = {
       filename: './index.html'
     }),
     new CopyWebpackPlugin([
-      // {from: './src/static', to: './'},
-      // {from: './src/img', to: './img/'},
+      { from: './src/components/game/img', to: './img/' },
     ]),
+    new Dotenv()
+
   ],
 
   devServer: {
