@@ -13,7 +13,7 @@ class Validation {
   }
 
   checkText(input: HTMLInputElement) {
-    const isNumberValid = String(input.value).split('').filter((e) => !Number.isNaN(parseInt(e))).length !== String(input.value).length;
+    const isNumberValid = String(input.value).split('').filter((e) => !Number.isNaN(parseInt(e, 10))).length !== String(input.value).length;
     const flag = String(input.value).length !== 0 &&
       isNumberValid &&
       String(input.value).split('').filter((e) => this.Constants.forbiddenSymbols.includes(e)).length === 0 &&
