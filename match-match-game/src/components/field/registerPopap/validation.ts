@@ -1,4 +1,4 @@
-import Constants from './constants';
+import Constants from '../../constants';
 
 class Validation {
   public readonly Constants: Constants = new Constants();
@@ -13,8 +13,9 @@ class Validation {
   }
 
   checkText(input: HTMLInputElement) {
+    const isNumberValid = String(input.value).split('').filter((e) => !Number.isNaN(parseInt(e))).length !== String(input.value).length;
     const flag = String(input.value).length !== 0 &&
-      String(input.value).split('').filter((e) => !Number.isNaN(+e)).length === 0 &&
+      isNumberValid &&
       String(input.value).split('').filter((e) => this.Constants.forbiddenSymbols.includes(e)).length === 0 &&
       String(input.value).split(' ').length <= 1;
     if (flag) {

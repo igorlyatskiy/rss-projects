@@ -6,7 +6,7 @@ import Constants from '../../constants';
 import './assets/bootstrap.css';
 import './popap.sass';
 import Popap from '../../popap/popap';
-import Validation from '../../validation';
+import Validation from './validation';
 
 class RegisterPopap extends Popap {
   public readonly Constants: Constants = new Constants();
