@@ -1,5 +1,5 @@
 import './img/userDark.png';
-import Constants from '../../../constants';
+import Constants from '../../constants';
 
 class UserImage {
   public readonly Constants: Constants = new Constants();

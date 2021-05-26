@@ -1,10 +1,9 @@
 import Card from '../../components/game/card/card';
 import Database from '../../components/Database/Database';
 import Model from './model';
-import Validation from '../../components/validation';
 import Constants from '../../components/constants';
 import View from './view';
-import userImage from '../../components/field/cards-field/popap/userImage';
+import userImage from '../../components/field/registerPopap/userImage';
 
 class Controller {
   public readonly View: View;
@@ -12,8 +11,6 @@ class Controller {
   public readonly Model: Model = new Model();
 
   public readonly Constants: Constants = new Constants();
-
-  public readonly Validation: Validation = new Validation();
 
   public readonly registerFunction: () => void = () => this.showRegistrationPopap();
 
@@ -26,13 +23,13 @@ class Controller {
     this.headerButton = this.View.Header.Wrapper.headerRightWrapper.headerButton.element;
 
     const shadow = this.View.Field.shadowBox;
-    const clearRegistrationButton = this.View.Field.CardsField.RegisterPopap.cancelButton.element;
-    const { inputs } = this.View.Field.CardsField.RegisterPopap;
+    const clearRegistrationButton = this.View.Field.RegisterPopap.cancelButton.element;
+    const { inputs } = this.View.Field.RegisterPopap;
 
     this.headerButton.addEventListener('click', this.registerFunction);
     shadow.addEventListener('click', this.hideRegistrationPopap);
-    clearRegistrationButton.addEventListener('click', () => this.clearPopapInputs());
-    inputs.forEach((e) => e.element.addEventListener('input', () => this.checkInputs()));
+    clearRegistrationButton.addEventListener('click', () => this.View.Field.RegisterPopap.clearPopapInputs());
+    inputs.forEach((e) => e.element.addEventListener('input', () => this.View.Field.RegisterPopap.checkInputs()));
 
     this.initRouter();
     this.clickHomeButton();
@@ -43,39 +40,15 @@ class Controller {
 
   showRegistrationPopap = () => {
     this.View.Field.activateShadowBox();
-    this.View.Field.CardsField.RegisterPopap.showPopap();
-    const avatar = this.View.Field.CardsField.RegisterPopap.UserImage;
+    this.View.Field.RegisterPopap.showPopap();
+    const avatar = this.View.Field.RegisterPopap.UserImage;
     this.loadImage(avatar);
   };
 
   hideRegistrationPopap = () => {
     this.View.Field.deactivateShadowBox();
-    this.View.Field.CardsField.RegisterPopap.hidePopap();
+    this.View.Field.RegisterPopap.hidePopap();
   };
-
-  clearPopapInputs = () => {
-    this.View.Field.CardsField.RegisterPopap.inputs.forEach((e) => {
-      e.element.value = '';
-      e.element.classList.remove(this.Constants.INPUT_ACTIVE_CLASS);
-      this.View.Field.CardsField.RegisterPopap.lockButton();
-    });
-  };
-
-  checkInputs() {
-    this.View.Field.CardsField.RegisterPopap.unlockButton();
-    this.View.Field.CardsField.RegisterPopap.inputs.forEach((e) => {
-
-      if (e.element.getAttribute('type') === 'text') {
-        this.Validation.checkText(e.element);
-      } else {
-        this.Validation.checkEmail(e.element);
-      }
-
-      if (!e.element.classList.contains(this.Constants.INPUT_ACTIVE_CLASS)) {
-        this.View.Field.CardsField.RegisterPopap.lockButton();
-      }
-    });
-  }
 
   initRouter() {
     window.location.hash = this.Constants.Pages.ABOUT_PAGE;
@@ -102,16 +75,16 @@ class Controller {
   }
 
   registerUser = () => {
-    this.View.Field.CardsField.RegisterPopap.addUserButton.element.addEventListener('click', () => {
+    this.View.Field.RegisterPopap.addUserButton.element.addEventListener('click', () => {
       window.location.hash = this.Constants.Pages.ABOUT_PAGE;
       this.View.Field.deactivateShadowBox();
-      this.View.Field.CardsField.RegisterPopap.hidePopap();
+      this.View.Field.RegisterPopap.hidePopap();
       this.headerButton.removeEventListener('click', this.registerFunction);
       this.View.Header.Wrapper.headerRightWrapper.showWaitingPlayer(this.Model.user.avatar);
       this.Model.role = this.Constants.PLAYER_ROLE_NAME;
-      this.Model.setUserName(this.View.Field.CardsField.RegisterPopap.inputs[0].element.value);
-      this.Model.setUserSurname(this.View.Field.CardsField.RegisterPopap.inputs[1].element.value);
-      this.Model.setUserEmail(this.View.Field.CardsField.RegisterPopap.inputs[2].element.value);
+      this.Model.setUserName(this.View.Field.RegisterPopap.inputs[0].element.value);
+      this.Model.setUserSurname(this.View.Field.RegisterPopap.inputs[1].element.value);
+      this.Model.setUserEmail(this.View.Field.RegisterPopap.inputs[2].element.value);
       this.headerButton.addEventListener('click', this.startGame, { once: true });
     }, { once: true });
   };
@@ -133,7 +106,7 @@ class Controller {
   }
 
   addUser2DataBase() {
-    this.Database.insert('users',
+    this.Database.insert(process.env.DB_STORAGE_NAME,
       {
         'name': this.Model.user.name,
         'surname': this.Model.user.surname,
@@ -145,7 +118,7 @@ class Controller {
   }
 
   pullUsersFromDataBase() {
-    return this.Database.getData('users');
+    return this.Database.getData(process.env.DB_STORAGE_NAME);
   }
 
   startGame = () => {
@@ -184,26 +157,26 @@ class Controller {
     switch (location) {
 
       case this.Constants.Pages.ABOUT_PAGE:
-        this.View.Field.CardsField.makeAboutPage();
+        this.View.Field.makeAboutPage();
         break;
 
       case this.Constants.Pages.GAME_PAGE:
-        this.View.Field.CardsField.makeGamePage(cardsType, settingsCardsNumber);
+        this.View.Field.makeGamePage(cardsType, settingsCardsNumber);
         this.initGameField();
         this.startViewAllCards();
         break;
 
       case this.Constants.Pages.SETTINGS_PAGE:
-        this.View.Field.CardsField.makeSettingsPage();
+        this.View.Field.makeSettingsPage();
         break;
 
       case this.Constants.Pages.SCORE_PAGE:
-        this.View.Field.CardsField.makeBestScorePage();
+        this.View.Field.makeBestScorePage();
         this.getUsers();
         break;
 
       default:
-        this.View.Field.CardsField.makeAboutPage();
+        this.View.Field.makeAboutPage();
         break;
     }
   };

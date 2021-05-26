@@ -1,16 +1,19 @@
 import Checkbox from './checkbox/checkbox';
-import Button from '../../../defaultButton/defaultButton';
+import Button from '../../defaultButton/defaultButton';
 import UserImage from './userImage';
 import Input from './input/input';
-import Constants from '../../../constants';
+import Constants from '../../constants';
 import './assets/bootstrap.css';
 import './popap.sass';
-import Popap from '../../../popap/popap';
+import Popap from '../../popap/popap';
+import Validation from '../../validation';
 
 class RegisterPopap extends Popap {
   public readonly Constants: Constants = new Constants();
 
   public readonly inputs: Input[] = [];
+
+  public readonly Validation: Validation = new Validation();
 
   public readonly containersForEachInput: HTMLElement[] = [];
 
@@ -71,6 +74,32 @@ class RegisterPopap extends Popap {
   unlockButton() {
     this.addUserButton.element.classList.remove(this.Constants.REGISTER_POPAP_BUTTON_BLOCKED_CLASS);
   }
+
+  clearPopapInputs = () => {
+    this.inputs.forEach((e) => {
+      e.element.value = '';
+      e.element.classList.remove(this.Constants.INPUT_ACTIVE_CLASS);
+      this.lockButton();
+    });
+  };
+
+
+  checkInputs() {
+    this.unlockButton();
+    this.inputs.forEach((e) => {
+
+      if (e.element.getAttribute('type') === 'text') {
+        this.Validation.checkText(e.element);
+      } else {
+        this.Validation.checkEmail(e.element);
+      }
+
+      if (!e.element.classList.contains(this.Constants.INPUT_ACTIVE_CLASS)) {
+        this.lockButton();
+      }
+    });
+  }
+
 }
 
 export { RegisterPopap as default };
