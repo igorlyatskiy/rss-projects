@@ -61,7 +61,7 @@ class RegisterPopap extends Popap {
       inputsContainer.append(this.containersForEachInput[index]);
       const input = new Input(this.Constants.registerInfo[index]);
       const checkbox = new Checkbox();
-      this.containersForEachInput[index].append(input.element, checkbox.element, this.makeElement('p', ['popap__p'], e), this.makeElement('span', ['p_wrong'], "this field isn't correct"));
+      this.containersForEachInput[index].append(input.element, checkbox.element, this.makeElement('p', ['popap__p'], e), this.makeElement('span', ['p_wrong'], this.Constants.WRONG_FIELD_VALIDATION_WORDS[index]));
       this.inputs.push(input);
       this.Checkbox.push(checkbox);
     });

@@ -91,6 +91,8 @@ class Constants {
 
   public readonly REGISTER_POPAP_BUTTON_BLOCKED_CLASS = 'button_locked';
 
+  public readonly WRONG_FIELD_VALIDATION_WORDS: string[] = ['First name is not correct', 'Last name is not correct', 'E-mail is not correct'];
+
 
 
   public readonly Pages: Pages = {
