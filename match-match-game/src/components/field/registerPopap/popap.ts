@@ -27,19 +27,13 @@ class RegisterPopap extends Popap {
 
   constructor() {
     super(['register-popap']);
-
     const title = this.makeElement('p', ['popap__title'], 'Register new Player');
     this.element.append(title);
-
     this.initInputs();
-
     this.UserImage = new UserImage();
-
     this.addUserButton.element.classList.add('popap__add-user');
     this.cancelButton.element.classList.add('popap__cancel');
-
     this.element.append(this.UserImage.img, this.UserImage.input, this.addUserButton.element, this.cancelButton.element);
-
     this.lockButton();
   }
 

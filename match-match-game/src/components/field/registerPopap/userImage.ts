@@ -3,22 +3,18 @@ import Constants from '../../constants';
 
 class UserImage {
   public readonly Constants: Constants = new Constants();
-
   public input: HTMLInputElement = document.createElement('input');
-
   public img: HTMLImageElement = document.createElement('img');
 
   constructor() {
-    const DEFAULT_DARK_USER_URL = './img/userDark.png';
-
-    this.input.classList.add('popap__input_file');
-    this.input.setAttribute('type', 'file');
-    this.input.setAttribute('title', this.Constants.REGISTER_AVATAR_LOADING_TITLE);
-
-    this.img.classList.add('popap__img');
-    this.img.setAttribute('src', DEFAULT_DARK_USER_URL);
-    this.img.setAttribute('alt', 'User image');
+    this.initElement(this.input, this.Constants.UserImageInputObject);
+    this.initElement(this.img, this.Constants.UserImagePictureObject);
   }
+
+  initElement = (element: HTMLInputElement | HTMLImageElement, object: object) => {
+    const keys = Object.keys(object);
+    keys.forEach((e) => element.setAttribute(e, object[e as keyof object]));
+  };
 
   changeSrc = (url: string) => {
     this.img.setAttribute('src', url);

@@ -14,86 +14,45 @@ export interface UserType {
 }
 
 class Constants {
-
   public readonly DEFAULT_USER_LINK_dark = './img/userDark.png';
-
   public readonly PLAYER_ROLE_NAME = 'player';
-
   public readonly DEFAULT_USER_LINK = './img/user.png';
-
   public readonly DEFAULT_HEADER_BUTTON_CONTENT = 'register new player';
-
   public readonly activePlayerHeaderButtonContent = 'STOP GAMe';
-
   public readonly waitingPlayerHeaderButtonContent = 'Start game';
-
   public readonly REGISTER_AVATAR_LOADING_TITLE: string = 'Choose a file';
-
   public readonly TIME_BEFORE_GAME_STARTS = 30000;
-
   public readonly DEFAULT_CARDS_NUMBER: number = 4;
-
   public readonly FLIPPED_CLASS: string = 'card_flipped';
-
   public readonly GUESSED_CLASS: string = 'card-container_guessed';
-
   public readonly WRONG_CLASS: string = 'card_wrong';
-
   public readonly BLOCKED_CLASS: string = 'card-container_blocked';
-
   public readonly HIDDEN_FINAL_POPAP_CLASS: string = 'popap_hidden';
-
   public readonly INPUT_ACTIVE_CLASS = 'input_active';
-
   public readonly topPlayersNumber: number = 10;
-
   public readonly infoCardsNumber: number;
-
   public readonly infoCardsImages: string[];
-
   public readonly infoCardsText: string[];
-
   public readonly infoCardsHeight: string[] = ['230px', '132px', '240px'];
-
   public readonly popapTitles: string[];
-
   public readonly registerInfo: string[];
-
   public readonly forbiddenSymbols: string[];
-
   public readonly NavImages: string[] = ['./img/aboutGame.svg', './img/bestScore.svg', './img/gameSettings.svg'];
-
   public readonly NavText: string[] = ['About Game', 'Best Score', 'Game Settings'];
-
   public readonly NavClass: string[] = ['aboutGame', 'bestScore', 'gameSettings'];
-
   public readonly NavLinks: string[] = ['about', 'score', 'settings'];
-
   public readonly SettingsTitle: string[] = ['Game cards', 'Difficulty'];
-
   public readonly SettingsContent: string[] = ['select game cards type', 'select game type'];
-
   public readonly SettingsOptions: string[][] = [['Animals', 'Transport'], ['4x4', '6x6']];
-
   public readonly settingsDefault: string[] = ['select game cards type'];
-
   public readonly picturesClasses: string[] = ['card-container_big', 'card-container_small'];
-
   public readonly cardWaitingTime: number = 2000;
-
   public readonly cardRotationTime: number = 300;
-
   public readonly SMALL_FIELD_UNIC_CARDS_NUMBER = 8;
-
   public readonly BIG_FIELD_UNIC_CARDS_NUMBER = 18;
-
   public readonly REGISTER_POPAP_ACTIVE_CLASS = 'register-popap_active';
-
   public readonly REGISTER_POPAP_BUTTON_BLOCKED_CLASS = 'button_locked';
-
   public readonly WRONG_FIELD_VALIDATION_WORDS: string[] = ['First name is not correct', 'Last name is not correct', 'E-mail is not correct'];
-
-
 
   public readonly Pages: Pages = {
     ABOUT_PAGE: '#/about',
@@ -143,6 +102,19 @@ class Constants {
     './img/hot-air-balloon.png',
     './img/yacht.png',
   ];
+
+  public readonly UserImageInputObject = {
+    class: 'popap__input_file',
+    type: 'file',
+    title: this.REGISTER_AVATAR_LOADING_TITLE,
+  };
+
+
+  public readonly UserImagePictureObject = {
+    class: 'popap__img',
+    src: this.DEFAULT_USER_LINK_dark,
+    alt: 'User image',
+  };
 
   constructor() {
     this.infoCardsNumber = 3;

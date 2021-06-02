@@ -13,14 +13,17 @@ class Card extends BaseComponent {
     this.url = url;
     this.element.append(this.card, this.makeElement('div', ['card-container__shadow'], ''));
 
-    const cardBack = this.makeElement('div', ['card__back'], '');
-    cardBack.setAttribute('style', `background-image: url('${url}')`);
+    this.initCardSides();
+  }
 
+  initCardSides = () => {
+    const cardBack = this.makeElement('div', ['card__back'], '');
+    cardBack.setAttribute('style', `background-image: url('${this.url}')`);
     this.card.append(
       this.makeElement('div', ['card__front'], ''),
       cardBack,
     );
-  }
+  };
 
   flipToFront = () => {
     this.card.classList.add(this.Constants.FLIPPED_CLASS);
