@@ -4,8 +4,8 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    'plugin:react/recommended',
-    'airbnb',
+    'airbnb-typescript',
+    'prettier'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -14,11 +14,15 @@ module.exports = {
     },
     ecmaVersion: 12,
     sourceType: 'module',
+    project: './tsconfig.json',
   },
   plugins: [
     'react',
     '@typescript-eslint',
+    'prettier'
   ],
   rules: {
+    "react/jsx-one-expression-per-line": "off"
   },
+  ignorePatterns: ['.eslintrc.js']
 };
