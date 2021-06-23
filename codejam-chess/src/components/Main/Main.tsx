@@ -9,7 +9,7 @@ import {
   // useLocation,
 } from "react-router-dom";
 import Game from "../pages/Game/Game";
-import MainPage from "../pages/Main/MainPage";
+import MainPageContainer from "../../Containers/MainPageContainer";
 
 export default class Main extends React.PureComponent {
   render() {
@@ -20,7 +20,7 @@ export default class Main extends React.PureComponent {
             <Game />
           </Route>
           <Route exact path='/'>
-            <MainPage />
+            <MainPageContainer />
           </Route>
           <Route path='*'>
             <div className='routing-error'>Something has gone wrong...</div>

@@ -4,18 +4,26 @@ import "./Player.sass";
 
 interface PlayerProps {
   number: number;
+  onNameClick: (name: string, number: number) => void;
 }
 
 export default class Player extends React.PureComponent<PlayerProps> {
   render() {
-    const { number } = this.props;
+    const { number, onNameClick } = this.props;
     const { image, name } = Constants.defaultPlayers[number - 1];
     return (
       <div className={`player player_${number}`}>
         <div className='player__image-container'>
           <img src={image} alt='User' className='player__image' />
         </div>
-        <div className='player__name'>{name}</div>
+        <button
+          type='button'
+          className='player__name'
+          onClick={() => onNameClick(name, number)}
+          onKeyUp={() => {}}
+        >
+          {name}
+        </button>
       </div>
     );
   }

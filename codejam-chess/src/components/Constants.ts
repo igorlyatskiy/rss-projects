@@ -5,6 +5,17 @@ export interface PlayerType {
   number: number,
   image: string,
 }
+export interface ReduxAction {
+  type: string,
+  payload: object | string
+}
+
+export interface UserAction extends ReduxAction {
+  payload: {
+    name: string,
+    id: number
+  }
+}
 
 export default class Constants {
   static reduxActions: string[] = [];
@@ -19,6 +30,6 @@ export default class Constants {
       number: 2,
       image: defaultPlayerImage
     }
-  ]
+  ];
 
 }
