@@ -2,27 +2,20 @@ import React from "react";
 import Constants from "../../../Constants";
 import "./Player.sass";
 
-export default class Player extends React.Component {
-  public readonly number: number;
+interface PlayerProps {
+  number: number;
+}
 
-  constructor(number: number) {
-    super({});
-    this.number = number;
-  }
-
+export default class Player extends React.PureComponent<PlayerProps> {
   render() {
+    const { number } = this.props;
+    const { image, name } = Constants.defaultPlayers[number - 1];
     return (
-      <div className='player'>
+      <div className={`player player_${number}`}>
         <div className='player__image-container'>
-          <img
-            src={Constants.defaultPlayers[this.number - 1].image}
-            alt='User'
-            className='player__image'
-          />
+          <img src={image} alt='User' className='player__image' />
         </div>
-        <div className='player__name'>
-          {Constants.defaultPlayers[this.number - 1].name}
-        </div>
+        <div className='player__name'>{name}</div>
       </div>
     );
   }

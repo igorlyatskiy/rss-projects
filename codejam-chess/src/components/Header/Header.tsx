@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
   // Switch,
   // Route,
   Link,
@@ -13,13 +13,11 @@ import logo from "../../img/svg/logo.svg";
 class Header extends React.PureComponent {
   render() {
     return (
-      <Router>
-        <header className='header'>
-          <Link to='/'>
-            <img src={logo} alt='Logo' className='header__logo' />
-          </Link>
-        </header>
-      </Router>
+      <header className='header'>
+        <Link to='/'>
+          <img src={logo} alt='Logo' className='header__logo' />
+        </Link>
+      </header>
     );
   }
 }

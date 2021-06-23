@@ -7,19 +7,19 @@
   justify-content: space-between
   position: relative
   margin-top: 130px
+  user-select: none
   &__name
-    background: #40B3A2
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     border-radius: 2px
     height: 44px
-    color: #fff
     font-family: Open Sans
     font-size: 24px
     font-style: normal
     font-weight: 700
-    line-height: 44px
+    line-height: 34px
     letter-spacing: 0em
     text-align: center
+    cursor: pointer
     width: 100%
 
   &__image-container
@@ -27,6 +27,7 @@
     height: 124px
     border: 5px solid #E8A87C
     border-radius: 50%
+    cursor: pointer
     background: #c4c4c4
 
   &__image
@@ -35,3 +36,14 @@
     border-radius: 50%
     object-position: center center
     opacity: 0.4
+
+  &_1
+    .player__name
+      color: #fff
+      background: #40B3A2
+      border: 5px solid #40B3A2
+  &_2
+    .player__name
+      background: #F0F7F4
+      border: 5px solid #40B3A2
+      color: #68A5A3
