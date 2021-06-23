@@ -22,7 +22,9 @@ module.exports = {
     'prettier'
   ],
   rules: {
-    "react/jsx-one-expression-per-line": "off"
+    "react/jsx-one-expression-per-line": "off",
+    "lines-between-class-members": "off",
+    "@typescript-eslint/lines-between-class-members": "off"
   },
   ignorePatterns: ['.eslintrc.js']
 };

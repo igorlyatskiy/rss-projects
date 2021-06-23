@@ -7,6 +7,7 @@ import {
   // Redirect,
   // useLocation,
 } from "react-router-dom";
+import MainPage from "../pages/Main/MainPage";
 
 export default class Main extends React.PureComponent {
   render() {
@@ -14,7 +15,9 @@ export default class Main extends React.PureComponent {
       <Router>
         <main className='main'>
           <Switch>
-            <Route path='/'>{/* <RegisterPage /> */}</Route>
+            <Route path='/'>
+              <MainPage />
+            </Route>
           </Switch>
         </main>
       </Router>

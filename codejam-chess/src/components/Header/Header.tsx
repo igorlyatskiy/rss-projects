@@ -8,7 +8,7 @@ import {
   // useLocation,
 } from "react-router-dom";
 import "./Header.sass";
-import logo from "../../img/logo.svg";
+import logo from "../../img/svg/logo.svg";
 
 class Header extends React.PureComponent {
   render() {
