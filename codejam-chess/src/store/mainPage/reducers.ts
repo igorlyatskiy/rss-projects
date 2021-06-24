@@ -1,21 +1,24 @@
-import { UserAction } from '../../components/Constants';
-import { MAIN_EDIT_NAME, MAIN_SET_ACTIVE_PLAYER } from "./actions"
+import Constants, { UserAction } from '../../components/Constants';
+import { MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const defaultState = {
   players:
     [
       {
-        name: 'Player 1',
-        image: '',
+        name: Constants.defaultPlayers[0].name,
+        image: Constants.defaultPlayers[0].image,
         id: 1
       },
       {
-        name: 'Player 2',
-        image: '',
+        name: Constants.defaultPlayers[1].name,
+        image: Constants.defaultPlayers[1].image,
         id: 2
       }
     ],
-  activePlayerId: 2
+  activePlayerId: 2,
+  popap: {
+    status: false
+  }
 }
 
 const mainPageReducer = (paramState = defaultState, action: UserAction) => {
@@ -35,7 +38,7 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           [
             ...state.players,
             {
-              name: action.payload.name,
+              name: (String(action.payload.name).trim().length === 0) ? `Player ${action.payload.id}` : action.payload.name,
               image: (player !== undefined) ? player.image : '',
               id: action.payload.id
             }
@@ -49,9 +52,27 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
     case MAIN_SET_ACTIVE_PLAYER: {
       return {
         ...state,
-        activePlayerId: action.payload.id
+        activePlayerId: action.payload
       }
       break;
+    }
+
+    case MAIN_SHOW_POPAP: {
+      return {
+        ...state,
+        popap: {
+          status: true
+        }
+      }
+    }
+
+    case MAIN_HIDE_POPAP: {
+      return {
+        ...state,
+        popap: {
+          status: false
+        }
+      }
     }
 
 

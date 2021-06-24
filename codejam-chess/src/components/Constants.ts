@@ -1,8 +1,8 @@
 import defaultPlayerImage from '../img/svg/defaultUserImage.svg';
 
-export interface PlayerType {
+export interface PlayerData {
   name: string,
-  number: number,
+  id: number,
   image: string,
 }
 export interface ReduxAction {
@@ -21,20 +21,23 @@ export interface PopapContainerProps {
   id: number;
   name: string;
   setNameFunc: (name: string, id: number) => {};
+  status: boolean
+  hidePopapFunc: () => void
 }
 
 export default class Constants {
   static activeChangeNamePopapClassname: string = 'main-page-popap-background_active';
+  static mainPagePopapContainerClassName: string = 'main-page-popap-container';
   static reduxActions: string[] = [];
-  static defaultPlayers: PlayerType[] = [
+  static defaultPlayers: PlayerData[] = [
     {
       name: 'Player 1',
-      number: 1,
+      id: 1,
       image: defaultPlayerImage,
     },
     {
       name: 'Player 2',
-      number: 2,
+      id: 2,
       image: defaultPlayerImage
     }
   ];

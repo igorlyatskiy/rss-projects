@@ -1,22 +1,40 @@
 import React from "react";
 import { connect } from "react-redux";
+import { PlayerData } from "../components/Constants";
 import MainPage from "../components/pages/Main/MainPage";
-import { setActivePlayer } from "../store/mainPage/actions";
+import {
+  setActivePlayer,
+  showPopap,
+  hidePopap,
+} from "../store/mainPage/actions";
 
-class MainContainer extends React.PureComponent {
+export interface MainContainerProps {
+  setActivePlayerFunc: (id: number) => void;
+  showPopapFunc: () => void;
+  users: PlayerData[];
+}
+
+class MainContainer extends React.PureComponent<MainContainerProps> {
   render() {
-    // const { setPlayerName } = this.props;
-    return <MainPage setActivePlayer={setActivePlayer} />;
+    const { setActivePlayerFunc, showPopapFunc, users } = this.props;
+    return (
+      <MainPage
+        setActivePlayer={setActivePlayerFunc}
+        showPopap={showPopapFunc}
+        usersData={users}
+      />
+    );
   }
 }
 
-const pushStateToProps = () => ({
-  // name: state.players[0].name,
+const pushStateToProps = (state: any) => ({
+  users: state.mainPageReducer.players,
 });
 
-// TODO understand, what should they do
-const mapDispatchToProps = () => ({
-  setActivePlayer,
-});
+const mapDispatchToProps = {
+  setActivePlayerFunc: setActivePlayer,
+  showPopapFunc: showPopap,
+  hidePopapFunc: hidePopap,
+};
 
 export default connect(pushStateToProps, mapDispatchToProps)(MainContainer);
