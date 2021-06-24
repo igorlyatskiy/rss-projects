@@ -4,7 +4,7 @@ import "./Player.sass";
 
 interface PlayerProps {
   number: number;
-  onNameClick: (name: string, number: number) => void;
+  onNameClick: (number: number) => void;
 }
 
 export default class Player extends React.PureComponent<PlayerProps> {
@@ -19,7 +19,7 @@ export default class Player extends React.PureComponent<PlayerProps> {
         <button
           type='button'
           className='player__name'
-          onClick={() => onNameClick(name, number)}
+          onClick={() => onNameClick(number)}
           onKeyUp={() => {}}
         >
           {name}

@@ -1,15 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
 import MainPage from "../components/pages/Main/MainPage";
+import { setActivePlayer } from "../store/mainPage/actions";
 
 class MainContainer extends React.PureComponent {
   render() {
-    return <MainPage />;
+    // const { setPlayerName } = this.props;
+    return <MainPage setActivePlayer={setActivePlayer} />;
   }
 }
 
-const pushStateToProps = () => ({});
-// TODO understand, what should they do
-const dispatchToProps = () => ({});
+const pushStateToProps = () => ({
+  // name: state.players[0].name,
+});
 
-export default connect(pushStateToProps, dispatchToProps)(MainContainer);
+// TODO understand, what should they do
+const mapDispatchToProps = () => ({
+  setActivePlayer,
+});
+
+export default connect(pushStateToProps, mapDispatchToProps)(MainContainer);

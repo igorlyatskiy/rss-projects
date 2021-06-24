@@ -17,7 +17,14 @@ export interface UserAction extends ReduxAction {
   }
 }
 
+export interface PopapContainerProps {
+  id: number;
+  name: string;
+  setNameFunc: (name: string, id: number) => {};
+}
+
 export default class Constants {
+  static activeChangeNamePopapClassname: string = 'main-page-popap-background_active';
   static reduxActions: string[] = [];
   static defaultPlayers: PlayerType[] = [
     {
