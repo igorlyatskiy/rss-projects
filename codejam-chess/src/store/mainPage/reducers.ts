@@ -1,4 +1,5 @@
 import Constants, { UserAction } from '../../components/Constants';
+import initialFieldState from '../initialFieldState';
 import { MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const defaultState = {
@@ -23,9 +24,7 @@ const defaultState = {
   },
   game: {
     history: [''],
-    data: [
-      []
-    ]
+    data: initialFieldState
   }
 }
 
