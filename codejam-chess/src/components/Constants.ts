@@ -10,6 +10,10 @@ export interface ReduxAction {
   payload: object | string
 }
 
+export interface Color {
+  color: 'black' | 'white'
+}
+
 export interface UserAction extends ReduxAction {
   payload: {
     name: string,
@@ -41,5 +45,4 @@ export default class Constants {
       image: defaultPlayerImage
     }
   ];
-
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import GameFieldContainer from "../../../Containers/GameFieldContainer";
 import PlayerViewContainer from "../../../Containers/PlayerViewContainer";
 import "./GamePage.sass";
 
@@ -7,7 +8,7 @@ export default class Game extends React.PureComponent {
     return (
       <section className='game-page'>
         <PlayerViewContainer propsId={1} />
-        {/* <GameFieldContainer/> */}
+        <GameFieldContainer/>
         <PlayerViewContainer propsId={2} />
       </section>
     );

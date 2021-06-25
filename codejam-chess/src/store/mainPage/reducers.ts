@@ -7,12 +7,14 @@ const defaultState = {
       {
         name: Constants.defaultPlayers[0].name,
         image: Constants.defaultPlayers[0].image,
-        id: 1
+        id: 1,
+        color: 'white'
       },
       {
         name: Constants.defaultPlayers[1].name,
         image: Constants.defaultPlayers[1].image,
-        id: 2
+        id: 2,
+        color: 'black'
       }
     ],
   activePlayerId: 2,
@@ -20,7 +22,10 @@ const defaultState = {
     status: false
   },
   game: {
-    history: ['']
+    history: [''],
+    data: [
+      []
+    ]
   }
 }
 
