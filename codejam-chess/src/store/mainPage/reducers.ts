@@ -18,6 +18,9 @@ const defaultState = {
   activePlayerId: 2,
   popap: {
     status: false
+  },
+  game: {
+    history: ['']
   }
 }
 
@@ -38,7 +41,7 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           [
             ...state.players,
             {
-              name: (String(action.payload.name).trim().length === 0) ? `Player ${action.payload.id}` : action.payload.name,
+              name: (String(action.payload.name).trim().length === 0) ? `Player ${action.payload.id}` : String(action.payload.name).trim(),
               image: (player !== undefined) ? player.image : '',
               id: action.payload.id
             }

@@ -8,8 +8,8 @@ import {
   // Redirect,
   // useLocation,
 } from "react-router-dom";
-import Game from "../pages/Game/Game";
 import MainPageContainer from "../../Containers/MainPageContainer";
+import GamePage from "../pages/Game/GamePage";
 
 export default class Main extends React.PureComponent {
   render() {
@@ -17,7 +17,7 @@ export default class Main extends React.PureComponent {
       <main className='main'>
         <Switch>
           <Route exact path='/game'>
-            <Game />
+            <GamePage />
           </Route>
           <Route exact path='/'>
             <MainPageContainer />

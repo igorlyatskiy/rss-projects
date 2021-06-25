@@ -1,0 +1,83 @@
+.player-view
+  display: flex
+  flex-direction: column
+  align-items: center
+  margin-top: 130px
+  width: 272px
+  &__image
+    font-family: Open Sans
+    font-size: 72px
+    font-style: normal
+    font-weight: 700
+    line-height: 98px
+    letter-spacing: 0em
+    text-align: center
+    width: 124px
+    height: 124px
+    border-radius: 50%
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: row
+
+  &__name
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
+    border-radius: 2px
+    font-family: Open Sans
+    font-size: 24px
+    font-style: normal
+    font-weight: 700
+    line-height: 33px
+    letter-spacing: 0em
+    text-align: center
+    width: 100%
+    margin-top: 15px
+
+  &__history
+    width: 100%
+    height: 502px
+    border-radius: 2px
+    margin-top: 20px
+    display: flex
+    flex-direction: row
+    align-items: center
+    justify-content: space-between
+    overflow-y: auto
+
+  &__moves,
+  &__time
+    height: 480px
+    width: 100%
+    padding: 0 10px
+
+.player-view_1
+  .player-view__image
+    background: #fff
+    border: 5px solid #E8A87C
+    color: #40B3A2
+  .player-view__name
+    background: #40B3A2
+    border: 5px solid #F0F7F4
+    color: #fff
+  .player-view__history
+    color: #fff
+    background: #85CDCA
+    border: 5px solid #F0F7F4
+  .player-view__moves
+    border-right: 1px solid #fff
+
+.player-view_2
+  .player-view__image
+    background: #40B3A2
+    border: 5px solid #E8A87C
+    color: #fff
+  .player-view__name
+    background: #F0F7F4
+    border: 5px solid #40B3A2
+    color: #68A5A3
+  .player-view__history
+    color: #68A5A3
+    background: #F0F7F4
+    border: 5px solid #40B3A2
+  .player-view__moves
+    border-right: 1px solid #40B3A2
