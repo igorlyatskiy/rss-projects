@@ -7,11 +7,11 @@ export interface PlayerData {
 }
 export interface ReduxAction {
   type: string,
-  payload: object | string
+  payload: object | string | boolean
 }
 
 export interface Color {
-  color: 'black' | 'white'
+  color: 'b' | 'w'
 }
 
 export interface UserAction extends ReduxAction {
@@ -29,7 +29,23 @@ export interface PopapContainerProps {
   hidePopapFunc: () => void
 }
 
+export interface FigureData extends Color {
+  type: string,
+}
+
 export default class Constants {
+  static FIGURES_NAMES = {
+    BISHOP: 'b',
+    KING: 'k',
+    KNIGHT: 'n',
+    PAWN: 'p',
+    QUEEN: 'q',
+    ROOK: 'r'
+  }
+  static FIGURES_COLORS_NAMES = {
+    black: 'b',
+    white: 'w'
+  }
   static activeChangeNamePopapClassname: string = 'main-page-popap-background_active';
   static mainPagePopapContainerClassName: string = 'main-page-popap-container';
   static reduxActions: string[] = [];
@@ -45,4 +61,5 @@ export default class Constants {
       image: defaultPlayerImage
     }
   ];
+  static startTimeValue = -1;
 }

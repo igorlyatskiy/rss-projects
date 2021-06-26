@@ -1,11 +1,11 @@
 import React from "react";
 
 import { connect } from "react-redux";
+import { FigureData } from "../components/Constants";
 import GameField from "../components/pages/Game/Field/GameField";
-import { FieldDataItem } from "../store/initialFieldState";
 
 interface GameFieldContainerProps {
-  data: FieldDataItem[][];
+  data: FigureData[][];
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {

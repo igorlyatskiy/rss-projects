@@ -1,6 +1,7 @@
 import Constants, { UserAction } from '../../components/Constants';
-import initialFieldState from '../initialFieldState';
-import { MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_INCREASE_TIME, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+
+const Chess = require('chess.js');
 
 const defaultState = {
   players:
@@ -23,13 +24,19 @@ const defaultState = {
     status: false
   },
   game: {
-    history: [''],
-    data: initialFieldState
-  }
+    history: [],
+    data: [[]],
+    chess: new Chess(),
+    timerFunction: 0,
+    time: Constants.startTimeValue,
+    isGameActive: false
+  },
+  isUserLogined: false,
+  winnerId: 0
 }
 
 const mainPageReducer = (paramState = defaultState, action: UserAction) => {
-  const state = paramState;
+  const state = { ...paramState };
   switch (action.type) {
     case MAIN_EDIT_NAME: {
       let player;
@@ -82,6 +89,61 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
       }
     }
 
+    case GAME_START_GAME: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          data: state.game.chess.board(),
+          time: 0,
+          isGameActive: true
+        },
+        isUserLogined: true,
+        activePlayerId: 1
+      }
+    }
+
+    case GAME_INCREASE_TIME: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          time: state.game.time + 1,
+        }
+      }
+    }
+
+    case GAME_BREAK_GAME: {
+      window.clearInterval(state.game.timerFunction)
+      state.game.chess.reset();
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          data: state.game.chess.board(),
+          time: Constants.startTimeValue,
+          isGameActive: false,
+          timerFunction: 0
+        }
+      }
+    }
+
+    case GAME_SET_TIMER_FUNC: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          timerFunction: action.payload
+        }
+      }
+    }
+
+    case GAME_SET_WINNER: {
+      return {
+        ...state,
+        winnerId: action.payload,
+      }
+    }
 
     default:
       return state

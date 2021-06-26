@@ -9,7 +9,23 @@ import {
   // useLocation,
 } from "react-router-dom";
 
-export default class Nav extends React.PureComponent {
+interface NavProps {
+  startGame: () => void;
+  increaseTime: () => void;
+  isGameActive: boolean;
+  setTimerFunc: (number: number) => void;
+}
+
+export default class Nav extends React.PureComponent<NavProps> {
+  startGameFunc = () => {
+    const { startGame, setTimerFunc, increaseTime } = this.props;
+    startGame();
+    const interval = window.setInterval(() => {
+      increaseTime();
+    }, 1000);
+    setTimerFunc(interval);
+  };
+
   render() {
     return (
       <nav className='main-page__nav'>
@@ -18,7 +34,7 @@ export default class Nav extends React.PureComponent {
             Online
           </div>
         </Link>
-        <Link to='/game'>
+        <Link to='/game' onClick={this.startGameFunc}>
           <div className='main-page__nav__element main-page__start'>Start</div>
         </Link>
         <Link to='/replays'>

@@ -1,45 +1,43 @@
 import React from "react";
-import { FieldDataItem } from "../../../../store/initialFieldState";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { FigureData } from "../../../Constants";
 import "./GameField.sass";
+import Square from "./Square/Square";
 
 interface GameFieldProps {
-  data: FieldDataItem[][];
+  data: FigureData[][];
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
-  checkClassName = (rowNumber: number, elementNumber: number) => {
-    const maxWhiteRowNumber = 1;
+  public keyNumber = 0;
 
-    let className = "field__element";
-    if ((rowNumber + elementNumber) % 2 !== 0) {
-      className += ` field__element_dark`;
-    }
-    if (rowNumber <= maxWhiteRowNumber) {
-      className += " field__element_reversed";
-    }
-
-    return className;
+  getKeyNumber = () => {
+    this.keyNumber += 1;
+    return this.keyNumber;
   };
 
   render = () => {
     const { data } = this.props;
     return (
-      <div className='field-container'>
-        <div className='field'>
-          {data.map((row, rowNumber) => (
-            <div className='field__row'>
-              {row.map((element, elementNumber) => (
-                <div
-                  key={element.id}
-                  className={this.checkClassName(rowNumber, elementNumber)}
-                >
-                  {element.figure?.render()}
-                </div>
-              ))}
-            </div>
-          ))}
+      <DndProvider backend={HTML5Backend}>
+        <div className='field-container'>
+          <div className='field'>
+            {data.map((row, rowNumber) => (
+              <div key={this.getKeyNumber()} className='field__row'>
+                {row.map((element, elementNumber) => (
+                  <Square
+                    key={this.getKeyNumber()}
+                    element={element}
+                    elementNumber={elementNumber}
+                    rowNumber={rowNumber}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </DndProvider>
     );
   };
 }

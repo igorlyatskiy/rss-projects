@@ -2,6 +2,11 @@ export const MAIN_EDIT_NAME = 'MAIN_EDIT_NAME';
 export const MAIN_SET_ACTIVE_PLAYER = 'MAIN_SET_ACTIVE_PLAYER';
 export const MAIN_SHOW_POPAP = 'MAIN_SHOW_POPAP';
 export const MAIN_HIDE_POPAP = 'MAIN_HIDE_POPAP';
+export const GAME_START_GAME = 'GAME_START_GAME';
+export const GAME_BREAK_GAME = 'GAME_BREAK_GAME';
+export const GAME_INCREASE_TIME = 'GAME_INCREASE_TIME';
+export const GAME_SET_TIMER_FUNC = 'GAME_SET_TIMER_FUNC';
+export const GAME_SET_WINNER = 'GAME_SET_WINNER';
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -18,7 +23,32 @@ export const showPopap = () => ({
   payload: true
 });
 
-export const hidePopap=()=>({
+export const hidePopap = () => ({
   type: MAIN_HIDE_POPAP,
   payload: false
+})
+
+export const startGame = () => ({
+  type: GAME_START_GAME,
+  payload: true
+})
+
+export const breakGame = () => ({
+  type: GAME_BREAK_GAME,
+  payload: true
+})
+
+export const increaseTime = () => ({
+  type: GAME_INCREASE_TIME,
+  payload: true
+})
+
+export const setTimerFunc = (number: number) => ({
+  type: GAME_SET_TIMER_FUNC,
+  payload: number
+})
+
+export const setWinner = (id:number) => ({
+  type: GAME_SET_WINNER,
+  payload: id
 })
