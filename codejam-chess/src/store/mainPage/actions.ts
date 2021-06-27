@@ -8,6 +8,7 @@ export const GAME_INCREASE_TIME = 'GAME_INCREASE_TIME';
 export const GAME_SET_TIMER_FUNC = 'GAME_SET_TIMER_FUNC';
 export const GAME_SET_WINNER = 'GAME_SET_WINNER';
 export const GAME_ADMIT_LOSS = 'GAME_ADMIT_LOSS';
+export const GAME_GET_VALID_MOVES = 'GAME_GET_VALID_MOVES';
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -52,4 +53,9 @@ export const setTimerFunc = (number: number) => ({
 export const setWinner = (id:number) => ({
   type: GAME_SET_WINNER,
   payload: id
+})
+
+export const getValidMoves = (square:string) => ({
+  type: GAME_GET_VALID_MOVES,
+  payload: square
 })

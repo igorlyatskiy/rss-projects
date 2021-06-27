@@ -1,5 +1,5 @@
 import Constants, { UserAction } from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_INCREASE_TIME, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const Chess = require('chess.js');
 
@@ -30,7 +30,8 @@ const defaultState = {
     timerFunction: 0,
     time: Constants.startTimeValue,
     isGamePageActive: false,
-    isGameProcessActive: false
+    isGameProcessActive: false,
+    validMoves: []
   },
   isUserLogined: false,
   winnerId: 0
@@ -152,6 +153,16 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           ...state.game,
           timerFunction: 0,
           isGameProcessActive: false
+        }
+      }
+    }
+
+    case GAME_GET_VALID_MOVES: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          validMoves: state.game.chess.moves({ square: action.payload })
         }
       }
     }

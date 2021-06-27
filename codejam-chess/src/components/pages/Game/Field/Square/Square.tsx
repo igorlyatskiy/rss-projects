@@ -11,11 +11,20 @@ interface SquareProps {
   element: FigureData;
   rowNumber: number;
   elementNumber: number;
+  position: string;
+  getValidMoves: (square: string) => void;
+  validMoves: string[];
 }
 
 export default class Square extends React.PureComponent<SquareProps> {
+  checkPosition = () => {
+    const { position, getValidMoves } = this.props;
+    console.log(position);
+    getValidMoves(position);
+  };
+
   getFigure = () => {
-    const { elementNumber, rowNumber,element } = this.props;
+    const { elementNumber, rowNumber, element } = this.props;
     const unicId = `${elementNumber}, ${rowNumber}`;
 
     if (element !== null) {
@@ -56,6 +65,18 @@ export default class Square extends React.PureComponent<SquareProps> {
   };
 
   render() {
-    return <div className={this.checkClassName()}>{this.getFigure()}</div>;
+    const { validMoves, position } = this.props;
+    return (
+      <div
+        onMouseDown={this.checkPosition}
+        role='presentation'
+        // onMouseUp={this.checkPosition}
+        className={`${this.checkClassName()}${
+          validMoves.includes(position) ? " field__element_valid" : ""
+        }`}
+      >
+        {this.getFigure()}
+      </div>
+    );
   }
 }

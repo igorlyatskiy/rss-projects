@@ -46,6 +46,7 @@ export default class Constants {
     black: 'b',
     white: 'w'
   }
+  static letters: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
   static activeChangeNamePopapClassname: string = 'main-page-popap-background_active';
   static mainPagePopapContainerClassName: string = 'main-page-popap-container';
   static reduxActions: string[] = [];
