@@ -29,7 +29,8 @@ const defaultState = {
     chess: new Chess(),
     timerFunction: 0,
     time: Constants.startTimeValue,
-    isGameActive: false
+    isGamePageActive: false,
+    isGameProcessActive: false
   },
   isUserLogined: false,
   winnerId: 0
@@ -96,10 +97,12 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           ...state.game,
           data: state.game.chess.board(),
           time: 0,
-          isGameActive: true
+          isGamePageActive: true,
+          isGameProcessActive: true
         },
         isUserLogined: true,
-        activePlayerId: 1
+        activePlayerId: 1,
+        winnerId: 0
       }
     }
 
@@ -122,9 +125,11 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           ...state.game,
           data: state.game.chess.board(),
           time: Constants.startTimeValue,
-          isGameActive: false,
+          isGamePageActive: false,
+          isGameProcessActive: false,
           timerFunction: 0
-        }
+        },
+        winnerId: 0
       }
     }
 
@@ -139,9 +144,15 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
     }
 
     case GAME_SET_WINNER: {
+      window.clearInterval(state.game.timerFunction)
       return {
         ...state,
         winnerId: action.payload,
+        game: {
+          ...state.game,
+          timerFunction: 0,
+          isGameProcessActive: false
+        }
       }
     }
 

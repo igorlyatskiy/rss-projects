@@ -7,6 +7,7 @@ export const GAME_BREAK_GAME = 'GAME_BREAK_GAME';
 export const GAME_INCREASE_TIME = 'GAME_INCREASE_TIME';
 export const GAME_SET_TIMER_FUNC = 'GAME_SET_TIMER_FUNC';
 export const GAME_SET_WINNER = 'GAME_SET_WINNER';
+export const GAME_ADMIT_LOSS = 'GAME_ADMIT_LOSS';
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,

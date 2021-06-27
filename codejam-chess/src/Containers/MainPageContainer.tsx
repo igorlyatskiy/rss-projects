@@ -48,7 +48,7 @@ class MainContainer extends React.PureComponent<MainContainerProps> {
 
 const pushStateToProps = (state: any) => ({
   users: state.mainPageReducer.players,
-  gameStatus: state.mainPageReducer.game.isGameActive,
+  gameStatus: state.mainPageReducer.game.isGamePageActive,
 });
 
 const mapDispatchToProps = {
@@ -57,7 +57,7 @@ const mapDispatchToProps = {
   hidePopapFunc: hidePopap,
   startGameFunc: startGame,
   increaseTimeFunc: increaseTime,
-  setTimerFunction: setTimerFunc
+  setTimerFunction: setTimerFunc,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(MainContainer);
