@@ -1,5 +1,6 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import Constants, { FigureData } from "../../../Constants";
+import Figure from "./Figure/Figure";
 import "./GameField.sass";
 import Square from "./Square/Square";
 
@@ -12,28 +13,19 @@ interface GameFieldProps {
 export default class GameField extends React.PureComponent<GameFieldProps> {
   public keyNumber = 0;
 
-  checkSquares = (e: SyntheticEvent) => {
-    const element = e.target as HTMLElement;
-    console.log(element);
-  };
-
   getKeyNumber = () => {
     this.keyNumber += 1;
     return this.keyNumber;
   };
 
-  getSquareDataKey = (rowNumber: number, elementNumber: number) =>
+  getPositionKey = (rowNumber: number, elementNumber: number) =>
     `${Constants.letters[elementNumber]}${rowNumber + 1}`;
 
   render = () => {
     const { data, getValidMoves, validMoves } = this.props;
     return (
       <div className='field-container'>
-        <div
-          className='field'
-          role='presentation'
-          onMouseDown={this.checkSquares}
-        >
+        <div className='field'>
           {data.map((row, rowNumber) => (
             <div key={this.getKeyNumber()} className='field__row'>
               {row.map((element, elementNumber) => (
@@ -41,13 +33,28 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                   validMoves={validMoves}
                   getValidMoves={getValidMoves}
                   key={this.getKeyNumber()}
-                  element={element}
                   elementNumber={elementNumber}
                   rowNumber={rowNumber}
-                  position={this.getSquareDataKey(rowNumber, elementNumber)}
+                  position={this.getPositionKey(rowNumber, elementNumber)}
                 />
               ))}
             </div>
+          ))}
+          {data.map((row, rowNumber) => (
+            <>
+              {row.map(
+                (element, elementNumber) =>
+                  element !== null && (
+                    <Figure
+                      key={this.getKeyNumber()}
+                      element={element}
+                      elementNumber={elementNumber}
+                      rowNumber={rowNumber}
+                      position={this.getPositionKey(rowNumber, elementNumber)}
+                    />
+                  )
+              )}
+            </>
           ))}
         </div>
       </div>
