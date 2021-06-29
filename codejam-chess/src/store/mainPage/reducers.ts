@@ -1,5 +1,5 @@
 import Constants, { UserAction } from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const Chess = require('chess.js');
 
@@ -158,12 +158,42 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
     }
 
     case GAME_GET_VALID_MOVES: {
+      const validMoves = state.game.chess.moves({ square: action.payload });
       return {
         ...state,
         game: {
           ...state.game,
-          validMoves: state.game.chess.moves({ square: action.payload })
+          validMoves,
+          data: state.game.chess.board()
         }
+      }
+    }
+
+    case GAME_CLEAN_VALID_MOVES: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          validMoves: []
+        }
+      }
+    }
+
+    case GAME_DRAW_FIELD: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          data: state.game.chess.board()
+        }
+      }
+    }
+
+    case GAME_TURN_MOVE: {
+      state.game.chess.turn();
+      return {
+        ...state,
+        activePlayerId: (state.activePlayerId === 1) ? 2 : 1
       }
     }
 

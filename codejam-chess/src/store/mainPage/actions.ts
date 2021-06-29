@@ -9,6 +9,9 @@ export const GAME_SET_TIMER_FUNC = 'GAME_SET_TIMER_FUNC';
 export const GAME_SET_WINNER = 'GAME_SET_WINNER';
 export const GAME_ADMIT_LOSS = 'GAME_ADMIT_LOSS';
 export const GAME_GET_VALID_MOVES = 'GAME_GET_VALID_MOVES';
+export const GAME_CLEAN_VALID_MOVES = 'GAME_CLEAN_VALID_MOVES';
+export const GAME_DRAW_FIELD = 'GAME_DRAW_FIELD'
+export const GAME_TURN_MOVE = 'GAME_TURN_MOVE';
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -50,12 +53,27 @@ export const setTimerFunc = (number: number) => ({
   payload: number
 })
 
-export const setWinner = (id:number) => ({
+export const setWinner = (id: number) => ({
   type: GAME_SET_WINNER,
   payload: id
 })
 
-export const getValidMoves = (square:string) => ({
+export const checkValidMoves = (square: string) => ({
   type: GAME_GET_VALID_MOVES,
   payload: square
+})
+
+export const cleanValidMoves = () => ({
+  type: GAME_CLEAN_VALID_MOVES,
+  payload: true
+})
+
+export const drawField = () => ({
+  type: GAME_DRAW_FIELD,
+  payload: true
+})
+
+export const turnMove = () => ({
+  type: GAME_TURN_MOVE,
+  payload: true
 })

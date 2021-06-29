@@ -4,10 +4,18 @@ import Figure from "./Figure/Figure";
 import "./GameField.sass";
 import Square from "./Square/Square";
 
+const Chess = require("chess.js");
+
 interface GameFieldProps {
   data: FigureData[][];
-  getValidMoves: (square: string) => void;
+  checkValidMoves: (square: string) => void;
   validMoves: string[];
+  activePlayerId: number;
+  isGameProcessActive: boolean;
+  chess: typeof Chess;
+  cleanValidMoves: () => void;
+  drawField: () => void;
+  turnMove: () => void;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -19,19 +27,28 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   };
 
   getPositionKey = (rowNumber: number, elementNumber: number) =>
-    `${Constants.letters[elementNumber]}${rowNumber + 1}`;
+    `${Constants.letters[elementNumber]}${Constants.rowNumbers - rowNumber}`;
 
   render = () => {
-    const { data, getValidMoves, validMoves } = this.props;
+    const {
+      data,
+      checkValidMoves,
+      validMoves,
+      activePlayerId,
+      isGameProcessActive,
+      chess,
+      cleanValidMoves,
+      drawField,
+      turnMove,
+    } = this.props;
     return (
       <div className='field-container'>
-        <div className='field'>
+        <div className={`field${activePlayerId === 1 ? "" : " field_rotated"}`}>
           {data.map((row, rowNumber) => (
             <div key={this.getKeyNumber()} className='field__row'>
               {row.map((element, elementNumber) => (
                 <Square
                   validMoves={validMoves}
-                  getValidMoves={getValidMoves}
                   key={this.getKeyNumber()}
                   elementNumber={elementNumber}
                   rowNumber={rowNumber}
@@ -40,17 +57,24 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               ))}
             </div>
           ))}
+
           {data.map((row, rowNumber) => (
             <>
               {row.map(
                 (element, elementNumber) =>
                   element !== null && (
                     <Figure
-                      key={this.getKeyNumber()}
                       element={element}
                       elementNumber={elementNumber}
                       rowNumber={rowNumber}
                       position={this.getPositionKey(rowNumber, elementNumber)}
+                      activePlayerId={activePlayerId}
+                      isGameProcessActive={isGameProcessActive}
+                      chess={chess}
+                      checkValidMoves={checkValidMoves}
+                      cleanValidMoves={cleanValidMoves}
+                      drawField={drawField}
+                      turnMove={turnMove}
                     />
                   )
               )}

@@ -8,18 +8,23 @@ import Queen from "../../../../Figures/Queen/Queen";
 import Rook from "../../../../Figures/Rook/Rook";
 import "./Figure.sass";
 
+const Chess = require("chess.js");
+
 interface FigureProps {
   element: FigureData;
   elementNumber: number;
   rowNumber: number;
   position: string;
+  activePlayerId: number;
+  isGameProcessActive: boolean;
+  chess: typeof Chess;
+  checkValidMoves: (square: string) => void;
+  cleanValidMoves: () => void;
+  drawField: () => void;
+  turnMove: () => void;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
-  public dragStartPosition: number | null = null;
-  public dragEndPosition: number | null = null;
-  public isDraggable: boolean | null = null;
-
   getFigure = () => {
     const { elementNumber, rowNumber, element } = this.props;
     const unicId = `${elementNumber}, ${rowNumber}`;
@@ -48,27 +53,32 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   mouseDown = (e: any) => {
     const { currentTarget } = e;
-    let startX = e.pageX - parseFloat(currentTarget.style.left);
-    let startY = e.pageY - parseFloat(currentTarget.style.top);
+    const { checkValidMoves, position, activePlayerId } = this.props;
+    checkValidMoves(position);
 
-    const getCoords = (elem: HTMLElement) => {
-      const box = elem.getBoundingClientRect();
-      return {
-        top: box.top,
-        left: box.left,
-      };
+    const coords = {
+      top: currentTarget.getBoundingClientRect().top,
+      left: currentTarget.getBoundingClientRect().left,
     };
 
-    const coords = getCoords(currentTarget);
+    const startLeft = parseFloat(currentTarget.style.left);
+    const startTop = parseFloat(currentTarget.style.top);
+
     const shiftX = e.pageX - coords.left;
     const shiftY = e.pageY - coords.top;
 
-    startX -= shiftX;
-    startY -= shiftY;
+    const startX = e.pageX - startLeft - shiftX;
+    const startY = e.pageY - startTop - shiftY;
+
+    const startPageX = e.pageX;
+    const startPageY = e.pageY;
+
+    const reverseCoef = activePlayerId === 1 ? 1 : -1;
 
     const moveAt = (event: MouseEvent) => {
-      currentTarget.style.left = `${event.pageX - shiftX - startX}px`;
-      currentTarget.style.top = `${event.pageY - shiftY - startY}px`;
+      console.log(currentTarget.style.top);
+      currentTarget.style.left = `${startPageX - reverseCoef * (startPageX - event.pageX) - shiftX - startX}px`;
+      currentTarget.style.top = `${startPageY - reverseCoef * (startPageY - event.pageY) - shiftY - startY}px`;
     };
     moveAt(e);
 
@@ -76,25 +86,58 @@ export default class Figure extends React.PureComponent<FigureProps> {
       moveAt(action);
     };
 
-    currentTarget.onmouseup = () => {
-      const left = parseFloat(currentTarget.style.left);
-      const top = parseFloat(currentTarget.style.top);
-      const leftFloat = left % Constants.squareSize;
-      const topFloat = top % Constants.squareSize;
-
-      currentTarget.style.left =
-        leftFloat > Constants.squareSize / 2
-          ? `${left - leftFloat + Constants.squareSize}px`
-          : `${left - leftFloat}px`;
-
-      currentTarget.style.top =
-        topFloat > Constants.squareSize / 2
-          ? `${top - topFloat + Constants.squareSize}px`
-          : `${top - topFloat}px`;
-
+    document.onmouseup = () => {
+      const { cleanValidMoves } = this.props;
+      this.checkFigurePosition(currentTarget, startLeft, startTop);
+      this.checkMove(currentTarget, startTop, startLeft);
+      cleanValidMoves();
       document.onmousemove = null;
-      currentTarget.onmouseup = null;
+      document.onmouseup = null;
     };
+  };
+
+  checkMove = (currentTarget: HTMLElement, startTop: number, startLeft: number) => {
+    const { position, chess, drawField, turnMove } = this.props;
+    const moveToBottom = (startTop - parseFloat(currentTarget.style.top)) / Constants.squareSize;
+    const moveToRight = (startLeft - parseFloat(currentTarget.style.left)) / Constants.squareSize;
+    const newPosition = `${Constants.letters[Constants.letters.indexOf(position[0]) - moveToRight]}${
+      +position[1] + moveToBottom
+    }`;
+    console.log(position, chess, newPosition);
+
+    const moveStatus = chess.move({ from: position, to: newPosition });
+    console.log(moveStatus);
+    if (moveStatus) {
+      drawField();
+      turnMove();
+    }
+  };
+
+  checkFigurePosition = (target: HTMLElement, startLeftParam: number, startTopParam: number) => {
+    const currentTarget = target;
+    const startLeft = startLeftParam;
+    const startTop = startTopParam;
+
+    const left = parseFloat(currentTarget.style.left);
+    const top = parseFloat(currentTarget.style.top);
+    const leftFloat = left % Constants.squareSize;
+    const topFloat = top % Constants.squareSize;
+
+    currentTarget.style.left =
+      leftFloat > Constants.squareSize / 2 ? `${left - leftFloat + Constants.squareSize}px` : `${left - leftFloat}px`;
+
+    currentTarget.style.top =
+      topFloat > Constants.squareSize / 2 ? `${top - topFloat + Constants.squareSize}px` : `${top - topFloat}px`;
+
+    if (
+      left < -Constants.squareSize / 2 ||
+      left > (Constants.rowNumbers - 0.5) * Constants.squareSize ||
+      top < -Constants.squareSize / 2 ||
+      top > (Constants.rowNumbers - 0.5) * Constants.squareSize
+    ) {
+      currentTarget.style.left = `${startLeft}px`;
+      currentTarget.style.top = `${startTop}px`;
+    }
   };
 
   startDrag = (e: any) => {
@@ -102,21 +145,27 @@ export default class Figure extends React.PureComponent<FigureProps> {
     return false;
   };
 
+  getReversedClassName = () => {
+    const { element } = this.props;
+    return element.color === Constants.FIGURES_COLORS_NAMES.black ? " figure-container_reversed" : "";
+  };
+
   render() {
-    const { rowNumber, elementNumber } = this.props;
+    const { rowNumber, elementNumber, isGameProcessActive, element, activePlayerId } = this.props;
+    const playerId = element.color === "w" ? 1 : 2;
+    // white player has id = 1, black id = 2 as default
     return (
       <div
         role='presentation'
-        className='figure-container'
+        className={`figure-container
+          ${playerId === activePlayerId ? " figure-container_active" : " figure-container_blocked"}
+          ${isGameProcessActive ? "" : " figure-container_blocked"}
+          ${this.getReversedClassName()}`}
         onMouseDown={this.mouseDown}
         onDragStart={this.startDrag}
         style={{
-          top: `${
-            Constants.squareSize * (Constants.rowNumbers - rowNumber - 1)
-          }px`,
-          left: `${
-            Constants.squareSize * (Constants.rowNumbers - elementNumber - 1)
-          }px`,
+          top: `${Constants.squareSize * rowNumber}px`,
+          left: `${Constants.squareSize * elementNumber}px`,
         }}
         draggable
       >

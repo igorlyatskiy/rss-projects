@@ -6,6 +6,10 @@
   border-radius: 2px
   margin-top: 58px
   position: relative
+  // transition: all linear 1200ms
+  &_rotated
+    transform: rotate(180deg)
+
   .field__row
     display: flex
     justify-content: space-between
@@ -21,6 +25,16 @@
       background: #85CDCA
     &_reversed
       transform: rotateX(180deg)
+    &_valid
+      .field__dot
+        opacity: 1
+
+  .field__dot
+    width: 20px
+    height: 20px
+    background: rgba(0,0,0,0.2)
+    border-radius: 50%
+    opacity: 0
 
   .figure
     min-width: 35px
