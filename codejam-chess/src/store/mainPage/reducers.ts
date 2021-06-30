@@ -31,7 +31,9 @@ const defaultState = {
     time: Constants.startTimeValue,
     isGamePageActive: false,
     isGameProcessActive: false,
-    validMoves: []
+    validMoves: [],
+    areMarkersVisible: true,
+    historyTime: []
   },
   isUserLogined: false,
   winnerId: 0
@@ -128,7 +130,9 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           time: Constants.startTimeValue,
           isGamePageActive: false,
           isGameProcessActive: false,
-          timerFunction: 0
+          timerFunction: 0,
+          historyTime: [],
+          history: []
         },
         winnerId: 0
       }
@@ -152,7 +156,8 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
         game: {
           ...state.game,
           timerFunction: 0,
-          isGameProcessActive: false
+          isGameProcessActive: false,
+          historyTime: []
         }
       }
     }
@@ -190,10 +195,19 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
     }
 
     case GAME_TURN_MOVE: {
+      console.log(state.game.historyTime);
       state.game.chess.turn();
       return {
         ...state,
-        activePlayerId: (state.activePlayerId === 1) ? 2 : 1
+        activePlayerId: (state.activePlayerId === 1) ? 2 : 1,
+        game: {
+          ...state.game,
+          history: state.game.chess.history({ verbose: true }),
+          historyTime: [
+            ...state.game.historyTime,
+            state.game.time
+          ]
+        }
       }
     }
 

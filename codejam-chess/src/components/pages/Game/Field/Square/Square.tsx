@@ -21,8 +21,21 @@ export default class Square extends React.PureComponent<SquareProps> {
   render() {
     const { validMoves, position } = this.props;
     return (
-      <div className={`${this.checkClassName()}${validMoves.includes(position) ? " field__element_valid" : ""}`}>
-        <div className='field__dot' />
+      <div
+        className={`${this.checkClassName()}
+          ${
+            validMoves.includes(position) ||
+            validMoves.map((el) => el.substr(1)).includes(position) ||
+            validMoves.map((el) => el.substr(2)).includes(position)
+              ? " field__element_valid"
+              : ""
+          }`}
+      >
+        <div
+          className={
+            validMoves.map((el) => el.substr(2)).includes(position) ? "field__dot field__dot_damaged" : "field__dot"
+          }
+        />
       </div>
     );
   }

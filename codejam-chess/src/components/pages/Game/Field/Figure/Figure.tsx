@@ -76,7 +76,6 @@ export default class Figure extends React.PureComponent<FigureProps> {
     const reverseCoef = activePlayerId === 1 ? 1 : -1;
 
     const moveAt = (event: MouseEvent) => {
-      console.log(currentTarget.style.top);
       currentTarget.style.left = `${startPageX - reverseCoef * (startPageX - event.pageX) - shiftX - startX}px`;
       currentTarget.style.top = `${startPageY - reverseCoef * (startPageY - event.pageY) - shiftY - startY}px`;
     };
@@ -96,20 +95,22 @@ export default class Figure extends React.PureComponent<FigureProps> {
     };
   };
 
-  checkMove = (currentTarget: HTMLElement, startTop: number, startLeft: number) => {
+  checkMove = (paramTarget: HTMLElement, startTop: number, startLeft: number) => {
+    const currentTarget = paramTarget;
     const { position, chess, drawField, turnMove } = this.props;
     const moveToBottom = (startTop - parseFloat(currentTarget.style.top)) / Constants.squareSize;
     const moveToRight = (startLeft - parseFloat(currentTarget.style.left)) / Constants.squareSize;
     const newPosition = `${Constants.letters[Constants.letters.indexOf(position[0]) - moveToRight]}${
       +position[1] + moveToBottom
     }`;
-    console.log(position, chess, newPosition);
 
     const moveStatus = chess.move({ from: position, to: newPosition });
-    console.log(moveStatus);
     if (moveStatus) {
       drawField();
       turnMove();
+    } else {
+      currentTarget.style.left = `${startLeft}px`;
+      currentTarget.style.top = `${startTop}px`;
     }
   };
 

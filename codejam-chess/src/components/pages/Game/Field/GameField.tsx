@@ -19,6 +19,7 @@ interface GameFieldProps {
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
+  public markersClassName: string = "";
   public keyNumber = 0;
 
   getKeyNumber = () => {
@@ -28,6 +29,18 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
 
   getPositionKey = (rowNumber: number, elementNumber: number) =>
     `${Constants.letters[elementNumber]}${Constants.rowNumbers - rowNumber}`;
+
+  checkClassName = () => {
+    let className = "";
+    const { activePlayerId } = this.props;
+    className = " field-markers__invisible";
+    setTimeout(() => {
+      if (activePlayerId === 2) {
+        className = "field-markers__row_reversed";
+      }
+    }, 1200);
+    return className;
+  };
 
   render = () => {
     const {
@@ -43,6 +56,40 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     } = this.props;
     return (
       <div className='field-container'>
+        <div className='field-markers'>
+          <div className={`field-markers__row field-markers__row_top${this.checkClassName()}`}>
+            {Constants.letters.map((e) => (
+              <p className='field-markers__text'>{e}</p>
+            ))}
+          </div>
+          <div
+            className={`field-markers__row field-markers__row_bottom${
+              activePlayerId === 1 ? "" : " field-markers__row_reversed"
+            }`}
+          >
+            {Constants.letters.map((e) => (
+              <p className='field-markers__text'>{e}</p>
+            ))}
+          </div>
+          <div
+            className={`field-markers__column field-markers__column_left${
+              activePlayerId === 1 ? "" : " field-markers__column_reversed"
+            }`}
+          >
+            {Constants.numbers.reverse().map((e) => (
+              <p className='field-markers__text'>{e}</p>
+            ))}
+          </div>
+          <div
+            className={`field-markers__column field-markers__column_right${
+              activePlayerId === 1 ? "" : " field-markers__column_reversed"
+            }`}
+          >
+            {Constants.numbers.map((e) => (
+              <p className='field-markers__text'>{e}</p>
+            ))}
+          </div>
+        </div>
         <div className={`field${activePlayerId === 1 ? "" : " field_rotated"}`}>
           {data.map((row, rowNumber) => (
             <div key={this.getKeyNumber()} className='field__row'>

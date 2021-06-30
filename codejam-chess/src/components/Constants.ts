@@ -33,6 +33,15 @@ export interface FigureData extends Color {
   type: string,
 }
 
+export interface HistoryElement {
+  color: string,
+  from: string,
+  to: string,
+  flag: string,
+  piece: string,
+  san: string
+}
+
 export default class Constants {
   static FIGURES_NAMES = {
     BISHOP: 'b',
@@ -47,6 +56,7 @@ export default class Constants {
     white: 'w'
   }
   static letters: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+  static numbers: number[] = [1, 2, 3, 4, 5, 6, 7, 8]
   static activeChangeNamePopapClassname: string = 'main-page-popap-background_active';
   static mainPagePopapContainerClassName: string = 'main-page-popap-container';
   static reduxActions: string[] = [];
