@@ -75,4 +75,5 @@ export default class Constants {
   static startTimeValue = -1;
   static squareSize = 91;
   static rowNumbers = 8;
+  static BOARD_ROTATION_TIME = 1200
 }

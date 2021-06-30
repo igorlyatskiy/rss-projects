@@ -12,6 +12,8 @@ export const GAME_GET_VALID_MOVES = 'GAME_GET_VALID_MOVES';
 export const GAME_CLEAN_VALID_MOVES = 'GAME_CLEAN_VALID_MOVES';
 export const GAME_DRAW_FIELD = 'GAME_DRAW_FIELD'
 export const GAME_TURN_MOVE = 'GAME_TURN_MOVE';
+export const GAME_MAKE_FIELD_MARKERS_VISIBLE = 'GAME_MAKE_FIELD_MARKERS_VISIBLE';
+export const GAME_MAKE_FIELD_MARKERS_INVISIBLE = 'GAME_MAKE_FIELD_MARKERS_INVISIBLE';
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -75,5 +77,15 @@ export const drawField = () => ({
 
 export const turnMove = () => ({
   type: GAME_TURN_MOVE,
+  payload: true
+})
+
+export const makeFieldMarkersVisible = () => ({
+  type: GAME_MAKE_FIELD_MARKERS_VISIBLE,
+  payload: true
+})
+
+export const makeFieldMarkersInvisible = () => ({
+  type: GAME_MAKE_FIELD_MARKERS_INVISIBLE,
   payload: true
 })

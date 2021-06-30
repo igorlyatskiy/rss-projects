@@ -1,5 +1,5 @@
 import Constants, { UserAction } from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const Chess = require('chess.js');
 
@@ -33,7 +33,8 @@ const defaultState = {
     isGameProcessActive: false,
     validMoves: [],
     areMarkersVisible: true,
-    historyTime: []
+    historyTime: [],
+    areFieldMarkersVisible: true
   },
   isUserLogined: false,
   winnerId: 0
@@ -206,7 +207,28 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
           historyTime: [
             ...state.game.historyTime,
             state.game.time
-          ]
+          ],
+          areFieldMarkersVisible: false
+        }
+      }
+    }
+
+    case GAME_MAKE_FIELD_MARKERS_VISIBLE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          areFieldMarkersVisible: true
+        }
+      }
+    }
+
+    case GAME_MAKE_FIELD_MARKERS_INVISIBLE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          areFieldMarkersVisible: false
         }
       }
     }

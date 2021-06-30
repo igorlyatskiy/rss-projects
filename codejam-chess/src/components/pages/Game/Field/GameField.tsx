@@ -1,5 +1,6 @@
 import React from "react";
 import Constants, { FigureData } from "../../../Constants";
+import FieldMarkers from "./FieldMarkers/FieldMarkers";
 import Figure from "./Figure/Figure";
 import "./GameField.sass";
 import Square from "./Square/Square";
@@ -16,6 +17,8 @@ interface GameFieldProps {
   cleanValidMoves: () => void;
   drawField: () => void;
   turnMove: () => void;
+  makeFieldMarkersVisible: () => void;
+  areFieldMarkersVisible: boolean;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -30,18 +33,6 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   getPositionKey = (rowNumber: number, elementNumber: number) =>
     `${Constants.letters[elementNumber]}${Constants.rowNumbers - rowNumber}`;
 
-  checkClassName = () => {
-    let className = "";
-    const { activePlayerId } = this.props;
-    className = " field-markers__invisible";
-    setTimeout(() => {
-      if (activePlayerId === 2) {
-        className = "field-markers__row_reversed";
-      }
-    }, 1200);
-    return className;
-  };
-
   render = () => {
     const {
       data,
@@ -53,43 +44,12 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       cleanValidMoves,
       drawField,
       turnMove,
+      areFieldMarkersVisible,
+      makeFieldMarkersVisible,
     } = this.props;
     return (
       <div className='field-container'>
-        <div className='field-markers'>
-          <div className={`field-markers__row field-markers__row_top${this.checkClassName()}`}>
-            {Constants.letters.map((e) => (
-              <p className='field-markers__text'>{e}</p>
-            ))}
-          </div>
-          <div
-            className={`field-markers__row field-markers__row_bottom${
-              activePlayerId === 1 ? "" : " field-markers__row_reversed"
-            }`}
-          >
-            {Constants.letters.map((e) => (
-              <p className='field-markers__text'>{e}</p>
-            ))}
-          </div>
-          <div
-            className={`field-markers__column field-markers__column_left${
-              activePlayerId === 1 ? "" : " field-markers__column_reversed"
-            }`}
-          >
-            {Constants.numbers.reverse().map((e) => (
-              <p className='field-markers__text'>{e}</p>
-            ))}
-          </div>
-          <div
-            className={`field-markers__column field-markers__column_right${
-              activePlayerId === 1 ? "" : " field-markers__column_reversed"
-            }`}
-          >
-            {Constants.numbers.map((e) => (
-              <p className='field-markers__text'>{e}</p>
-            ))}
-          </div>
-        </div>
+        <FieldMarkers activePlayerId={activePlayerId} areFieldMarkersVisible={areFieldMarkersVisible} />
         <div className={`field${activePlayerId === 1 ? "" : " field_rotated"}`}>
           {data.map((row, rowNumber) => (
             <div key={this.getKeyNumber()} className='field__row'>
@@ -122,6 +82,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                       cleanValidMoves={cleanValidMoves}
                       drawField={drawField}
                       turnMove={turnMove}
+                      makeFieldMarkersVisible={makeFieldMarkersVisible}
                     />
                   )
               )}

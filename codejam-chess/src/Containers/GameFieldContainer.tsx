@@ -2,7 +2,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { FigureData } from "../components/Constants";
 import GameField from "../components/pages/Game/Field/GameField";
-import { checkValidMoves, cleanValidMoves, drawField, turnMove } from "../store/mainPage/actions";
+import {
+  checkValidMoves,
+  cleanValidMoves,
+  drawField,
+  makeFieldMarkersVisible,
+  turnMove,
+} from "../store/mainPage/actions";
 
 const Chess = require("chess.js");
 
@@ -16,6 +22,8 @@ interface GameFieldContainerProps {
   cleanValidMovesFunc: () => void;
   drawFieldFunc: () => void;
   turnMoveFunc: () => void;
+  areFieldMarkersVisible: boolean;
+  makeFieldMarkersVisibleFunc: () => void;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -30,6 +38,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       chess,
       cleanValidMovesFunc,
       drawFieldFunc,
+      areFieldMarkersVisible,
+      makeFieldMarkersVisibleFunc,
     } = this.props;
     return (
       <GameField
@@ -42,6 +52,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         cleanValidMoves={cleanValidMovesFunc}
         drawField={drawFieldFunc}
         turnMove={turnMoveFunc}
+        areFieldMarkersVisible={areFieldMarkersVisible}
+        makeFieldMarkersVisible={makeFieldMarkersVisibleFunc}
       />
     );
   }
@@ -55,6 +67,7 @@ const pushStateToProps = (state: any) => {
     activePlayerId: mainPageReducer.activePlayerId,
     isGameProcessActive: mainPageReducer.game.isGameProcessActive,
     chess: mainPageReducer.game.chess,
+    areFieldMarkersVisible: mainPageReducer.game.areFieldMarkersVisible,
   };
 };
 
@@ -63,6 +76,7 @@ const mapDispatchToProps = {
   cleanValidMovesFunc: cleanValidMoves,
   drawFieldFunc: drawField,
   turnMoveFunc: turnMove,
+  makeFieldMarkersVisibleFunc: makeFieldMarkersVisible,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(GameFieldContainer);

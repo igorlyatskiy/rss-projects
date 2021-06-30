@@ -22,6 +22,7 @@ interface FigureProps {
   cleanValidMoves: () => void;
   drawField: () => void;
   turnMove: () => void;
+  makeFieldMarkersVisible: () => void;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -86,10 +87,11 @@ export default class Figure extends React.PureComponent<FigureProps> {
     };
 
     document.onmouseup = () => {
-      const { cleanValidMoves } = this.props;
+      const { cleanValidMoves, makeFieldMarkersVisible } = this.props;
       this.checkFigurePosition(currentTarget, startLeft, startTop);
       this.checkMove(currentTarget, startTop, startLeft);
       cleanValidMoves();
+      setTimeout(() => makeFieldMarkersVisible(), Constants.BOARD_ROTATION_TIME);
       document.onmousemove = null;
       document.onmouseup = null;
     };
