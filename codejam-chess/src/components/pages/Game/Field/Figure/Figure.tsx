@@ -107,6 +107,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
     }`;
 
     const moveStatus = chess.move({ from: position, to: newPosition });
+    console.log(moveStatus);
     if (moveStatus) {
       drawField();
       turnMove();

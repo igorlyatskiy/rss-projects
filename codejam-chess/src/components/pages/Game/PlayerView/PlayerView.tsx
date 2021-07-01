@@ -44,14 +44,11 @@ export default class PlayerView extends React.PureComponent<PlayerViewProps> {
     return null;
   };
 
-  // TODO убрать баг у прокручивания, убрать баг у блока прокручивания, убрать баг с кручением доски
-
   render() {
     const { player, history, winnerId, activePlayerId, historyTime } = this.props;
     const playerColor = player.id === 1 ? Constants.FIGURES_COLORS_NAMES.white : Constants.FIGURES_COLORS_NAMES.black;
     const playerHistory = history.filter((e: HistoryElement) => e.color === playerColor);
     const playerHistoryTime = historyTime.filter((e, index) => index % 2 !== player.id % 2);
-    console.log(playerHistory);
     return (
       <div className={`player-view player-view_${player.id} ${winnerId === player.id ? "player-view_winner" : ""}`}>
         <img src={winnerIcon} alt='WinnerLogo' className='player-view__winner-icon' />
