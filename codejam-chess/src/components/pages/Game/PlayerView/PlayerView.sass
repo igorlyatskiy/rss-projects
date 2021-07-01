@@ -6,6 +6,7 @@
   width: 272px
   position: relative
   margin-bottom: 20px
+  user-select: none
   &__image
     font-family: Open Sans
     font-size: 72px
@@ -49,7 +50,7 @@
     &::-webkit-scrollbar-track
       border-radius: 4px
     &::-webkit-scrollbar
-      width: 11px
+      width: 16px
     &::-webkit-scrollbar-thumb
       border-radius: 4px
       background: #C4C4C4
@@ -77,7 +78,9 @@
     align-items: center
     margin-bottom: 20px
     height: 30px
-    justify-content: center
+    justify-content: flex-start
+    &:last-of-type
+      margin-bottom: 5px
 
   &__move
     font-family: Open Sans
@@ -104,10 +107,18 @@
       max-width: 17px
       max-height: 27px
 
+  &__moves
+    width: 52%
+
+  &__time
+    width: 48%
+    .player-view__row
+      justify-content: center
+
   &__moves,
   &__time
+    align-self: flex-start
     min-height: 100%
-    width: 100%
     padding: 0 10px
 
   &__winner-icon
@@ -115,6 +126,7 @@
     position: relative
     top: -15px
     transition: all linear 300ms
+    pointer-events: none
 
   &_winner
     .player-view__winner-icon
@@ -132,6 +144,16 @@
     color: #fff
     background: #85CDCA
     border: 5px solid #F0F7F4
+    &::-webkit-scrollbar-thumb
+      background: #C4C4C4
+      border-right: 5px solid #85CDCA
+      border-top: 5px solid #85CDCA
+      border-bottom: 5px solid #85CDCA
+      border-left: 5px solid #85CDCA
+      border-radius: 25px
+    &:hover::-webkit-scrollbar-thumb
+      background: #ffffffcb
+
   .player-view__moves
     border-right: 1px solid #fff
 
@@ -148,5 +170,14 @@
     color: #68A5A3
     background: #F0F7F4
     border: 5px solid #40B3A2
+    &::-webkit-scrollbar-thumb
+      background: #C4C4C4
+      border-right: 5px solid #F0F7F4
+      border-top: 5px solid #F0F7F4
+      border-bottom: 5px solid #F0F7F4
+      border-left: 5px solid #F0F7F4
+      border-radius: 25px
+    &:hover::-webkit-scrollbar-thumb
+      background: #00000063
   .player-view__moves
     border-right: 1px solid #40B3A2
