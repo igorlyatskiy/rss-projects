@@ -1,11 +1,10 @@
 import React from "react";
+import NewChess from "../../../../chess.js/chess";
 import Constants, { FigureData } from "../../../Constants";
 import FieldMarkers from "./FieldMarkers/FieldMarkers";
 import Figure from "./Figure/Figure";
 import "./GameField.sass";
 import Square from "./Square/Square";
-
-const Chess = require("chess.js");
 
 interface GameFieldProps {
   data: FigureData[][];
@@ -13,7 +12,7 @@ interface GameFieldProps {
   validMoves: string[];
   activePlayerId: number;
   isGameProcessActive: boolean;
-  chess: typeof Chess;
+  chess: NewChess;
   cleanValidMoves: () => void;
   drawField: () => void;
   turnMove: () => void;

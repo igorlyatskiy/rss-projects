@@ -3,7 +3,8 @@ import ChessConstants, { FigureMovement } from "./Constants";
 
 export default class NewChess {
   public chessBoard = ChessConstants.defaultBoard;
-  activePlayer = ChessConstants.WHITE;
+  public activePlayer = ChessConstants.WHITE;
+  public gameHistory = [];
 
   board = () => this.chessBoard;
 
@@ -18,21 +19,30 @@ export default class NewChess {
   move = (movement: FigureMovement) => {
     const { from, to } = movement;
     if (this.getSquare(from) !== undefined && this.getSquare(to) !== undefined) {
-      return 'a';
+      const [moveFromRow, moveFromColumn] = this.getSquareIndex(from);
+      const [moveToRow, moveToColumn] = this.getSquareIndex(to);
+      const moveFrom = this.chessBoard[moveFromRow][moveFromColumn]
+      const moveTo = this.chessBoard[moveToRow][moveToColumn]
+      if (moveFrom !== null && moveTo !== moveFrom) {
+        this.chessBoard[moveToRow][moveToColumn] = { ...moveFrom }
+        this.chessBoard[moveFromRow][moveFromColumn] = null;
+      }
     }
     return null;
   }
 
-  moves = () => {
-
-  }
-
   getSquare = (square: string) => {
-    const [rowNumber, colNumber] = this.getSquareIndex(square)
+    const [rowNumber, colNumber] = this.getSquareIndex(square);
     return this.chessBoard[rowNumber][colNumber]
   }
 
-  getSquareByIndex = (row: number, col: number) => this.chessBoard[row][col];
+  getSquareByIndex = (row: number, col: number) => {
+    if (this.chessBoard[row] === undefined) {
+      return undefined
+    };
+    return this.chessBoard[row][col];
+  }
+
 
   getSquareIndex = (square: string) => {
     const rowNumber = Constants.rowNumbers - (+square[1]);
@@ -52,25 +62,49 @@ export default class NewChess {
     return `${letter}${number}x`;
   }
 
-  checkFigureMoves = (square: string) => {
-    const ableMoves = [];
+  moves = (square: string) => {
+    const ableMoves: string[] = [];
     const figure = this.getSquare(square)?.type;
     if (figure !== null) {
       switch (figure) {
         case 'r': {
           const [rowNumber, colNumber] = this.getSquareIndex(square);
           let i = rowNumber - 1;
-          if (this.getSquareByIndex(i, colNumber) === null) {
-            while (this.getSquareByIndex(i, colNumber) === null) {
-              ableMoves.push(this.getSquareNameByIndex(i, colNumber))
-              i -= 1;
-            }
-          }
-          i = rowNumber - 1;
-          while (this.getSquareByIndex(i, colNumber)?.color !== this.oppositeColor()) {
+          while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
             ableMoves.push(this.getSquareNameByIndex(i, colNumber))
             i -= 1;
           }
+          if (this.getSquareByIndex(i, colNumber) !== undefined && this.getSquareByIndex(i, colNumber)?.color === this.oppositeColor()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
+          }
+
+          i = rowNumber + 1;
+          while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
+            ableMoves.push(this.getSquareNameByIndex(i, colNumber))
+            i += 1;
+          }
+          if (this.getSquareByIndex(i, colNumber) !== undefined && this.getSquareByIndex(i, colNumber)?.color === this.oppositeColor()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
+          }
+
+
+          i = colNumber - 1;
+          while (this.getSquareByIndex(rowNumber, i) === null) {
+            ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
+            i -= 1;
+          }
+          if (this.getSquareByIndex(rowNumber, i) !== undefined && this.getSquareByIndex(rowNumber, i)?.color === this.oppositeColor()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
+          }
+          i = colNumber + 1;
+          while (this.getSquareByIndex(rowNumber, i) === null) {
+            ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
+            i += 1;
+          }
+          if (this.getSquareByIndex(rowNumber, i) !== undefined && this.getSquareByIndex(rowNumber, i)?.color === this.oppositeColor()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
+          }
+          console.log(ableMoves);
         }
           break;
 
@@ -95,5 +129,5 @@ export default class NewChess {
   oppositeColor = () =>
     (this.activePlayer === ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
 
-
+  history = () => this.gameHistory;
 }

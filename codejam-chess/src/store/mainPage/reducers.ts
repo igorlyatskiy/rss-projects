@@ -1,11 +1,6 @@
 import NewChess from '../../chess.js/chess';
-import Constants, { UserAction } from '../../components/Constants';
+import Constants from '../../components/Constants';
 import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
-
-const Chess = require('chess.js');
-
-const newChess = new NewChess();
-console.log(newChess);
 
 const defaultState = {
   players:
@@ -30,7 +25,7 @@ const defaultState = {
   game: {
     history: [],
     data: [[]],
-    chess: new Chess(),
+    chess: new NewChess(),
     timerFunction: 0,
     time: Constants.startTimeValue,
     isGamePageActive: false,
@@ -44,7 +39,7 @@ const defaultState = {
   winnerId: 0
 }
 
-const mainPageReducer = (paramState = defaultState, action: UserAction) => {
+const mainPageReducer = (paramState = defaultState, action: any) => {
   const state = { ...paramState };
   switch (action.type) {
     case MAIN_EDIT_NAME: {
@@ -168,7 +163,7 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
     }
 
     case GAME_GET_VALID_MOVES: {
-      const validMoves = state.game.chess.moves({ square: action.payload });
+      const validMoves = state.game.chess.moves(action.payload);
       console.log(validMoves);
       return {
         ...state,
@@ -207,7 +202,7 @@ const mainPageReducer = (paramState = defaultState, action: UserAction) => {
         activePlayerId: (state.activePlayerId === 1) ? 2 : 1,
         game: {
           ...state.game,
-          history: state.game.chess.history({ verbose: true }),
+          history: state.game.chess.history(),
           historyTime: [
             ...state.game.historyTime,
             state.game.time

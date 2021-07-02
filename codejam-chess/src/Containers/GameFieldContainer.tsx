@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import NewChess from "../chess.js/chess";
 import { FigureData } from "../components/Constants";
 import GameField from "../components/pages/Game/Field/GameField";
 import {
@@ -10,15 +11,13 @@ import {
   turnMove,
 } from "../store/mainPage/actions";
 
-const Chess = require("chess.js");
-
 interface GameFieldContainerProps {
   data: FigureData[][];
   getValidMovesFunc: (square: string) => void;
   validMoves: string[];
   activePlayerId: number;
   isGameProcessActive: boolean;
-  chess: typeof Chess;
+  chess: NewChess;
   cleanValidMovesFunc: () => void;
   drawFieldFunc: () => void;
   turnMoveFunc: () => void;

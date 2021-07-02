@@ -1,4 +1,5 @@
 import React from "react";
+import NewChess from "../../../../../chess.js/chess";
 import Constants, { FigureData } from "../../../../Constants";
 import Bishop from "../../../../Figures/Bishop/Bishop";
 import King from "../../../../Figures/King/King";
@@ -8,8 +9,6 @@ import Queen from "../../../../Figures/Queen/Queen";
 import Rook from "../../../../Figures/Rook/Rook";
 import "./Figure.sass";
 
-const Chess = require("chess.js");
-
 interface FigureProps {
   element: FigureData;
   elementNumber: number;
@@ -17,7 +16,7 @@ interface FigureProps {
   position: string;
   activePlayerId: number;
   isGameProcessActive: boolean;
-  chess: typeof Chess;
+  chess: NewChess;
   checkValidMoves: (square: string) => void;
   cleanValidMoves: () => void;
   drawField: () => void;
