@@ -33,10 +33,12 @@ const defaultState = {
     validMoves: [],
     areMarkersVisible: true,
     historyTime: [],
-    areFieldMarkersVisible: true
+    areFieldMarkersVisible: true,
+    kingPosition: '',
+    checkSquares: ['']
   },
   isUserLogined: false,
-  winnerId: 0
+  winnerId: 0,
 }
 
 const mainPageReducer = (paramState = defaultState, action: any) => {
@@ -197,6 +199,10 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_TURN_MOVE: {
       state.game.chess.turn();
+      console.log(state.game.chess.chess.inCheck());
+      if (state.game.chess.chess.inCheck()) {
+        console.log(state.game.chess.checkSquares);
+      }
       return {
         ...state,
         activePlayerId: (state.activePlayerId === 1) ? 2 : 1,
