@@ -1,4 +1,4 @@
-import { Chess, PartialMove, Piece } from '@lubert/chess.ts'
+import { Chess, PartialMove } from '@lubert/chess.ts'
 import Constants from '../components/Constants';
 import ChessConstants from "./Constants";
 
@@ -11,8 +11,8 @@ export default class NewChess {
   turn = () => {
     const returnValue = this.chess.turn();
     this.activePlayer = returnValue;
+    this.checkSquares = [];
     if (this.chess.inCheck()) {
-      this.getCheckMoves()
       if (this.chess.inCheckmate()) {
         console.log('checkmate');
       } else {
@@ -66,13 +66,11 @@ export default class NewChess {
   history = () => this.chess.history();
 
   getKingPosition = () => {
-    this.checkSquares = [];
-    const king = this.chess.board().flat().find((e: Piece | null) => e?.color === this.activePlayer && e.type === 'k');
     let kingRow
     let kingCol;
     for (let i = 0; i < Constants.rowNumbers; i += 1) {
       for (let j = 0; j < Constants.rowNumbers; j += 1) {
-        if (this.chess.board()[i][j] === king) {
+        if (this.chess.board()[i][j]?.color === this.activePlayer && this.chess.board()[i][j]?.type === 'k') {
           kingRow = i;
           kingCol = j;
         }
@@ -138,7 +136,7 @@ export default class NewChess {
           for (let i = -1; i <= 1; i += 1) {
             for (let j = -1; j <= 1; j += 1) {
               if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
-                ableMoves.push(this.getSquareNameByIndex(rowNumber + i, colNumber + j))
+                ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j))
               }
             }
           }
@@ -163,7 +161,7 @@ export default class NewChess {
           while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
             i += 1;
           }
-          if (this.getSquareByIndex(i, colNumber) === this.getKingPosition()) {
+          if (this.getSquareNameByIndex(i, colNumber) === this.getKingPosition()) {
             ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
             i = rowNumber + 1
             while (this.getSquareNameByIndex(i, colNumber) !== this.getKingPosition()) {
@@ -177,12 +175,12 @@ export default class NewChess {
           while (this.getSquareByIndex(rowNumber, i) === null) {
             i -= 1;
           }
-          if (this.getSquareByIndex(rowNumber, i) === this.getKingPosition()) {
-            i = colNumber - 1;
+          if (this.getSquareNameByIndex(rowNumber, i) === this.getKingPosition()) {
             ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
-            while (this.getSquareByIndex(rowNumber, i) !== this.getKingPosition()) {
+            i = colNumber - 1;
+            while (this.getSquareNameByIndex(rowNumber, i) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(rowNumber, i));
               i -= 1;
-              ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
             }
           }
 
@@ -191,189 +189,258 @@ export default class NewChess {
           while (this.getSquareByIndex(rowNumber, i) === null) {
             i += 1;
           }
-          if (this.getSquareByIndex(rowNumber, i) === this.getKingPosition()) {
+          if (this.getSquareNameByIndex(rowNumber, i) === this.getKingPosition()) {
             ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
-            while (this.getSquareByIndex(rowNumber, i) !== this.getKingPosition()) {
+            i = colNumber + 1;
+            while (this.getSquareNameByIndex(rowNumber, i) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(rowNumber, i));
               i += 1;
-              ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
+            }
+          }
+
+        }
+          break;
+
+        case 'n': {
+          let i = 2;
+          let j = 1;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = 1;
+          j = 2;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = -1;
+          j = 2;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = -2;
+          j = 1;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = -1;
+          j = -2;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = -2;
+          j = -1;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = 1;
+          j = -2;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+          i = 2;
+          j = -1;
+          if (this.getSquareNameByIndex(rowNumber + i, colNumber + j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
+          }
+        }
+          break;
+
+        case 'b': {
+          let i = rowNumber - 1;
+          let j = colNumber - 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i -= 1;
+            j -= 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber - 1;
+            j = colNumber - 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i -= 1;
+              j -= 1;
+            }
+          }
+
+          i = rowNumber + 1;
+          j = colNumber - 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i += 1;
+            j -= 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber + 1;
+            j = colNumber - 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i += 1;
+              j -= 1;
+            }
+          }
+
+          i = rowNumber - 1;
+          j = colNumber + 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i -= 1;
+            j += 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber - 1;
+            j = colNumber + 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i -= 1;
+              j += 1;
+            }
+          }
+
+          i = rowNumber + 1;
+          j = colNumber + 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i += 1;
+            j += 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber + 1;
+            j = colNumber + 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i += 1;
+              j += 1;
             }
           }
         }
           break;
 
-        // case 'n': {
-        //   let i = 2;
-        //   let j = 1;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = 1;
-        //   j = 2;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = -1;
-        //   j = 2;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = -2;
-        //   j = 1;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = -1;
-        //   j = -2;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = -2;
-        //   j = -1;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = 1;
-        //   j = -2;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        //   i = 2;
-        //   j = -1;
-        //   if (this.getSquareByIndex(rowNumber + i, colNumber + j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber + i, colNumber + j));
-        //   }
-        // }
-        //   break;
-
-        // case 'b': {
-        //   let i = rowNumber - 1;
-        //   let j = colNumber - 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i -= 1;
-        //     j -= 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber + 1;
-        //   j = colNumber - 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i += 1;
-        //     j -= 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber - 1;
-        //   j = colNumber + 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i -= 1;
-        //     j += 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber + 1;
-        //   j = colNumber + 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i += 1;
-        //     j += 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-        // }
-        //   break;
-
-        // case 'q': {
-        //   let i = rowNumber - 1;
-        //   let j = colNumber - 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i -= 1;
-        //     j -= 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber + 1;
-        //   j = colNumber - 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i += 1;
-        //     j -= 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber - 1;
-        //   j = colNumber + 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i -= 1;
-        //     j += 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber + 1;
-        //   j = colNumber + 1;
-        //   while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, j))
-        //     i += 1;
-        //     j += 1;
-        //   }
-        //   if (this.getSquareByIndex(i, j) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, j));
-        //   }
-
-        //   i = rowNumber - 1;
-        //   while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, colNumber))
-        //     i -= 1;
-        //   }
-        //   if (this.getSquareByIndex(i, colNumber) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
-        //   }
-
-        //   i = rowNumber + 1;
-        //   while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
-        //     ableMoves.push(this.getSquareNameByIndex(i, colNumber))
-        //     i += 1;
-        //   }
-        //   if (this.getSquareByIndex(i, colNumber) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
-        //   }
+        case 'q': {
+          let i = rowNumber - 1;
+          let j;
+          while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
+            i -= 1;
+          }
+          if (this.getSquareNameByIndex(i, colNumber) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
+            i = rowNumber - 1;
+            while (this.getSquareNameByIndex(i, colNumber) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, colNumber))
+              i -= 1;
+            }
+          }
 
 
-        //   i = colNumber - 1;
-        //   while (this.getSquareByIndex(rowNumber, i) === null) {
-        //     ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
-        //     i -= 1;
-        //   }
-        //   if (this.getSquareByIndex(rowNumber, i) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
-        //   }
-        //   i = colNumber + 1;
-        //   while (this.getSquareByIndex(rowNumber, i) === null) {
-        //     ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
-        //     i += 1;
-        //   }
-        //   if (this.getSquareByIndex(rowNumber, i) !== undefined) {
-        //     ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
-        //   }
-        // }
-        //   break;
+          i = rowNumber + 1;
+          while (this.getSquareByIndex(i, colNumber) === null && i >= 0 && i < Constants.rowNumbers) {
+            i += 1;
+          }
+          if (this.getSquareNameByIndex(i, colNumber) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
+            i = rowNumber + 1
+            while (this.getSquareNameByIndex(i, colNumber) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, colNumber))
+              i += 1;
+            }
+          }
+
+
+          i = colNumber - 1;
+          while (this.getSquareByIndex(rowNumber, i) === null) {
+            i -= 1;
+          }
+          if (this.getSquareNameByIndex(rowNumber, i) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
+            i = colNumber - 1;
+            while (this.getSquareNameByIndex(rowNumber, i) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(rowNumber, i));
+              i -= 1;
+            }
+          }
+
+
+          i = colNumber + 1;
+          while (this.getSquareByIndex(rowNumber, i) === null) {
+            i += 1;
+          }
+          if (this.getSquareNameByIndex(rowNumber, i) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
+            i = colNumber + 1;
+            while (this.getSquareNameByIndex(rowNumber, i) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(rowNumber, i));
+              i += 1;
+            }
+          }
+          i = rowNumber - 1;
+          j = colNumber - 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i -= 1;
+            j -= 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber - 1;
+            j = colNumber - 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i -= 1;
+              j -= 1;
+            }
+          }
+
+          i = rowNumber + 1;
+          j = colNumber - 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i += 1;
+            j -= 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber + 1;
+            j = colNumber - 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i += 1;
+              j -= 1;
+            }
+          }
+
+          i = rowNumber - 1;
+          j = colNumber + 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i -= 1;
+            j += 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber - 1;
+            j = colNumber + 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i -= 1;
+              j += 1;
+            }
+          }
+
+          i = rowNumber + 1;
+          j = colNumber + 1;
+          while (this.getSquareByIndex(i, j) === null && i >= 0 && i < Constants.rowNumbers && j >= 0 && j < Constants.rowNumbers) {
+            i += 1;
+            j += 1;
+          }
+          if (this.getSquareNameByIndex(i, j) === this.getKingPosition()) {
+            ableMoves.push(this.getAttackedNameByIndex(i, j));
+            i = rowNumber + 1;
+            j = colNumber + 1;
+            while (this.getSquareNameByIndex(i, j) !== this.getKingPosition()) {
+              ableMoves.push(this.getSquareNameByIndex(i, j))
+              i += 1;
+              j += 1;
+            }
+          }
+        }
+          break;
 
         default:
           break;
@@ -387,11 +454,13 @@ export default class NewChess {
     this.checkSquares = [];
     this.chess.board().forEach((row, rowIndex) => {
       row.forEach((element, elementIndex) => {
-        if (element?.color === this.activePlayer) {
-          const moves = this.getAttackCheckMoves(this.getSquareNameByIndex(rowIndex, elementIndex))
+        if (element?.color === this.oppositeColor()) {
+          const moves = this.getAttackCheckMoves(this.getSquareNameByIndex(rowIndex, elementIndex));
           this.checkSquares.push(...moves);
         }
       })
     })
   }
+
+  oppositeColor = () => (this.activePlayer === ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
 }

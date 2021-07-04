@@ -23,6 +23,7 @@ interface GameFieldContainerProps {
   turnMoveFunc: () => void;
   areFieldMarkersVisible: boolean;
   makeFieldMarkersVisibleFunc: () => void;
+  squaresThatMadeCheck: string[];
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -39,6 +40,7 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       drawFieldFunc,
       areFieldMarkersVisible,
       makeFieldMarkersVisibleFunc,
+      squaresThatMadeCheck
     } = this.props;
     return (
       <GameField
@@ -53,6 +55,7 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         turnMove={turnMoveFunc}
         areFieldMarkersVisible={areFieldMarkersVisible}
         makeFieldMarkersVisible={makeFieldMarkersVisibleFunc}
+        squaresThatMadeCheck={squaresThatMadeCheck}
       />
     );
   }
@@ -67,6 +70,7 @@ const pushStateToProps = (state: any) => {
     isGameProcessActive: mainPageReducer.game.isGameProcessActive,
     chess: mainPageReducer.game.chess,
     areFieldMarkersVisible: mainPageReducer.game.areFieldMarkersVisible,
+    squaresThatMadeCheck: mainPageReducer.game.checkSquares,
   };
 };
 

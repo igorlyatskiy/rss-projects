@@ -18,6 +18,7 @@ interface GameFieldProps {
   turnMove: () => void;
   makeFieldMarkersVisible: () => void;
   areFieldMarkersVisible: boolean;
+  squaresThatMadeCheck: string[];
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -45,6 +46,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       turnMove,
       areFieldMarkersVisible,
       makeFieldMarkersVisible,
+      squaresThatMadeCheck
     } = this.props;
     return (
       <div className='field-container'>
@@ -59,6 +61,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                   elementNumber={elementNumber}
                   rowNumber={rowNumber}
                   position={this.getPositionKey(rowNumber, elementNumber)}
+                  squaresThatMadeCheck={squaresThatMadeCheck}
                 />
               ))}
             </div>

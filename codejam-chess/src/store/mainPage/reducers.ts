@@ -199,10 +199,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_TURN_MOVE: {
       state.game.chess.turn();
-      console.log(state.game.chess.chess.inCheck());
-      if (state.game.chess.chess.inCheck()) {
-        console.log(state.game.chess.checkSquares);
-      }
+      state.game.checkSquares = state.game.chess.checkSquares;
       return {
         ...state,
         activePlayerId: (state.activePlayerId === 1) ? 2 : 1,
