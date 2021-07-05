@@ -218,7 +218,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
             ...state.game.historyTime,
             state.game.time
           ],
-          areFieldMarkersVisible: false
+          areFieldMarkersVisible: false,
+          isGameProcessActive: !isGameFinished
         },
         winnerId: isGameFinished ? state.activePlayerId : 0
       }
