@@ -28,15 +28,23 @@
       background: #85CDCA
     &_reversed
       transform: rotateX(180deg)
+    &_checkmated
+      .field__dot
+        opacity: 0.5
+        background: rgba(255, 0, 0, 0)
+        border: 4px solid rgb(255, 0, 0)
+        width: 100%
+        height: 100%
+        border-radius: 0
     &_attacked
       .field__dot
         opacity: 0.5
-        background: rgb(255, 0, 0)
+        background: rgb(255, 166, 0)
     &_king-attacked
       .field__dot
         opacity: 0.8
         background: rgba(255, 0, 0, 0)
-        border: 4px solid rgb(255, 0, 0)
+        border: 4px solid rgb(255, 153, 0)
         width: 100%
         height: 100%
         border-radius: 0
@@ -56,7 +64,14 @@
           border: 10px solid black
           width: 100%
           height: 100%
-
+    &_king-checkmated
+      .field__dot
+        opacity: 1
+        background: rgba(255, 0, 0, 0)
+        border: 4px solid rgb(255, 0, 0)
+        width: 100%
+        height: 100%
+        border-radius: 0
   .field__dot
     width: 20px
     height: 20px

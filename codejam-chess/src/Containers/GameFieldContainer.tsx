@@ -8,6 +8,7 @@ import {
   cleanValidMoves,
   drawField,
   makeFieldMarkersVisible,
+  setWinner,
   turnMove,
 } from "../store/mainPage/actions";
 
@@ -24,6 +25,8 @@ interface GameFieldContainerProps {
   areFieldMarkersVisible: boolean;
   makeFieldMarkersVisibleFunc: () => void;
   squaresThatMadeCheck: string[];
+  squaresThatMadeCheckMate: string[];
+  setWinnerFunc: (id: number) => void;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -40,7 +43,9 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       drawFieldFunc,
       areFieldMarkersVisible,
       makeFieldMarkersVisibleFunc,
-      squaresThatMadeCheck
+      squaresThatMadeCheck,
+      squaresThatMadeCheckMate,
+      setWinnerFunc
     } = this.props;
     return (
       <GameField
@@ -56,6 +61,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         areFieldMarkersVisible={areFieldMarkersVisible}
         makeFieldMarkersVisible={makeFieldMarkersVisibleFunc}
         squaresThatMadeCheck={squaresThatMadeCheck}
+        squaresThatMadeCheckMate={squaresThatMadeCheckMate}
+        setWinner={setWinnerFunc}
       />
     );
   }
@@ -71,6 +78,7 @@ const pushStateToProps = (state: any) => {
     chess: mainPageReducer.game.chess,
     areFieldMarkersVisible: mainPageReducer.game.areFieldMarkersVisible,
     squaresThatMadeCheck: mainPageReducer.game.checkSquares,
+    squaresThatMadeCheckMate: mainPageReducer.game.checkmateSquares,
   };
 };
 
@@ -80,6 +88,7 @@ const mapDispatchToProps = {
   drawFieldFunc: drawField,
   turnMoveFunc: turnMove,
   makeFieldMarkersVisibleFunc: makeFieldMarkersVisible,
+  setWinnerFunc: setWinner,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(GameFieldContainer);

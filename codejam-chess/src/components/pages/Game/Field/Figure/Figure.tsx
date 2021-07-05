@@ -22,6 +22,7 @@ interface FigureProps {
   drawField: () => void;
   turnMove: () => void;
   makeFieldMarkersVisible: () => void;
+  setWinner: (id: number) => void;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {

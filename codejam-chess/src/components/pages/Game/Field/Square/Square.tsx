@@ -6,6 +6,7 @@ interface SquareProps {
   position: string;
   validMoves: string[];
   squaresThatMadeCheck: string[];
+  squaresThatMadeCheckMate: string[];
 }
 
 export default class Square extends React.PureComponent<SquareProps> {
@@ -20,7 +21,7 @@ export default class Square extends React.PureComponent<SquareProps> {
   };
 
   render() {
-    const { validMoves, position,squaresThatMadeCheck } = this.props;
+    const { validMoves, position, squaresThatMadeCheck, squaresThatMadeCheckMate } = this.props;
     return (
       <div
         className={`${this.checkClassName()}
@@ -30,9 +31,10 @@ export default class Square extends React.PureComponent<SquareProps> {
               ? "  field__element_active-castling"
               : " "
           }
-          ${squaresThatMadeCheck.includes(position)?' field__element_attacked':''}
-          ${squaresThatMadeCheck.includes(`${position}x`)?' field__element_king-attacked':''}
-
+          ${squaresThatMadeCheck.includes(position) ? " field__element_attacked" : ""}
+          ${squaresThatMadeCheck.includes(`${position}x`) ? " field__element_king-attacked" : ""}
+          ${squaresThatMadeCheckMate.includes(position) ? " field__element_checkmated" : ""}
+          ${squaresThatMadeCheckMate.includes(`${position}!`) ? " field__element_king-checkmated" : ""}
           `}
       >
         <div className={validMoves.includes(`${position}x`) ? "field__dot field__dot_damaged" : "field__dot"} />

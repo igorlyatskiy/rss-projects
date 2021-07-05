@@ -35,7 +35,8 @@ const defaultState = {
     historyTime: [],
     areFieldMarkersVisible: true,
     kingPosition: '',
-    checkSquares: ['']
+    checkSquares: [''],
+    checkmateSquares: [''],
   },
   isUserLogined: false,
   winnerId: 0,
@@ -134,7 +135,9 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           isGameProcessActive: false,
           timerFunction: 0,
           historyTime: [],
-          history: []
+          history: [],
+          checkmateSquares: [],
+          checkSquares: []
         },
         winnerId: 0
       }
@@ -199,7 +202,12 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_TURN_MOVE: {
       state.game.chess.turn();
-      state.game.checkSquares = state.game.chess.checkSquares;
+      state.game.checkSquares = [...state.game.chess.checkSquares];
+      state.game.checkmateSquares = [...state.game.chess.checkmateSquares];
+      const isGameFinished = state.game.chess.chess.inCheckmate()
+      if (isGameFinished) {
+        window.clearInterval(state.game.timerFunction)
+      }
       return {
         ...state,
         activePlayerId: (state.activePlayerId === 1) ? 2 : 1,
@@ -211,7 +219,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
             state.game.time
           ],
           areFieldMarkersVisible: false
-        }
+        },
+        winnerId: isGameFinished ? state.activePlayerId : 0
       }
     }
 
