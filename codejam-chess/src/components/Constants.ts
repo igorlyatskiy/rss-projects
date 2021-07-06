@@ -43,6 +43,10 @@ export interface HistoryElement {
 }
 
 export default class Constants {
+  static NOT_AI_PLAYER_ID = 1;
+  static PVP_OFFLINE_NAME = 'pvp-offline'
+  static PVP_ONLINE_NAME = 'pvp-offline'
+  static AI_NAME = 'ai'
   static FIGURES_NAMES = {
     BISHOP: 'b',
     KING: 'k',

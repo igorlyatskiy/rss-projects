@@ -14,6 +14,7 @@ export const GAME_DRAW_FIELD = 'GAME_DRAW_FIELD'
 export const GAME_TURN_MOVE = 'GAME_TURN_MOVE';
 export const GAME_MAKE_FIELD_MARKERS_VISIBLE = 'GAME_MAKE_FIELD_MARKERS_VISIBLE';
 export const GAME_MAKE_FIELD_MARKERS_INVISIBLE = 'GAME_MAKE_FIELD_MARKERS_INVISIBLE';
+export const GAME_TURN_AI_MOVE = 'GAME_TURN_AI_MOVE';
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -77,6 +78,11 @@ export const drawField = () => ({
 
 export const turnMove = () => ({
   type: GAME_TURN_MOVE,
+  payload: true
+})
+
+export const turnAiMove = () => ({
+  type: GAME_TURN_AI_MOVE,
   payload: true
 })
 

@@ -20,10 +20,12 @@ interface FigureProps {
   checkValidMoves: (square: string) => void;
   cleanValidMoves: () => void;
   drawField: () => void;
+  turnAiMove: () => void;
   turnMove: () => void;
   makeFieldMarkersVisible: () => void;
   setWinner: (id: number) => void;
   players: PlayerData[];
+  gameType: string;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -55,7 +57,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   mouseDown = (e: any) => {
     const { currentTarget } = e;
-    const { checkValidMoves, position, activePlayerId,players } = this.props;
+    const { checkValidMoves, position, activePlayerId, players } = this.props;
     checkValidMoves(position);
 
     const coords = {
@@ -75,7 +77,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
     const startPageX = e.pageX;
     const startPageY = e.pageY;
 
-    const reverseCoef = players[activePlayerId-1].color === 'w' ? 1 : -1;
+    const reverseCoef = players[activePlayerId - 1].color === "w" ? 1 : -1;
 
     const moveAt = (event: MouseEvent) => {
       currentTarget.style.left = `${startPageX - reverseCoef * (startPageX - event.pageX) - shiftX - startX}px`;
@@ -100,7 +102,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   checkMove = (paramTarget: HTMLElement, startTop: number, startLeft: number) => {
     const currentTarget = paramTarget;
-    const { position, chess, drawField, turnMove } = this.props;
+    const { position, chess, drawField, turnMove, gameType, turnAiMove } = this.props;
     const moveToBottom = (startTop - parseFloat(currentTarget.style.top)) / Constants.squareSize;
     const moveToRight = (startLeft - parseFloat(currentTarget.style.left)) / Constants.squareSize;
     const newPosition = `${Constants.letters[Constants.letters.indexOf(position[0]) - moveToRight]}${
@@ -108,10 +110,14 @@ export default class Figure extends React.PureComponent<FigureProps> {
     }`;
 
     const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
-    console.log(moveStatus);
     if (moveStatus) {
       drawField();
-      turnMove();
+      if (gameType === Constants.AI_NAME) {
+        turnAiMove();
+      }
+      if (gameType === Constants.PVP_OFFLINE_NAME) {
+        turnMove();
+      }
     } else {
       currentTarget.style.left = `${startLeft}px`;
       currentTarget.style.top = `${startTop}px`;

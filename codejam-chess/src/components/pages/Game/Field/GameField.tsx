@@ -16,12 +16,14 @@ interface GameFieldProps {
   cleanValidMoves: () => void;
   drawField: () => void;
   turnMove: () => void;
+  turnAiMove: () => void;
   makeFieldMarkersVisible: () => void;
   areFieldMarkersVisible: boolean;
   squaresThatMadeCheck: string[];
   squaresThatMadeCheckMate: string[];
   setWinner: (id: number) => void;
   players: PlayerData[];
+  gameType: string;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -53,12 +55,25 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       squaresThatMadeCheckMate,
       setWinner,
       players,
+      gameType,
+      turnAiMove,
     } = this.props;
-    const player = players.find((e) => e.id === activePlayerId) || { color: null };
+    const player = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
+    const notAiPlayer = players.find((e) => e.id === Constants.NOT_AI_PLAYER_ID) || { color: null, id: null };
     return (
       <div className='field-container'>
-        <FieldMarkers activePlayerId={activePlayerId} players={players} areFieldMarkersVisible={areFieldMarkersVisible} />
-        <div className={`field${player.color === "w" ? "" : " field_rotated"}`}>
+        <FieldMarkers
+          activePlayerId={activePlayerId}
+          players={players}
+          areFieldMarkersVisible={areFieldMarkersVisible}
+        />
+        <div
+          className={`field
+        ${gameType !== "pvp-offline" && notAiPlayer.color === "b" ? " field_rotated" : ""}
+        ${gameType !== "pvp-offline" && player.id === 2 ? " field_blocked" : ""}
+        ${gameType === "pvp-offline" && player.color === "w" ? " field_rotated" : " "}
+        `}
+        >
           {data.map((row, rowNumber) => (
             <div key={this.getKeyNumber()} className='field__row'>
               {row.map((element, elementNumber) => (
@@ -95,6 +110,8 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                       makeFieldMarkersVisible={makeFieldMarkersVisible}
                       setWinner={setWinner}
                       players={players}
+                      gameType={gameType}
+                      turnAiMove={turnAiMove}
                     />
                   )
               )}

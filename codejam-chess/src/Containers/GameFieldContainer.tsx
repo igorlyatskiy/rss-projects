@@ -9,6 +9,7 @@ import {
   drawField,
   makeFieldMarkersVisible,
   setWinner,
+  turnAiMove,
   turnMove,
 } from "../store/mainPage/actions";
 
@@ -27,7 +28,9 @@ interface GameFieldContainerProps {
   squaresThatMadeCheck: string[];
   squaresThatMadeCheckMate: string[];
   setWinnerFunc: (id: number) => void;
-  players: PlayerData[]
+  players: PlayerData[];
+  gameType: string;
+  turnAiMoveFunc: () => void;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -47,7 +50,9 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       squaresThatMadeCheck,
       squaresThatMadeCheckMate,
       setWinnerFunc,
-      players
+      players,
+      gameType,
+      turnAiMoveFunc
     } = this.props;
     return (
       <GameField
@@ -66,6 +71,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         squaresThatMadeCheckMate={squaresThatMadeCheckMate}
         setWinner={setWinnerFunc}
         players={players}
+        gameType={gameType}
+        turnAiMove={turnAiMoveFunc}
       />
     );
   }
@@ -82,7 +89,8 @@ const pushStateToProps = (state: any) => {
     areFieldMarkersVisible: mainPageReducer.game.areFieldMarkersVisible,
     squaresThatMadeCheck: mainPageReducer.game.checkSquares,
     squaresThatMadeCheckMate: mainPageReducer.game.checkmateSquares,
-    players: mainPageReducer.players
+    players: mainPageReducer.players,
+    gameType: mainPageReducer.game.gameType,
   };
 };
 
@@ -91,6 +99,7 @@ const mapDispatchToProps = {
   cleanValidMovesFunc: cleanValidMoves,
   drawFieldFunc: drawField,
   turnMoveFunc: turnMove,
+  turnAiMoveFunc: turnAiMove,
   makeFieldMarkersVisibleFunc: makeFieldMarkersVisible,
   setWinnerFunc: setWinner,
 };

@@ -30,14 +30,13 @@ export default class NewChess {
 
   reset = () => this.chess.reset();
 
-  moves = (data: string) => {
-    const moves = this.chess.moves({ square: data });
-    console.log(moves);
+  moves = (data?: string) => {
+    const moves = (data) ? this.chess.moves({ square: data }) : this.chess.moves();
     return moves
       .map((e) => {
         const reg = /\w\d/g;
         const result: any = e.match(reg);
-        if(e.includes('=Q')){
+        if (e.includes('=Q')) {
           return `${result[0]}x=`;
         }
         if (e.includes('x')) {
@@ -537,7 +536,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(rowNumber, i))) {
               ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
             }
-            i = rowNumber - 1;
+            i = colNumber - 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(rowNumber, i)) && this.getSquareByIndex(rowNumber, i) === null) {
               ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
               i -= 1;
@@ -546,7 +545,7 @@ export default class NewChess {
 
 
           i = colNumber + 1;
-          while (this.getSquareByIndex(rowNumber, i) === null) {
+          while (!kingMoves.includes(this.getSquareNameByIndex(rowNumber, i)) && this.getSquareByIndex(rowNumber, i) === null) {
             i += 1;
           }
           if (kingMoves.includes(this.getSquareNameByIndex(rowNumber, i))) {
@@ -863,7 +862,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(rowNumber, i))) {
               ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
             }
-            i = rowNumber - 1;
+            i = colNumber - 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(rowNumber, i)) && this.getSquareByIndex(rowNumber, i) === null) {
               ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
               i -= 1;
@@ -872,7 +871,7 @@ export default class NewChess {
 
 
           i = colNumber + 1;
-          while (this.getSquareByIndex(rowNumber, i) === null) {
+          while (!kingMoves.includes(this.getSquareNameByIndex(rowNumber, i)) && this.getSquareByIndex(rowNumber, i) === null) {
             i += 1;
           }
           if (kingMoves.includes(this.getSquareNameByIndex(rowNumber, i))) {
@@ -937,4 +936,23 @@ export default class NewChess {
   }
 
   oppositeColor = () => (this.activePlayer === ChessConstants.WHITE) ? ChessConstants.BLACK : ChessConstants.WHITE;
+
+  moveAI = (level: number) => {
+    switch (level) {
+      case 1:
+        this.makeRandomAiMove()
+        break;
+      default:
+        break;
+    }
+    this.turn();
+  }
+
+  makeRandomAiMove = () => {
+    const moves = this.chess.moves();
+    console.log('total AI moves: ', moves);
+    const move = moves[Math.floor(Math.random() * moves.length)]
+    this.move(move)
+    console.log(this.move(move))
+  }
 }

@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const defaultState = {
   players:
@@ -39,7 +39,8 @@ const defaultState = {
     checkmateSquares: [''],
     arePlayersColorsReversed: true,
     areRandomSidexEnabled: true,
-    AILevel: 1
+    AILevel: 1,
+    gameType: Constants.AI_NAME
   },
   isUserLogined: false,
   winnerId: 0,
@@ -102,20 +103,30 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_START_GAME: {
-      let firstPlayerColor = 'w';
+      let firstPlayerColor = Constants.FIGURES_COLORS_NAMES.white;
       if (state.game.areRandomSidexEnabled && Math.random() - 0.5 >= 0) {
-        firstPlayerColor = 'b'
+        firstPlayerColor = Constants.FIGURES_COLORS_NAMES.black
+      }
+      if (firstPlayerColor === Constants.FIGURES_COLORS_NAMES.black && state.game.gameType === Constants.AI_NAME) {
+        state.game.chess.moveAI(state.game.AILevel);
+      }
+      let timeHistory: number[] = [];
+      if (state.game.gameType === Constants.AI_NAME) {
+        if (firstPlayerColor === Constants.FIGURES_COLORS_NAMES.black) {
+          timeHistory = [0]
+        }
       }
       return {
         ...state,
         players: [
           {
-            ...state.players[0],
+            ...state.players.find((e) => e.id === 1),
             color: firstPlayerColor
           },
           {
-            ...state.players[1],
-            color: firstPlayerColor === 'w' ? 'b' : 'w'
+            ...state.players.find((e) => e.id === 2),
+            color: firstPlayerColor === Constants.FIGURES_COLORS_NAMES.white ? Constants.FIGURES_COLORS_NAMES.black : Constants.FIGURES_COLORS_NAMES.white,
+            name: state.game.gameType === Constants.AI_NAME ? 'AI Bot' : state.players.find((e) => e.id === 2)?.name
           }
         ],
         game: {
@@ -123,11 +134,14 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           data: state.game.chess.board(),
           time: 0,
           isGamePageActive: true,
-          isGameProcessActive: true
+          isGameProcessActive: true,
+          history: state.game.chess.history(),
+          historyTime: timeHistory
         },
         isUserLogined: true,
-        activePlayerId: firstPlayerColor === Constants.FIGURES_COLORS_NAMES.white ? 1 : 2,
-        winnerId: 0
+        activePlayerId: 1,
+        winnerId: 0,
+        draw: false
       }
     }
 
@@ -240,6 +254,40 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           ],
           areFieldMarkersVisible: false,
           isGameProcessActive: !isGameFinished
+        },
+        winnerId: state.game.chess.chess.inCheckmate() ? state.activePlayerId : 0,
+        draw
+      }
+    }
+
+    case GAME_TURN_AI_MOVE: {
+      state.game.chess.turn();
+      state.game.chess.moveAI(state.game.AILevel);
+      state.game.checkSquares = [...state.game.chess.checkSquares];
+      state.game.checkmateSquares = [...state.game.chess.checkmateSquares];
+      const isGameFinished = state.game.chess.chess.gameOver()
+      let draw = false;
+      if (isGameFinished) {
+        window.clearInterval(state.game.timerFunction)
+        draw = !state.game.chess.chess.inCheckmate();
+      }
+      return {
+        ...state,
+        activePlayerId: state.activePlayerId,
+        game: {
+          ...state.game,
+          history: state.game.chess.history(),
+          historyTime: isGameFinished ? [
+            ...state.game.historyTime,
+            state.game.time,
+          ] : [
+            ...state.game.historyTime,
+            state.game.time,
+            state.game.time,
+          ],
+          areFieldMarkersVisible: false,
+          isGameProcessActive: !isGameFinished,
+          data: state.game.chess.board()
         },
         winnerId: state.game.chess.chess.inCheckmate() ? state.activePlayerId : 0,
         draw
