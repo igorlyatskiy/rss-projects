@@ -7,9 +7,9 @@ export default class Game extends React.PureComponent {
   render() {
     return (
       <section className='game-page'>
-        <PlayerViewContainer propsId={1} />
-        <GameFieldContainer/>
-        <PlayerViewContainer propsId={2} />
+        <PlayerViewContainer propsColor='w' />
+        <GameFieldContainer />
+        <PlayerViewContainer propsColor='b' />
       </section>
     );
   }

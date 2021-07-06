@@ -16,26 +16,27 @@ interface PlayerViewProps {
   winnerId: number;
   activePlayerId: number;
   historyTime: number[];
+  draw: boolean;
+  arePlayersColorsReversed: boolean;
 }
 
 export default class PlayerView extends React.PureComponent<PlayerViewProps> {
   getFigure = (type: string) => {
     const { player } = this.props;
-    const playerColor = player.id === 1 ? Constants.FIGURES_COLORS_NAMES.white : Constants.FIGURES_COLORS_NAMES.black;
-    if (playerColor === "w" || playerColor === "b") {
+    if (player.color === "w" || player.color === "b") {
       switch (type) {
         case Constants.FIGURES_NAMES.BISHOP:
-          return <BishopSVG color={playerColor} />;
+          return <BishopSVG color={player.color} />;
         case Constants.FIGURES_NAMES.KING:
-          return <KingSVG color={playerColor} />;
+          return <KingSVG color={player.color} />;
         case Constants.FIGURES_NAMES.KNIGHT:
-          return <KnightSVG color={playerColor} />;
+          return <KnightSVG color={player.color} />;
         case Constants.FIGURES_NAMES.PAWN:
-          return <PawnSVG color={playerColor} />;
+          return <PawnSVG color={player.color} />;
         case Constants.FIGURES_NAMES.QUEEN:
-          return <QueenSVG color={playerColor} />;
+          return <QueenSVG color={player.color} />;
         case Constants.FIGURES_NAMES.ROOK:
-          return <RookSVG color={playerColor} />;
+          return <RookSVG color={player.color} />;
 
         default:
           return <div>Unexpected error</div>;
@@ -45,12 +46,14 @@ export default class PlayerView extends React.PureComponent<PlayerViewProps> {
   };
 
   render() {
-    const { player, history, winnerId, activePlayerId, historyTime } = this.props;
-    const playerColor = player.id === 1 ? Constants.FIGURES_COLORS_NAMES.white : Constants.FIGURES_COLORS_NAMES.black;
+    const { player, history, winnerId, activePlayerId, historyTime, draw } = this.props;
+    const playerColor = player.color;
     const playerHistory = history.filter((e: HistoryElement) => e.color === playerColor);
-    const playerHistoryTime = historyTime.filter((e, index) => index % 2 !== player.id % 2);
+    const playerHistoryTimeNumber = player.color === "w" ? 0 : 1;
+    const playerHistoryTime = historyTime.filter((e, i) => i % 2 === playerHistoryTimeNumber);
     return (
-      <div className={`player-view player-view_${player.id} ${winnerId === player.id ? "player-view_winner" : ""}`}>
+      <div className={`player-view player-view_${playerColor} ${winnerId === player.id ? "player-view_winner" : ""}`}>
+        {draw && <div className='player-view__draw'>No winner</div>}
         <img src={winnerIcon} alt='WinnerLogo' className='player-view__winner-icon' />
         <div className='player-view__image'>
           {String(player.name).split("")[0].toUpperCase()}

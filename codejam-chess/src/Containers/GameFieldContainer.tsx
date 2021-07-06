@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import NewChess from "../chess.js/chess";
-import { FigureData } from "../components/Constants";
+import { FigureData, PlayerData } from "../components/Constants";
 import GameField from "../components/pages/Game/Field/GameField";
 import {
   checkValidMoves,
@@ -27,6 +27,7 @@ interface GameFieldContainerProps {
   squaresThatMadeCheck: string[];
   squaresThatMadeCheckMate: string[];
   setWinnerFunc: (id: number) => void;
+  players: PlayerData[]
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -45,7 +46,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       makeFieldMarkersVisibleFunc,
       squaresThatMadeCheck,
       squaresThatMadeCheckMate,
-      setWinnerFunc
+      setWinnerFunc,
+      players
     } = this.props;
     return (
       <GameField
@@ -63,6 +65,7 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         squaresThatMadeCheck={squaresThatMadeCheck}
         squaresThatMadeCheckMate={squaresThatMadeCheckMate}
         setWinner={setWinnerFunc}
+        players={players}
       />
     );
   }
@@ -79,6 +82,7 @@ const pushStateToProps = (state: any) => {
     areFieldMarkersVisible: mainPageReducer.game.areFieldMarkersVisible,
     squaresThatMadeCheck: mainPageReducer.game.checkSquares,
     squaresThatMadeCheckMate: mainPageReducer.game.checkmateSquares,
+    players: mainPageReducer.players
   };
 };
 

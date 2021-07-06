@@ -1,6 +1,6 @@
 import React from "react";
 import NewChess from "../../../../chess.js/chess";
-import Constants, { FigureData } from "../../../Constants";
+import Constants, { FigureData, PlayerData } from "../../../Constants";
 import FieldMarkers from "./FieldMarkers/FieldMarkers";
 import Figure from "./Figure/Figure";
 import "./GameField.sass";
@@ -21,6 +21,7 @@ interface GameFieldProps {
   squaresThatMadeCheck: string[];
   squaresThatMadeCheckMate: string[];
   setWinner: (id: number) => void;
+  players: PlayerData[];
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -51,11 +52,13 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       squaresThatMadeCheck,
       squaresThatMadeCheckMate,
       setWinner,
+      players,
     } = this.props;
+    const player = players.find((e) => e.id === activePlayerId) || { color: null };
     return (
       <div className='field-container'>
-        <FieldMarkers activePlayerId={activePlayerId} areFieldMarkersVisible={areFieldMarkersVisible} />
-        <div className={`field${activePlayerId === 1 ? "" : " field_rotated"}`}>
+        <FieldMarkers activePlayerId={activePlayerId} players={players} areFieldMarkersVisible={areFieldMarkersVisible} />
+        <div className={`field${player.color === "w" ? "" : " field_rotated"}`}>
           {data.map((row, rowNumber) => (
             <div key={this.getKeyNumber()} className='field__row'>
               {row.map((element, elementNumber) => (
@@ -91,6 +94,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                       turnMove={turnMove}
                       makeFieldMarkersVisible={makeFieldMarkersVisible}
                       setWinner={setWinner}
+                      players={players}
                     />
                   )
               )}

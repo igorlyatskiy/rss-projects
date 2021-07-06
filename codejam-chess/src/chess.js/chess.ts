@@ -32,10 +32,14 @@ export default class NewChess {
 
   moves = (data: string) => {
     const moves = this.chess.moves({ square: data });
+    console.log(moves);
     return moves
       .map((e) => {
         const reg = /\w\d/g;
         const result: any = e.match(reg);
+        if(e.includes('=Q')){
+          return `${result[0]}x=`;
+        }
         if (e.includes('x')) {
           return `${result[0]}x`;
         }

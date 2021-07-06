@@ -17,6 +17,7 @@ interface MainPageProps {
 
 export default class MainPage extends React.PureComponent<MainPageProps> {
   onNameClick = (number: number) => {
+    console.log(number);
     const { setActivePlayer, showPopap } = this.props;
     setActivePlayer(number);
     showPopap();

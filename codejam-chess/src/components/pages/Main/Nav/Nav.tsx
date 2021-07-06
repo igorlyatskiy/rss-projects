@@ -30,17 +30,16 @@ export default class Nav extends React.PureComponent<NavProps> {
     return (
       <nav className='main-page__nav'>
         <Link to='/online'>
-          <div className='main-page__nav__element main-page__online main-page__nav__element_active'>
-            Online
-          </div>
+          <div className='main-page__nav__element main-page__online main-page__nav__element_active'>Online</div>
         </Link>
         <Link to='/game' onClick={this.startGameFunc}>
           <div className='main-page__nav__element main-page__start'>Start</div>
         </Link>
+        <Link to='/settings'>
+          <div className='main-page__settings'>Settings</div>
+        </Link>
         <Link to='/replays'>
-          <div className='main-page__nav__element main-page__replays'>
-            View replays
-          </div>
+          <div className='main-page__nav__element main-page__replays'>View replays</div>
         </Link>
       </nav>
     );

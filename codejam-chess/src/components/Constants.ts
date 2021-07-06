@@ -1,6 +1,6 @@
 import defaultPlayerImage from '../img/svg/defaultUserImage.svg';
 
-export interface PlayerData {
+export interface PlayerData extends Color {
   name: string,
   id: number,
   image: string,
@@ -65,11 +65,13 @@ export default class Constants {
       name: 'Player 1',
       id: 1,
       image: defaultPlayerImage,
+      color: 'w'
     },
     {
       name: 'Player 2',
       id: 2,
-      image: defaultPlayerImage
+      image: defaultPlayerImage,
+      color: 'b'
     }
   ];
   static startTimeValue = -1;

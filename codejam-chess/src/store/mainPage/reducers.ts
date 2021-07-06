@@ -9,13 +9,13 @@ const defaultState = {
         name: Constants.defaultPlayers[0].name,
         image: Constants.defaultPlayers[0].image,
         id: 1,
-        color: 'white'
+        color: Constants.FIGURES_COLORS_NAMES.black
       },
       {
         name: Constants.defaultPlayers[1].name,
         image: Constants.defaultPlayers[1].image,
         id: 2,
-        color: 'black'
+        color: Constants.FIGURES_COLORS_NAMES.white
       }
     ],
   activePlayerId: 2,
@@ -37,9 +37,13 @@ const defaultState = {
     kingPosition: '',
     checkSquares: [''],
     checkmateSquares: [''],
+    arePlayersColorsReversed: true,
+    areRandomSidexEnabled: true,
+    AILevel: 1
   },
   isUserLogined: false,
   winnerId: 0,
+  draw: false
 }
 
 const mainPageReducer = (paramState = defaultState, action: any) => {
@@ -61,7 +65,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
             {
               name: (String(action.payload.name).trim().length === 0) ? `Player ${action.payload.id}` : String(action.payload.name).trim(),
               image: (player !== undefined) ? player.image : '',
-              id: action.payload.id
+              id: action.payload.id,
+              color: player?.color
             }
 
           ],
@@ -97,8 +102,22 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_START_GAME: {
+      let firstPlayerColor = 'w';
+      if (state.game.areRandomSidexEnabled && Math.random() - 0.5 >= 0) {
+        firstPlayerColor = 'b'
+      }
       return {
         ...state,
+        players: [
+          {
+            ...state.players[0],
+            color: firstPlayerColor
+          },
+          {
+            ...state.players[1],
+            color: firstPlayerColor === 'w' ? 'b' : 'w'
+          }
+        ],
         game: {
           ...state.game,
           data: state.game.chess.board(),
@@ -107,7 +126,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           isGameProcessActive: true
         },
         isUserLogined: true,
-        activePlayerId: 1,
+        activePlayerId: firstPlayerColor === Constants.FIGURES_COLORS_NAMES.white ? 1 : 2,
         winnerId: 0
       }
     }
@@ -162,7 +181,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           ...state.game,
           timerFunction: 0,
           isGameProcessActive: false,
-          historyTime: []
         }
       }
     }
@@ -204,9 +222,11 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       state.game.chess.turn();
       state.game.checkSquares = [...state.game.chess.checkSquares];
       state.game.checkmateSquares = [...state.game.chess.checkmateSquares];
-      const isGameFinished = state.game.chess.chess.inCheckmate()
+      const isGameFinished = state.game.chess.chess.gameOver()
+      let draw = false;
       if (isGameFinished) {
         window.clearInterval(state.game.timerFunction)
+        draw = !state.game.chess.chess.inCheckmate();
       }
       return {
         ...state,
@@ -221,7 +241,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           areFieldMarkersVisible: false,
           isGameProcessActive: !isGameFinished
         },
-        winnerId: isGameFinished ? state.activePlayerId : 0
+        winnerId: state.game.chess.chess.inCheckmate() ? state.activePlayerId : 0,
+        draw
       }
     }
 

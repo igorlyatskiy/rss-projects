@@ -1,6 +1,6 @@
 import React from "react";
 import NewChess from "../../../../../chess.js/chess";
-import Constants, { FigureData } from "../../../../Constants";
+import Constants, { FigureData, PlayerData } from "../../../../Constants";
 import Bishop from "../../../../Figures/Bishop/Bishop";
 import King from "../../../../Figures/King/King";
 import Knight from "../../../../Figures/Knight/Knight";
@@ -23,6 +23,7 @@ interface FigureProps {
   turnMove: () => void;
   makeFieldMarkersVisible: () => void;
   setWinner: (id: number) => void;
+  players: PlayerData[];
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -54,7 +55,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   mouseDown = (e: any) => {
     const { currentTarget } = e;
-    const { checkValidMoves, position, activePlayerId } = this.props;
+    const { checkValidMoves, position, activePlayerId,players } = this.props;
     checkValidMoves(position);
 
     const coords = {
@@ -74,7 +75,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
     const startPageX = e.pageX;
     const startPageY = e.pageY;
 
-    const reverseCoef = activePlayerId === 1 ? 1 : -1;
+    const reverseCoef = players[activePlayerId-1].color === 'w' ? 1 : -1;
 
     const moveAt = (event: MouseEvent) => {
       currentTarget.style.left = `${startPageX - reverseCoef * (startPageX - event.pageX) - shiftX - startX}px`;
@@ -106,7 +107,8 @@ export default class Figure extends React.PureComponent<FigureProps> {
       +position[1] + moveToBottom
     }`;
 
-    const moveStatus = chess.move({ from: position, to: newPosition });
+    const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
+    console.log(moveStatus);
     if (moveStatus) {
       drawField();
       turnMove();
@@ -154,9 +156,8 @@ export default class Figure extends React.PureComponent<FigureProps> {
   };
 
   render() {
-    const { rowNumber, elementNumber, isGameProcessActive, element, activePlayerId } = this.props;
-    const playerId = element.color === "w" ? 1 : 2;
-    // white player has id = 1, black id = 2 as default
+    const { rowNumber, elementNumber, isGameProcessActive, element, activePlayerId, players } = this.props;
+    const playerId = players.find((e) => e.color === element.color)?.id;
     return (
       <div
         role='presentation'

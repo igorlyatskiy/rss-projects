@@ -5,18 +5,21 @@ import { HistoryElement, PlayerData } from "../components/Constants";
 import PlayerView from "../components/pages/Game/PlayerView/PlayerView";
 
 interface PlayerViewContainerProps {
-  propsId: number;
+  propsColor: string;
   players: PlayerData[];
   propsHistory: HistoryElement[];
   winnerId: number;
   historyTime: number[];
   activePlayerId: number;
+  draw: boolean;
+  arePlayersColorsReversed: boolean;
 }
 
 class PlayerViewContainer extends React.PureComponent<PlayerViewContainerProps> {
   render() {
-    const { players, propsHistory, propsId, winnerId, activePlayerId, historyTime } = this.props;
-    const player = players.find((e: PlayerData) => e.id === propsId);
+    const { players, propsHistory, propsColor, winnerId, activePlayerId, historyTime, draw, arePlayersColorsReversed } =
+      this.props;
+    const player = players.find((e: PlayerData) => e.color === propsColor);
     if (player === undefined || historyTime === undefined) {
       throw new Error("At the player view container");
     }
@@ -27,6 +30,8 @@ class PlayerViewContainer extends React.PureComponent<PlayerViewContainerProps> 
         winnerId={winnerId}
         activePlayerId={activePlayerId}
         historyTime={historyTime}
+        draw={draw}
+        arePlayersColorsReversed={arePlayersColorsReversed}
       />
     );
   }
@@ -40,6 +45,8 @@ const pushStateToProps = (state: any) => {
     winnerId: mainPageReducer.winnerId,
     activePlayerId: mainPageReducer.activePlayerId,
     historyTime: mainPageReducer.game.historyTime,
+    draw: mainPageReducer.draw,
+    arePlayersColorsReversed: mainPageReducer.game.arePlayersColorsReversed,
   };
 };
 
