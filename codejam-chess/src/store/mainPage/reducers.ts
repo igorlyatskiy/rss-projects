@@ -38,9 +38,9 @@ const defaultState = {
     checkSquares: [''],
     checkmateSquares: [''],
     arePlayersColorsReversed: true,
-    areRandomSidexEnabled: true,
+    areRandomSidexEnabled: false,
     AILevel: 1,
-    gameType: Constants.AI_NAME
+    gameType: Constants.PVP_OFFLINE_NAME
   },
   isUserLogined: false,
   winnerId: 0,

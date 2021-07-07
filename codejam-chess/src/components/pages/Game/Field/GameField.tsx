@@ -71,7 +71,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
           className={`field
         ${gameType !== "pvp-offline" && notAiPlayer.color === "b" ? " field_rotated" : ""}
         ${gameType !== "pvp-offline" && player.id === 2 ? " field_blocked" : ""}
-        ${gameType === "pvp-offline" && player.color === "w" ? " field_rotated" : " "}
+        ${gameType === "pvp-offline" && player.color === "b" ? " field_rotated" : " "}
         `}
         >
           {data.map((row, rowNumber) => (

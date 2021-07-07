@@ -950,9 +950,7 @@ export default class NewChess {
 
   makeRandomAiMove = () => {
     const moves = this.chess.moves();
-    console.log('total AI moves: ', moves);
     const move = moves[Math.floor(Math.random() * moves.length)]
     this.move(move)
-    console.log(this.move(move))
   }
 }
