@@ -57,6 +57,11 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   mouseDown = (e: any) => {
     const { currentTarget } = e;
+    const leftMouseBtnCode = 0;
+    if (e.button !== leftMouseBtnCode) {
+      return;
+    }
+    console.log("event");
     const { checkValidMoves, position, activePlayerId, players } = this.props;
     checkValidMoves(position);
 
@@ -87,6 +92,13 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
     document.onmousemove = (action: MouseEvent) => {
       moveAt(action);
+    };
+
+    window.onblur = () => {
+      currentTarget.style.left = `${startLeft}px`;
+      currentTarget.style.top = `${startTop}px`;
+      document.onmousemove = null;
+      document.onmouseup = null;
     };
 
     document.onmouseup = () => {

@@ -1,5 +1,6 @@
 export const MAIN_EDIT_NAME = 'MAIN_EDIT_NAME';
 export const MAIN_SET_ACTIVE_PLAYER = 'MAIN_SET_ACTIVE_PLAYER';
+export const MAIN_CHANGE_POPAP_INPUT_VALUE = 'MAIN_CHANGE_POPAP_INPUT_VALUE'
 export const MAIN_SHOW_POPAP = 'MAIN_SHOW_POPAP';
 export const MAIN_HIDE_POPAP = 'MAIN_HIDE_POPAP';
 export const GAME_START_GAME = 'GAME_START_GAME';
@@ -30,6 +31,11 @@ export const showPopap = () => ({
   type: MAIN_SHOW_POPAP,
   payload: true
 });
+
+export const changePopapInputValue = (value: string) => ({
+  type: MAIN_CHANGE_POPAP_INPUT_VALUE,
+  payload: value
+})
 
 export const hidePopap = () => ({
   type: MAIN_HIDE_POPAP,

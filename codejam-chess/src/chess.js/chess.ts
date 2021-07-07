@@ -942,6 +942,9 @@ export default class NewChess {
       case 1:
         this.makeRandomAiMove()
         break;
+      case 2:
+        this.makeRandomAttackAiMove()
+        break;
       default:
         break;
     }
@@ -952,5 +955,17 @@ export default class NewChess {
     const moves = this.chess.moves();
     const move = moves[Math.floor(Math.random() * moves.length)]
     this.move(move)
+  }
+
+  makeRandomAttackAiMove = () => {
+    const moves = this.chess.moves();
+    console.log(moves);
+    const attackMove = moves.find((e) => e.includes('#')) || moves.find((e) => e.includes('+')) || moves.find((e) => e.includes('x'));
+    if (attackMove !== undefined) {
+      this.move(attackMove)
+    } else {
+      const move = moves[Math.floor(Math.random() * moves.length)]
+      this.move(move)
+    }
   }
 }

@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
 
 const defaultState = {
   players:
@@ -20,7 +20,9 @@ const defaultState = {
     ],
   activePlayerId: 2,
   popap: {
-    status: false
+    status: false,
+    inputContext: '',
+    isBtnBlocked: true
   },
   game: {
     history: [],
@@ -39,8 +41,8 @@ const defaultState = {
     checkmateSquares: [''],
     arePlayersColorsReversed: true,
     areRandomSidexEnabled: false,
-    AILevel: 1,
-    gameType: Constants.PVP_OFFLINE_NAME
+    AILevel: 2,
+    gameType: Constants.AI_NAME
   },
   isUserLogined: false,
   winnerId: 0,
@@ -84,11 +86,27 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       break;
     }
 
+    case MAIN_CHANGE_POPAP_INPUT_VALUE: {
+      const value = action.payload;
+      const cleanValue = value.trim();
+      return {
+        ...state,
+        popap: {
+          ...state.popap,
+          inputContext: value,
+          isBtnBlocked: cleanValue.length === 0
+        }
+      }
+    }
+
     case MAIN_SHOW_POPAP: {
       return {
         ...state,
         popap: {
-          status: true
+          ...state.popap,
+          status: true,
+          inputContext: '',
+          isBtnBlocked: true
         }
       }
     }
@@ -97,7 +115,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       return {
         ...state,
         popap: {
-          status: false
+          ...state.popap,
+          status: false,
         }
       }
     }

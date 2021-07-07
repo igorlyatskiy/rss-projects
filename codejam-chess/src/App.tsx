@@ -10,18 +10,18 @@ import rootReducer from "./store/reducers";
 
 const store = createStore(rootReducer);
 
-function App() {
-  return (
-    <Provider store={store}>
-      <Router>
-        <div className='App'>
-          <HeaderContainer />
-          <MainComponentContainer />
-          <Footer />
-        </div>
-      </Router>
-    </Provider>
-  );
+export default class App extends React.PureComponent {
+  render() {
+    return (
+      <Provider store={store}>
+        <Router>
+          <div className='App'>
+            <HeaderContainer />
+            <MainComponentContainer />
+            <Footer />
+          </div>
+        </Router>
+      </Provider>
+    );
+  }
 }
-
-export default App;
