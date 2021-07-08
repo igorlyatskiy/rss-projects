@@ -61,7 +61,6 @@ export default class Figure extends React.PureComponent<FigureProps> {
     if (e.button !== leftMouseBtnCode) {
       return;
     }
-    console.log("event");
     const { checkValidMoves, position, activePlayerId, players } = this.props;
     checkValidMoves(position);
 

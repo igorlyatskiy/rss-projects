@@ -467,7 +467,7 @@ export default class NewChess {
           if (kingMoves.includes(this.getSquareNameByIndex(rowNumber - coef, colNumber - coef))) {
             ableMoves.push(this.getAttackedNameByIndex(rowNumber - coef, colNumber - coef))
           }
-          if (kingMoves.includes(this.getSquareNameByIndex(rowNumber - coef, colNumber - coef))) {
+          if (kingMoves.includes(this.getSquareNameByIndex(rowNumber - coef, colNumber + coef))) {
             ableMoves.push(this.getAttackedNameByIndex(rowNumber - coef, colNumber + coef))
           }
         }
@@ -496,7 +496,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(i, colNumber))) {
               ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
             }
-            i = rowNumber - 1;
+            i = colNumber - 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(i, colNumber)) && this.getSquareByIndex(i, colNumber) === null) {
               ableMoves.push(this.getSquareNameByIndex(i, colNumber))
               i -= 1;
@@ -516,7 +516,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(i, colNumber))) {
               ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
             }
-            i = rowNumber + 1;
+            i = colNumber + 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(i, colNumber)) && this.getSquareByIndex(i, colNumber) === null) {
               ableMoves.push(this.getSquareNameByIndex(i, colNumber))
               i += 1;
@@ -556,13 +556,12 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(rowNumber, i))) {
               ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
             }
-            i = rowNumber + 1;
+            i = colNumber + 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(rowNumber, i)) && this.getSquareByIndex(rowNumber, i) === null) {
               ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
               i += 1;
             }
           }
-
         }
           break;
 
@@ -822,7 +821,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(i, colNumber))) {
               ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
             }
-            i = rowNumber - 1;
+            i = colNumber - 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(i, colNumber)) && this.getSquareByIndex(i, colNumber) === null) {
               ableMoves.push(this.getSquareNameByIndex(i, colNumber))
               i -= 1;
@@ -842,7 +841,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(i, colNumber))) {
               ableMoves.push(this.getAttackedNameByIndex(i, colNumber));
             }
-            i = rowNumber + 1;
+            i = colNumber + 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(i, colNumber)) && this.getSquareByIndex(i, colNumber) === null) {
               ableMoves.push(this.getSquareNameByIndex(i, colNumber))
               i += 1;
@@ -882,7 +881,7 @@ export default class NewChess {
             if (kingMoves.includes(this.getSquareNameByIndex(rowNumber, i))) {
               ableMoves.push(this.getAttackedNameByIndex(rowNumber, i));
             }
-            i = rowNumber + 1;
+            i = colNumber + 1;
             while (!kingMoves.includes(this.getSquareNameByIndex(rowNumber, i)) && this.getSquareByIndex(rowNumber, i) === null) {
               ableMoves.push(this.getSquareNameByIndex(rowNumber, i))
               i += 1;
@@ -894,6 +893,9 @@ export default class NewChess {
         default:
           break;
       }
+    }
+    if (ableMoves.length !== 0) {
+      ableMoves.push(this.getSquareNameByIndex(rowNumber, colNumber));
     }
     return ableMoves;
   }

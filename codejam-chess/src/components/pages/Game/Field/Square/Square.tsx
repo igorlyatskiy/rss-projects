@@ -34,6 +34,7 @@ export default class Square extends React.PureComponent<SquareProps> {
           ${squaresThatMadeCheck.includes(position) ? " field__element_attacked" : ""}
           ${squaresThatMadeCheck.includes(`${position}x`) ? " field__element_king-attacked" : ""}
           ${squaresThatMadeCheckMate.includes(position) ? " field__element_checkmated" : ""}
+          ${squaresThatMadeCheckMate.includes(`${position}x`) ? " field__element_checkmated" : ""}
           ${squaresThatMadeCheckMate.includes(`${position}!`) ? " field__element_king-checkmated" : ""}
           ${validMoves.includes(`${position}x=`) ? " field__element_promotion" : ""}
           `}
