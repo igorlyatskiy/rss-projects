@@ -16,6 +16,8 @@ export const GAME_TURN_MOVE = 'GAME_TURN_MOVE';
 export const GAME_MAKE_FIELD_MARKERS_VISIBLE = 'GAME_MAKE_FIELD_MARKERS_VISIBLE';
 export const GAME_MAKE_FIELD_MARKERS_INVISIBLE = 'GAME_MAKE_FIELD_MARKERS_INVISIBLE';
 export const GAME_TURN_AI_MOVE = 'GAME_TURN_AI_MOVE';
+export const SETTINGS_CHANGE_RANDOM_PLAYER_SIDES = 'SETTINGS_CHANGE_RANDOM_PLAYER_SIDES';
+export const SETTINGS_CHANGE_AI_LEVEL = 'SETTINGS_CHANGE_AI_LEVEL'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -100,4 +102,14 @@ export const makeFieldMarkersVisible = () => ({
 export const makeFieldMarkersInvisible = () => ({
   type: GAME_MAKE_FIELD_MARKERS_INVISIBLE,
   payload: true
+})
+
+export const changeRandomPlayerSides = (status: boolean) => ({
+  type: SETTINGS_CHANGE_RANDOM_PLAYER_SIDES,
+  payload: status
+})
+
+export const changeAiLevel = (number: number) => ({
+  type: SETTINGS_CHANGE_AI_LEVEL,
+  payload: number
 })

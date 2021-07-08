@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
   players:
@@ -40,9 +40,9 @@ const defaultState = {
     checkSquares: [''],
     checkmateSquares: [''],
     arePlayersColorsReversed: true,
-    areRandomSidexEnabled: false,
-    AILevel: 2,
-    gameType: Constants.PVP_OFFLINE_NAME
+    areRandomSidesEnabled: true,
+    AILevel: 1,
+    gameType: Constants.AI_NAME
   },
   isUserLogined: false,
   winnerId: 0,
@@ -123,7 +123,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_START_GAME: {
       let firstPlayerColor = Constants.FIGURES_COLORS_NAMES.white;
-      if (state.game.areRandomSidexEnabled && Math.random() - 0.5 >= 0) {
+      if (state.game.areRandomSidesEnabled && Math.random() - 0.5 >= 0) {
         firstPlayerColor = Constants.FIGURES_COLORS_NAMES.black
       }
       if (firstPlayerColor === Constants.FIGURES_COLORS_NAMES.black && state.game.gameType === Constants.AI_NAME) {
@@ -158,7 +158,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           historyTime: timeHistory
         },
         isUserLogined: true,
-        activePlayerId: 1,
+        activePlayerId: firstPlayerColor === Constants.FIGURES_COLORS_NAMES.white ? 1 : 2,
         winnerId: 0,
         draw: false
       }
@@ -329,6 +329,26 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         game: {
           ...state.game,
           areFieldMarkersVisible: false
+        }
+      }
+    }
+
+    case SETTINGS_CHANGE_RANDOM_PLAYER_SIDES: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          areRandomSidesEnabled: action.payload
+        }
+      }
+    }
+
+    case SETTINGS_CHANGE_AI_LEVEL: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          AILevel: action.payload
         }
       }
     }

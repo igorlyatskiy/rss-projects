@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import MainPageContainer from "../../Containers/MainPageContainer";
 import GamePage from "../pages/Game/GamePage";
-import Settings from "../pages/Settings/Settings";
+import SettingsContainer from "../../Containers/SettingsContainer";
 
 interface MainProps {
   isUserLogined: boolean;
@@ -30,7 +30,7 @@ export default class Main extends React.PureComponent<MainProps> {
             <GamePage />
           </Route>
           <Route exact path='/settings'>
-            <Settings />
+            <SettingsContainer />
           </Route>
           <Route path='*'>
             <div className='routing-error'>Something has gone wrong...</div>

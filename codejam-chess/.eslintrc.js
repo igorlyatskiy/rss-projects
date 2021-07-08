@@ -24,7 +24,12 @@ module.exports = {
   rules: {
     "react/jsx-one-expression-per-line": "off",
     "lines-between-class-members": "off",
-    "@typescript-eslint/lines-between-class-members": "off"
+    "@typescript-eslint/lines-between-class-members": "off",
+    "jsx-a11y/label-has-associated-control": [2, {
+      "required": {
+        "every": ["id"]
+      }
+    }]
   },
   ignorePatterns: ['.eslintrc.js']
 };
