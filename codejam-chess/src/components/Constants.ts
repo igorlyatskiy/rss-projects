@@ -47,7 +47,9 @@ export interface HistoryElement {
 
 export interface GameRoom {
   id: number,
-  status: 'empty' | 'waiting' | 'game' | 'finished'
+  playersNumber: number,
+  isGameActive: boolean,
+  name: string
 }
 
 export default class Constants {

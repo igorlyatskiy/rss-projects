@@ -26,14 +26,17 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     };
   }
 
-  joinGame = (roomId: number) => {
+  joinGame = (roomId: number, playersNumber: number) => {
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
     const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
 
     wsConnection.onopen = () => {
       const action = {
         event: "join-room",
-        payload: roomId,
+        payload: {
+          roomId,
+          playersNumber,
+        },
       };
       wsConnection.send(JSON.stringify(action));
       console.log("%c Connected.", "color: #00FF00");
@@ -55,7 +58,6 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   getRooms = () => {
     const port = process.env.REACT_APP_SERVER_PORT;
     const getGameRoomsUrl = `http://127.0.0.1:${port}/rooms`;
-    console.log(getGameRoomsUrl);
     return axios({
       method: "get",
       url: getGameRoomsUrl,
@@ -68,7 +70,6 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
       .then((responce: AxiosResponse) => {
         this.request = null;
         const roomsData: RoomsData = responce.data;
-        console.log(roomsData);
         this.setState({ data: roomsData.rooms });
       })
       .catch(() => {
@@ -78,7 +79,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
 
   render() {
     const { data } = this.state;
-    const cleanData = data?.filter((e) => e.status !== "finished" && e.status !== "game");
+    const cleanData = data?.filter((e) => e.isGameActive === true && e.playersNumber !== 2);
     return (
       <section className='online-page'>
         {cleanData === null || cleanData === undefined ? (
@@ -89,19 +90,25 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
               {cleanData.map((e) => (
                 <div className='game-card'>
                   <img src={boardImage} alt='Chess board' className='game-card__image' />
-                  <div className='game-card__status'>
-                    {" "}
-                    <b>Status:</b> {e.status}
-                  </div>
-                  <button type='button' className='game-card__button' onClick={() => this.joinGame(e.id)}>
+                  <p className='game-card__name'>{e.name}</p>
+                  <button
+                    type='button'
+                    className='game-card__button'
+                    onClick={() => this.joinGame(e.id, e.playersNumber)}
+                  >
                     Join
                   </button>
                 </div>
               ))}
             </div>
-            <div className='random-game'>
-              <h3 className='random-game__heading'>Click, if you want to play a random game</h3>
-            </div>
+            <section className='interaction-menu'>
+              <button type='button' className='interaction-menu__random-game'>
+                Random game
+              </button>
+              <button type='button' className='interaction-menu__create-game'>
+                Create game
+              </button>
+            </section>
           </>
         )}
       </section>

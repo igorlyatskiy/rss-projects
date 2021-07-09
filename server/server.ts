@@ -11,6 +11,7 @@ const cors = require('cors')
 firebase.initializeApp(fireBaseConfig);
 const db = firebase.database();
 
+// websocket part
 const socketApp = express();
 const WEBSOCKET_PORT = process.env.REACT_APP_WEBSOCKET_PORT || 5001;
 socketApp.set('port', WEBSOCKET_PORT);
@@ -18,15 +19,26 @@ const server = http.createServer(socketApp);
 const webSocketServer = new WebSocket.Server({ server, port: +WEBSOCKET_PORT }, () => console.log(`Websocket server started on port ${WEBSOCKET_PORT}`));
 
 webSocketServer.on('connection', (ws: WebSocket) => {
-  ws.on('message', (data: string) => {
+  ws.once('message', (data: string) => {
     const message = JSON.parse(data);
     switch (message.event) {
       case "join-room":
-        let number = 0;
-        webSocketServer.clients.forEach((e, i) => {
-          number += 1;
-        })
-        console.log(number);
+        const { roomId, playersNumber } = message.payload;
+        console.log(roomId, playersNumber);
+        const url = `rooms/`;
+        if (playersNumber !== 2) {
+          db.ref(url).on('value', (item) => {
+            const rooms = item.val();
+            const activeRoom = rooms.find((e: any) => e.id === roomId);
+            if (activeRoom !== undefined) {
+              db.ref(`${url}${activeRoom.id}`).set({
+                players: playersNumber + 1
+              });
+            }
+          })
+        } else {
+          ws.close();
+        }
         break;
       default: ws.send((new Error("Wrong query")).message);
     }
