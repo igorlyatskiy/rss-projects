@@ -22,7 +22,11 @@ webSocketServer.on('connection', (ws: WebSocket) => {
     const message = JSON.parse(data);
     switch (message.event) {
       case "join-room":
-        webSocketServer.clients.forEach(client => client.send(message))
+        let number = 0;
+        webSocketServer.clients.forEach((e, i) => {
+          number += 1;
+        })
+        console.log(number);
         break;
       default: ws.send((new Error("Wrong query")).message);
     }

@@ -3,7 +3,6 @@ import React from "react";
 import { GameRoom } from "../../Constants";
 import "./OnlinePage.sass";
 import boardImage from "../../../img/chessboard.jpg";
-import { wsConnection } from "../../../Websocket/Websocket";
 
 require("dotenv").config();
 const axios = require("axios");
@@ -28,8 +27,29 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   }
 
   joinGame = (roomId: number) => {
-    console.log(roomId);
-    wsConnection.send(JSON.stringify({ event: "join-room", payload: { id: roomId } }));
+    const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
+    const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
+
+    wsConnection.onopen = () => {
+      const action = {
+        event: "join-room",
+        payload: roomId,
+      };
+      wsConnection.send(JSON.stringify(action));
+      console.log("%c Connected.", "color: #00FF00");
+    };
+
+    wsConnection.onclose = (event) => {
+      if (event.wasClean) {
+        console.log("Connection was closed sucsessfully");
+      } else {
+        console.log("Connection error", event);
+      }
+    };
+
+    wsConnection.onerror = (e: any) => {
+      console.log(e);
+    };
   };
 
   getRooms = () => {
