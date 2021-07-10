@@ -17,6 +17,8 @@ interface OnlinePageState {
 
 interface OnlinePageProps {}
 
+let wsConnection: WebSocket;
+
 export default class OnlinePage extends React.Component<OnlinePageProps, OnlinePageState> {
   public request = null;
   constructor(props: OnlinePageProps) {
@@ -28,8 +30,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
 
   joinGame = (roomId: number, playersNumber: number) => {
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
-    const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
-
+    wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
     wsConnection.onopen = () => {
       const action = {
         event: "join-room",
@@ -40,6 +41,11 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
       };
       wsConnection.send(JSON.stringify(action));
       console.log("%c Connected.", "color: #00FF00");
+    };
+
+    wsConnection.onmessage = (event) => {
+      const message = event;
+      console.log(JSON.parse(message.data));
     };
 
     wsConnection.onclose = (event) => {
