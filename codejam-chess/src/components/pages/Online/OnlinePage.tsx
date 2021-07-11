@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import React from "react";
 import { GameRoom } from "../../Constants";
@@ -15,12 +16,21 @@ interface OnlinePageState {
   data: GameRoom[] | null;
 }
 
-interface OnlinePageProps {}
+interface OnlinePageProps {
+  onlineName: string;
+  setStore: (data: unknown, id: string | number) => void;
+  startGame: () => void;
+  increaseTime: () => void;
+  setSelectedPlayer: (id: number) => void;
+  setWsConnection: (wsConnection: WebSocket) => void;
+  isGameProcessActive: boolean;
+}
 
-let wsConnection: WebSocket;
+const port = process.env.REACT_APP_SERVER_PORT;
 
 export default class OnlinePage extends React.Component<OnlinePageProps, OnlinePageState> {
   public request = null;
+  public selectedPlayerExists = false;
   constructor(props: OnlinePageProps) {
     super(props);
     this.state = {
@@ -28,15 +38,26 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     };
   }
 
-  joinGame = (roomId: number, playersNumber: number) => {
+  createRoom = () => {
+    const url = `http://127.0.0.1:${port}/room`;
+    axios({
+      method: "put",
+      url,
+      mode: "cors",
+    }).then(() => this.getNewRoomsData());
+  };
+
+  joinGame = (roomId: number | string) => {
+    const { onlineName, startGame, setWsConnection } = this.props;
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
-    wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
+    const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
+    setWsConnection(wsConnection);
     wsConnection.onopen = () => {
       const action = {
         event: "join-room",
         payload: {
           roomId,
-          playersNumber,
+          name: onlineName,
         },
       };
       wsConnection.send(JSON.stringify(action));
@@ -44,8 +65,37 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     };
 
     wsConnection.onmessage = (event) => {
-      const message = event;
-      console.log(JSON.parse(message.data));
+      const { setStore, setSelectedPlayer, increaseTime } = this.props;
+      const message = JSON.parse(event.data);
+      const { selectedPlayerId } = message;
+      if (message.id === roomId) {
+        switch (message.event) {
+          case "set-selected-player":
+            if (!this.selectedPlayerExists) {
+              setSelectedPlayer(selectedPlayerId);
+              this.selectedPlayerExists = true;
+            }
+            break;
+          case "timer":
+            increaseTime();
+            break;
+          case "start-game":
+            {
+              const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
+              axios({
+                method: "get",
+                url,
+                mode: "cors",
+              }).then((e: AxiosResponse) => {
+                setStore(e.data, roomId);
+                startGame();
+              });
+            }
+            break;
+          default:
+            throw new Error("at the online page");
+        }
+      }
     };
 
     wsConnection.onclose = (event) => {
@@ -62,7 +112,6 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   };
 
   getRooms = () => {
-    const port = process.env.REACT_APP_SERVER_PORT;
     const getGameRoomsUrl = `http://127.0.0.1:${port}/rooms`;
     return axios({
       method: "get",
@@ -71,21 +120,30 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     });
   };
 
-  componentDidMount = () => {
+  getNewRoomsData = () => {
     this.request = this.getRooms()
       .then((responce: AxiosResponse) => {
         this.request = null;
         const roomsData: RoomsData = responce.data;
-        this.setState({ data: roomsData.rooms });
+        this.setState({ data: Object.values(roomsData.rooms) });
       })
       .catch(() => {
         throw new Error("while getting the axiosResponce at the online page");
       });
   };
 
+  componentDidMount = () => {
+    this.getNewRoomsData();
+  };
+
   render() {
     const { data } = this.state;
-    const cleanData = data?.filter((e) => e.isGameActive === true && e.playersNumber !== 2);
+    const cleanData = data?.filter((e) => {
+      if (e.players !== undefined) {
+        return Object.values(e.players).length !== 2 && e.game.isGameProcessActive === true;
+      }
+      return e.game.isGameProcessActive === true;
+    });
     return (
       <section className='online-page'>
         {cleanData === null || cleanData === undefined ? (
@@ -94,16 +152,16 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           <>
             <div className='cards'>
               {cleanData.map((e) => (
-                <div className='game-card'>
+                <div
+                  className={`game-card ${e.players === undefined ? " game-card_empty" : ""} ${
+                    e.players !== undefined && Object.values(e.players).length === 1 ? " game-card_waiting" : ""
+                  }`}
+                >
                   <img src={boardImage} alt='Chess board' className='game-card__image' />
                   <p className='game-card__name'>{e.name}</p>
-                  <button
-                    type='button'
-                    className='game-card__button'
-                    onClick={() => this.joinGame(e.id, e.playersNumber)}
-                  >
+                  <Link to='/game' className='game-card__button' onClick={() => this.joinGame(e.id)}>
                     Join
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -111,8 +169,11 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
               <button type='button' className='interaction-menu__random-game'>
                 Random game
               </button>
-              <button type='button' className='interaction-menu__create-game'>
+              <button type='button' className='interaction-menu__create-game' onClick={() => this.createRoom()}>
                 Create game
+              </button>
+              <button type='button' className='interaction-menu__reload' onClick={() => this.getNewRoomsData()}>
+                Refresh
               </button>
             </section>
           </>

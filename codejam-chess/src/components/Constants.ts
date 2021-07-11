@@ -46,16 +46,21 @@ export interface HistoryElement {
 }
 
 export interface GameRoom {
-  id: number,
-  playersNumber: number,
+  id: number | string,
+  players: PlayerData[],
   isGameActive: boolean,
-  name: string
+  name: string,
+  game: StoreGame
+}
+
+interface StoreGame {
+  isGameProcessActive: boolean
 }
 
 export default class Constants {
   static NOT_AI_PLAYER_ID = 1;
   static PVP_OFFLINE_NAME = 'pvp-offline'
-  static PVP_ONLINE_NAME = 'pvp-offline'
+  static PVP_ONLINE_NAME = 'pvp-online'
   static AI_NAME = 'ai'
   static FIGURES_NAMES = {
     BISHOP: 'b',

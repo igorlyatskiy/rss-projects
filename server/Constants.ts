@@ -1,5 +1,10 @@
 require('dotenv').config()
 
+export interface TimerInfo {
+  roomId: number,
+  timerInterval: NodeJS.Timeout
+}
+
 export const fireBaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
   authDomain: process.env.REACT_APP_AUTHDOMAIN,

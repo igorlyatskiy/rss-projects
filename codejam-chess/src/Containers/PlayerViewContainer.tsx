@@ -42,10 +42,10 @@ const pushStateToProps = (state: any) => {
   return {
     players: mainPageReducer.players,
     propsHistory: mainPageReducer.game.history,
-    winnerId: mainPageReducer.winnerId,
+    winnerId: mainPageReducer.game.winnerId,
     activePlayerId: mainPageReducer.activePlayerId,
     historyTime: mainPageReducer.game.historyTime,
-    draw: mainPageReducer.draw,
+    draw: mainPageReducer.game.draw,
     arePlayersColorsReversed: mainPageReducer.game.arePlayersColorsReversed,
   };
 };

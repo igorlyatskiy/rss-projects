@@ -26,6 +26,9 @@ interface FigureProps {
   setWinner: (id: number) => void;
   players: PlayerData[];
   gameType: string;
+  wsConnection: WebSocket;
+  roomId: number | string;
+  time: number;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -113,7 +116,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   checkMove = (paramTarget: HTMLElement, startTop: number, startLeft: number) => {
     const currentTarget = paramTarget;
-    const { position, chess, drawField, turnMove, gameType, turnAiMove } = this.props;
+    const { position, chess, drawField, wsConnection, roomId, time } = this.props; //  , turnMove, gameType, turnAiMove
     const moveToBottom = (startTop - parseFloat(currentTarget.style.top)) / Constants.squareSize;
     const moveToRight = (startLeft - parseFloat(currentTarget.style.left)) / Constants.squareSize;
     const newPosition = `${Constants.letters[Constants.letters.indexOf(position[0]) - moveToRight]}${
@@ -122,13 +125,18 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
     const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
     if (moveStatus) {
+      const message = {
+        event: "move",
+        payload: { from: position, to: newPosition, promotion: "q", roomId, time },
+      };
+      wsConnection.send(JSON.stringify(message));
       drawField();
-      if (gameType === Constants.AI_NAME) {
-        turnAiMove();
-      }
-      if (gameType === Constants.PVP_OFFLINE_NAME) {
-        turnMove();
-      }
+      // if (gameType === Constants.AI_NAME) {
+      //   turnAiMove();
+      // }
+      // if (gameType === Constants.PVP_OFFLINE_NAME) {
+      //   turnMove();
+      // }
     } else {
       currentTarget.style.left = `${startLeft}px`;
       currentTarget.style.top = `${startTop}px`;

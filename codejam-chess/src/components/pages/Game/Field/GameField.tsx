@@ -1,8 +1,8 @@
 import React from "react";
 import NewChess from "../../../../chess.js/chess";
+import FigureContainer from "../../../../Containers/FigureContainer";
 import Constants, { FigureData, PlayerData } from "../../../Constants";
 import FieldMarkers from "./FieldMarkers/FieldMarkers";
-import Figure from "./Figure/Figure";
 import "./GameField.sass";
 import Square from "./Square/Square";
 
@@ -24,6 +24,8 @@ interface GameFieldProps {
   setWinner: (id: number) => void;
   players: PlayerData[];
   gameType: string;
+  selectedPlayerId: number;
+  wsConnection: WebSocket;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -41,25 +43,18 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   render = () => {
     const {
       data,
-      checkValidMoves,
       validMoves,
       activePlayerId,
-      isGameProcessActive,
-      chess,
-      cleanValidMoves,
-      drawField,
-      turnMove,
       areFieldMarkersVisible,
-      makeFieldMarkersVisible,
       squaresThatMadeCheck,
       squaresThatMadeCheckMate,
-      setWinner,
       players,
       gameType,
-      turnAiMove,
+      selectedPlayerId,
     } = this.props;
-    const player = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
-    const notAiPlayer = players.find((e) => e.id === Constants.NOT_AI_PLAYER_ID) || { color: null, id: null };
+    const activePlayer = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
+    // const notAiPlayer = players.find((e) => e.id === Constants.NOT_AI_PLAYER_ID) || { color: null, id: null };
+    const selectedPlayer = players.find((e) => e.id === selectedPlayerId) || { color: null, id: null };
     return (
       <div className='field-container'>
         <FieldMarkers
@@ -69,9 +64,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
         />
         <div
           className={`field
-        ${gameType !== "pvp-offline" && notAiPlayer.color === "b" ? " field_rotated" : ""}
-        ${gameType !== "pvp-offline" && player.id === 2 ? " field_blocked" : ""}
-        ${gameType === "pvp-offline" && player.color === "b" ? " field_rotated" : " "}
+        ${gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b" ? " field_rotated" : " "}
+        ${gameType === Constants.PVP_ONLINE_NAME && selectedPlayer.color === "b" ? " field_rotated" : ""}
+        ${activePlayerId === selectedPlayerId ? "" : " field_blocked"}
         `}
         >
           {data.map((row, rowNumber) => (
@@ -95,23 +90,11 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               {row.map(
                 (element, elementNumber) =>
                   element !== null && (
-                    <Figure
+                    <FigureContainer
                       element={element}
-                      elementNumber={elementNumber}
                       rowNumber={rowNumber}
+                      elementNumber={elementNumber}
                       position={this.getPositionKey(rowNumber, elementNumber)}
-                      activePlayerId={activePlayerId}
-                      isGameProcessActive={isGameProcessActive}
-                      chess={chess}
-                      checkValidMoves={checkValidMoves}
-                      cleanValidMoves={cleanValidMoves}
-                      drawField={drawField}
-                      turnMove={turnMove}
-                      makeFieldMarkersVisible={makeFieldMarkersVisible}
-                      setWinner={setWinner}
-                      players={players}
-                      gameType={gameType}
-                      turnAiMove={turnAiMove}
                     />
                   )
               )}

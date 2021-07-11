@@ -1,12 +1,14 @@
-import { fireBaseConfig } from './Constants';
+import { fireBaseConfig, TimerInfo } from './Constants';
 import express from "express";
 import WebSocket from "ws";
 import http from 'http'
 import firebase from "firebase/app";
 import "firebase/database";
+import { GameRoom } from '../codejam-chess/src/components/Constants';
+const { v4: uuidv4 } = require('uuid');
+
 require('dotenv').config()
 const cors = require('cors')
-
 
 firebase.initializeApp(fireBaseConfig);
 const db = firebase.database();
@@ -19,32 +21,69 @@ const server = http.createServer(socketApp);
 const webSocketServer = new WebSocket.Server({ server, port: +WEBSOCKET_PORT }, () => console.log(`Websocket server started on port ${WEBSOCKET_PORT}`));
 
 webSocketServer.on('connection', (ws: WebSocket) => {
+  const timers: TimerInfo[] = [];
   ws.on('message', (data: string) => {
     const message = JSON.parse(data);
     console.log(message);
     switch (message.event) {
       case "join-room":
-        const { roomId, playersNumber } = message.payload;
+        const { roomId, name } = message.payload;
         const url = `rooms/`;
         db.ref(url).once('value', (item) => {
           const rooms = item.val();
-          const activeRoom = rooms.find((e: any) => e.id === roomId);
+          const activeRoom = Object.values(rooms).find((e: any) => e.id === roomId) as GameRoom;
           if (activeRoom !== undefined) {
-            const unicRoomId = rooms.indexOf(activeRoom);
-            db.ref(`${url}${unicRoomId}`).update({
-              playersNumber: playersNumber + 1
+            const players = activeRoom.players ? Object.values(activeRoom.players) : [];
+            const MAX_PLAYERS_AT_ONE_ROOM = 2;
+            let color = Math.random() - 0.5 > 0 ? 'w' : 'b';
+            if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
+              color = Object.values(activeRoom.players)[0].color === 'w' ? 'b' : 'w';
+            }
+            const playerId = players.length + 1
+            db.ref(`${url}${roomId}/players`).push({
+              id: playerId,
+              name,
+              color,
             });
+            const selectPlayerMessage = {
+              selectedPlayerId: playerId,
+              event: 'set-selected-player',
+              id: roomId
+            }
+            webSocketServer.clients.forEach((client) => {
+              client.send(JSON.stringify(selectPlayerMessage));
+            })
+            if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
+              const startGameMessage = {
+                event: 'start-game',
+                id: roomId,
+              }
+              webSocketServer.clients.forEach((client) => {
+                client.send(JSON.stringify(startGameMessage))
+              })
+              const timerInterval = setInterval(() => {
+                webSocketServer.clients.forEach((client) => client.send(JSON.stringify(timerMessage)))
+              }, 1000)
+              timers.push({ roomId, timerInterval });
+              const timerMessage = {
+                event: 'timer',
+                id: roomId,
+              }
+            }
+
           }
         })
-        const MAX_PLAYERS_AT_ONE_ROOM = 2;
-        if (playersNumber + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
-          const startGameMessage = {
-            event: 'start-game',
-            roomId
-          }
-          webSocketServer.clients.forEach((client) => {
-            client.send(JSON.stringify(startGameMessage))
-          })
+
+        break;
+
+      case 'move':
+        console.log(message.payload);
+        break;
+
+      case 'stop-timer':
+        const selectedTimer = timers.find((e) => e.roomId === message.payload);
+        if (selectedTimer) {
+          clearInterval(selectedTimer?.timerInterval);
         }
         break;
 
@@ -67,10 +106,10 @@ app.get('/rooms', (req, res) => {
   const id = req.query.id;
   db.ref(`rooms/`).once('value', (item) => {
     if (id !== undefined) {
-      const room = item.val().find((e: any) => e.id === id) || {};
-      res.send(JSON.stringify({
+      const room = Object.values(item.val()).find((e: any) => e.id === id) || {};
+      res.send(JSON.stringify(
         room,
-      }))
+      ))
     }
     if (JSON.stringify(req.query) === JSON.stringify({})) {
       res.send(JSON.stringify({
@@ -80,16 +119,58 @@ app.get('/rooms', (req, res) => {
   })
 });
 
-
-app.put('/chess', (req, res) => {
-  firebase.database().ref('rooms/').set({
-    0: {
-
+app.put('/room', (req, res) => {
+  const id = uuidv4()
+  const ref = db.ref(`rooms/${id}`);
+  const defaultState = {
+    id,
+    name: 'Game',
+    players:
+      [
+      ],
+    activePlayerId: 2,
+    game: {
+      history: [],
+      data: [[]],
+      time: 0,
+      isGameProcessActive: true,
+      validMoves: [],
+      areMarkersVisible: true,
+      historyTime: [],
+      areFieldMarkersVisible: true,
+      kingPosition: '',
+      checkSquares: [''],
+      checkmateSquares: [''],
+      areRandomSidesEnabled: true,
+      AILevel: 1,
+      gameType: 'Constants.AI_NAME',
+      draw: false,
+      winnerId: 0,
     },
-    1: {
+  }
+  ref.set({
+    ...defaultState
+  }).then(() => {
+    res.send(JSON.stringify({ status: true }))
+  })
+})
 
-    }
-  });
+app.post('/move', (req, res) => {
+  // const from = req.query.from;
+  // const to = req.query.to;
+  // db.ref(`rooms/`).once('value', (item) => {
+  //   if (from !== undefined && to !== undefined) {
+  //     const room = Object.values(item.val()).find((e: any) => e.id === id) || {};
+  //     res.send(JSON.stringify(
+  //       room,
+  //     ))
+  //   }
+  //   if (JSON.stringify(req.query) === JSON.stringify({})) {
+  //     res.send(JSON.stringify({
+  //       rooms: item.val(),
+  //     }))
+  //   }
+  // })
 })
 
 

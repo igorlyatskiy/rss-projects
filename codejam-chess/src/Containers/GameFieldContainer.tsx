@@ -31,6 +31,8 @@ interface GameFieldContainerProps {
   players: PlayerData[];
   gameType: string;
   turnAiMoveFunc: () => void;
+  selectedPlayerId: number;
+  wsConnection: WebSocket;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -52,7 +54,9 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       setWinnerFunc,
       players,
       gameType,
-      turnAiMoveFunc
+      turnAiMoveFunc,
+      selectedPlayerId,
+      wsConnection,
     } = this.props;
     return (
       <GameField
@@ -73,6 +77,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         players={players}
         gameType={gameType}
         turnAiMove={turnAiMoveFunc}
+        selectedPlayerId={selectedPlayerId}
+        wsConnection={wsConnection}
       />
     );
   }
@@ -91,6 +97,8 @@ const pushStateToProps = (state: any) => {
     squaresThatMadeCheckMate: mainPageReducer.game.checkmateSquares,
     players: mainPageReducer.players,
     gameType: mainPageReducer.game.gameType,
+    selectedPlayerId: mainPageReducer.game.selectedPlayerId,
+    wsConnection: mainPageReducer.game.wsConnection,
   };
 };
 
