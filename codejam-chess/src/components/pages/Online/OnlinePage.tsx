@@ -92,6 +92,18 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
               });
             }
             break;
+          case "move-figure":
+            {
+              const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
+              axios({
+                method: "get",
+                url,
+                mode: "cors",
+              }).then((e: AxiosResponse) => {
+                setStore(e.data, roomId);
+              });
+            }
+            break;
           default:
             throw new Error("at the online page");
         }

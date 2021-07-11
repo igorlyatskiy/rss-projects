@@ -24,7 +24,6 @@ webSocketServer.on('connection', (ws: WebSocket) => {
   const timers: TimerInfo[] = [];
   ws.on('message', (data: string) => {
     const message = JSON.parse(data);
-    console.log(message);
     switch (message.event) {
       case "join-room":
         const { roomId, name } = message.payload;
@@ -64,6 +63,10 @@ webSocketServer.on('connection', (ws: WebSocket) => {
               const timerInterval = setInterval(() => {
                 webSocketServer.clients.forEach((client) => client.send(JSON.stringify(timerMessage)))
               }, 1000)
+              const activeTimeoutRoom = timers.find((e) => e.roomId === roomId);
+              if (activeTimeoutRoom !== undefined) {
+                clearInterval(activeTimeoutRoom.timerInterval)
+              }
               timers.push({ roomId, timerInterval });
               const timerMessage = {
                 event: 'timer',
@@ -77,7 +80,24 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         break;
 
       case 'move':
+        const { to, from, time } = message.payload;
+        const activeRoomId = message.payload.roomId;
+        const moveAction = {
+          event: 'move-figure',
+          id: activeRoomId,
+        }
+        const ref = db.ref(`rooms/${activeRoomId}/game/history/${time}`);
         console.log(message.payload);
+        ref.set({
+          time,
+          move: {
+            from, to
+          }
+        }).then(() => {
+          webSocketServer.clients.forEach((client) => {
+            client.send(JSON.stringify(moveAction));
+          })
+        });
         break;
 
       case 'stop-timer':
@@ -130,7 +150,7 @@ app.put('/room', (req, res) => {
       ],
     activePlayerId: 2,
     game: {
-      history: [],
+      history: [null],
       data: [[]],
       time: 0,
       isGameProcessActive: true,
@@ -156,21 +176,18 @@ app.put('/room', (req, res) => {
 })
 
 app.post('/move', (req, res) => {
-  // const from = req.query.from;
-  // const to = req.query.to;
-  // db.ref(`rooms/`).once('value', (item) => {
-  //   if (from !== undefined && to !== undefined) {
-  //     const room = Object.values(item.val()).find((e: any) => e.id === id) || {};
-  //     res.send(JSON.stringify(
-  //       room,
-  //     ))
-  //   }
-  //   if (JSON.stringify(req.query) === JSON.stringify({})) {
-  //     res.send(JSON.stringify({
-  //       rooms: item.val(),
-  //     }))
-  //   }
-  // })
+  const { from, to, id, time } = req.query;
+  db.ref(`rooms/`).once('value', (item) => {
+    if (from !== undefined && id !== undefined && to !== undefined && time !== undefined) {
+      const ref = db.ref(`rooms/${id}/history/${time}`);
+      ref.set({
+        time,
+        move: {
+          from, to
+        }
+      }).then(() => res.send({ status: true }));
+    }
+  })
 })
 
 

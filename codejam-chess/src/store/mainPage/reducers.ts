@@ -1,5 +1,5 @@
 import NewChess from '../../chess.js/chess';
-import Constants, { PlayerData } from '../../components/Constants';
+import Constants, { HistoryAction, PlayerData } from '../../components/Constants';
 import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
@@ -344,6 +344,10 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     case SERVER_SET_STORE: {
       const data = action.payload.store;
       const players = Object.values(data.players) as PlayerData[];
+      if (data.game.history !== undefined) {
+        const historyArray = Object.values(data.game.history) as HistoryAction[];
+        state.game.chess.move(historyArray[historyArray.length - 1].move)
+      }
       return {
         ...state,
         activePlayerId: data.activePlayerId,
@@ -363,6 +367,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           ...state.game,
           roomId: action.payload.id,
           gameType: Constants.PVP_ONLINE_NAME,
+          data: state.game.chess.board()
         }
       }
     }

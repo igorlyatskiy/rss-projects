@@ -21,6 +21,16 @@ export interface UserAction extends ReduxAction {
   }
 }
 
+export interface HistoryAction {
+  move: HistoryMove,
+  time: number
+}
+
+interface HistoryMove {
+  from: string,
+  to: string
+}
+
 export interface PopapContainerProps {
   id: number;
   name: string;
