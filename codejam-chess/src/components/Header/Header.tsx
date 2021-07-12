@@ -29,18 +29,13 @@ class Header extends React.PureComponent<HeaderProps> {
     const FIRST_PLAYER_ID = 1;
     const SECOND_PLAYER_ID = 2;
     const { setWinner, activePlayerId } = this.props;
-    const winnerId =
-      activePlayerId === FIRST_PLAYER_ID ? SECOND_PLAYER_ID : FIRST_PLAYER_ID;
+    const winnerId = activePlayerId === FIRST_PLAYER_ID ? SECOND_PLAYER_ID : FIRST_PLAYER_ID;
     setWinner(winnerId);
   };
 
   render() {
-    const { time, isGamePageActive, breakGame, isGameProcessActive } =
-      this.props;
-    const minutes =
-      Math.floor(time / 60) >= 10
-        ? Math.floor(time / 60)
-        : `0${Math.floor(time / 60)}`;
+    const { time, isGamePageActive, breakGame, isGameProcessActive } = this.props;
+    const minutes = Math.floor(time / 60) >= 10 ? Math.floor(time / 60) : `0${Math.floor(time / 60)}`;
     const seconds = time % 60 >= 10 ? time % 60 : `0${time % 60}`;
     const isGameWinned = isGamePageActive && !isGameProcessActive;
     return (
@@ -48,13 +43,7 @@ class Header extends React.PureComponent<HeaderProps> {
         <Link to='/' onClick={breakGame}>
           <img src={logo} alt='Logo' className='header__logo' />
         </Link>
-        <div
-          className={
-            isGameWinned
-              ? "header__container header__container_align-center"
-              : "header__container"
-          }
-        >
+        <div className={isGameWinned ? "header__container header__container_align-center" : "header__container"}>
           {isGamePageActive && (
             <div className='header__round-time'>
               Round Time: <br />
@@ -63,19 +52,17 @@ class Header extends React.PureComponent<HeaderProps> {
           )}
 
           {isGameProcessActive && (
-            <button
-              type='button'
-              className='header__admit-loss'
-              onClick={this.admitLoss}
-            >
+            <button type='button' className='header__admit-loss' onClick={this.admitLoss}>
               ADMIT LOSS
             </button>
           )}
 
           {isGameWinned && (
-            <button type='button' className='header__lobby-btn'>
-              TO LOBBY
-            </button>
+            <Link to='/' onClick={breakGame}>
+              <button type='button' className='header__lobby-btn'>
+                TO LOBBY
+              </button>
+            </Link>
           )}
 
           {isGameWinned && (

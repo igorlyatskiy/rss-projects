@@ -22,7 +22,7 @@ interface GameFieldContainerProps {
   chess: NewChess;
   cleanValidMovesFunc: () => void;
   drawFieldFunc: () => void;
-  turnMoveFunc: () => void;
+  turnMoveFunc: (data: unknown) => void;
   areFieldMarkersVisible: boolean;
   makeFieldMarkersVisibleFunc: () => void;
   squaresThatMadeCheck: string[];

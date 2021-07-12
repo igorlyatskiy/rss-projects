@@ -21,6 +21,8 @@ export const SETTINGS_CHANGE_AI_LEVEL = 'SETTINGS_CHANGE_AI_LEVEL'
 export const SERVER_SET_STORE = 'SERVER_SET_STORE';
 export const SERVER_SET_SELECTED_PLAYER = 'SERVER_SET_SELECTED_PLAYER'
 export const SERVER_SET_WS_CONNECTION = 'SERVER_SET_WS_CONNECTION'
+export const GAME_GET_HIGHLIGHTED_SQUARES = 'GAME_GET_HIGHLIGHTED_SQUARES'
+export const GAME_RANDOMIZE_COLORS = 'GAME_RANDOMIZE_COLORS'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -47,9 +49,12 @@ export const hidePopap = () => ({
   payload: false
 })
 
-export const startGame = () => ({
+export const startGame = (type: string, id: string) => ({
   type: GAME_START_GAME,
-  payload: true
+  payload: {
+    type,
+    id
+  }
 })
 
 export const breakGame = () => ({
@@ -87,9 +92,9 @@ export const drawField = () => ({
   payload: true
 })
 
-export const turnMove = () => ({
+export const turnMove = (data: unknown) => ({
   type: GAME_TURN_MOVE,
-  payload: true
+  payload: data
 })
 
 export const turnAiMove = () => ({
@@ -133,4 +138,14 @@ export const setSelectedPlayer = (selectedPlayerId: number) => ({
 export const setWebsocketConnection = (connection: WebSocket) => ({
   type: SERVER_SET_WS_CONNECTION,
   payload: connection
+})
+
+export const getHighlightedSquares = () => ({
+  type: GAME_GET_HIGHLIGHTED_SQUARES,
+  payload: true
+})
+
+export const checkAndRandomizeColors = () => ({
+  type: GAME_RANDOMIZE_COLORS,
+  payload: true
 })

@@ -24,6 +24,8 @@ export default class NewChess {
     return returnValue
   }
 
+  isGameActive = () => !this.chess.gameOver()
+
   move = (object: string | PartialMove) => this.chess.move(object);
 
   board = () => this.chess.board();

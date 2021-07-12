@@ -9,14 +9,16 @@ import {
   startGame,
   increaseTime,
   setTimerFunc,
+  checkAndRandomizeColors,
 } from "../store/mainPage/actions";
 
 export interface MainContainerProps {
   setActivePlayerFunc: (id: number) => void;
   showPopapFunc: () => void;
-  startGameFunc: () => void;
+  startGameFunc: (type: string, id: string) => void;
   users: PlayerData[];
   increaseTimeFunc: () => void;
+  checkAndRandomizeColorsFunc: () => void;
   setTimerFunction: (number: number) => void;
   gameStatus: boolean;
 }
@@ -25,6 +27,7 @@ class MainContainer extends React.PureComponent<MainContainerProps> {
   render() {
     const {
       setActivePlayerFunc,
+      checkAndRandomizeColorsFunc,
       showPopapFunc,
       startGameFunc,
       increaseTimeFunc,
@@ -41,6 +44,7 @@ class MainContainer extends React.PureComponent<MainContainerProps> {
         increaseTime={increaseTimeFunc}
         isGameActive={gameStatus}
         setTimerFunc={setTimerFunction}
+        checkAndRandomizeColors={checkAndRandomizeColorsFunc}
       />
     );
   }
@@ -58,6 +62,7 @@ const mapDispatchToProps = {
   startGameFunc: startGame,
   increaseTimeFunc: increaseTime,
   setTimerFunction: setTimerFunc,
+  checkAndRandomizeColorsFunc: checkAndRandomizeColors,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(MainContainer);

@@ -56,7 +56,7 @@ export interface HistoryElement {
 }
 
 export interface GameRoom {
-  id: number | string,
+  id: string,
   players: PlayerData[],
   isGameActive: boolean,
   name: string,
@@ -64,7 +64,8 @@ export interface GameRoom {
 }
 
 interface StoreGame {
-  isGameProcessActive: boolean
+  isGameProcessActive: boolean,
+  gameType: string
 }
 
 export default class Constants {

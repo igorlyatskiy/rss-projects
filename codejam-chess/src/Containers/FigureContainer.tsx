@@ -7,6 +7,7 @@ import {
   checkValidMoves,
   cleanValidMoves,
   drawField,
+  getHighlightedSquares,
   makeFieldMarkersVisible,
   setWinner,
   turnAiMove,
@@ -25,7 +26,7 @@ interface FigureContainerProps {
   cleanValidMovesFunc: () => void;
   drawFieldFunc: () => void;
   turnAiMoveFunc: () => void;
-  turnMoveFunc: () => void;
+  turnMoveFunc: (data: unknown) => void;
   makeFieldMarkersVisibleFunc: () => void;
   setWinnerFunc: (id: number) => void;
   players?: PlayerData[];
@@ -33,6 +34,10 @@ interface FigureContainerProps {
   wsConnection?: WebSocket;
   roomId: number | string;
   time: number;
+  checkSquares: string[];
+  checkmateSquares: string[];
+  getHighlightedSquaresFunc: () => void;
+  winnerId: number
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -56,7 +61,11 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       wsConnection,
       roomId,
       time,
+      checkmateSquares,
+      checkSquares,
+      getHighlightedSquaresFunc,
       cleanValidMovesFunc,
+      winnerId
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -89,6 +98,10 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         wsConnection={wsConnection}
         roomId={roomId}
         time={time}
+        checkmateSquares={checkmateSquares}
+        checkSquares={checkSquares}
+        getHighlightedSquares={getHighlightedSquaresFunc}
+        winnerId={winnerId}
       />
     );
   }
@@ -105,6 +118,9 @@ const pushStateToProps = (state: any) => {
     chess: mainPageReducer.game.chess,
     roomId: mainPageReducer.game.roomId,
     time: mainPageReducer.game.time,
+    checkSquares: mainPageReducer.game.checkSquares,
+    checkmateSquares: mainPageReducer.game.checkmateSquares,
+    winnerId: mainPageReducer.game.winnerId
   };
 };
 
@@ -116,6 +132,7 @@ const mapDispatchToProps = {
   makeFieldMarkersVisibleFunc: makeFieldMarkersVisible,
   setWinnerFunc: setWinner,
   cleanValidMovesFunc: cleanValidMoves,
+  getHighlightedSquaresFunc: getHighlightedSquares,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(FigureContainer);

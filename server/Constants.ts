@@ -5,6 +5,15 @@ export interface TimerInfo {
   timerInterval: NodeJS.Timeout
 }
 
+export interface PlayerData extends Color {
+  name: string,
+  id: number,
+  image: string,
+}
+export interface Color {
+  color: 'b' | 'w'
+}
+
 export const fireBaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
   authDomain: process.env.REACT_APP_AUTHDOMAIN,

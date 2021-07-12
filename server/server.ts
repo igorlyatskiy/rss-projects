@@ -1,10 +1,11 @@
-import { fireBaseConfig, TimerInfo } from './Constants';
+import { fireBaseConfig, PlayerData, TimerInfo } from './Constants';
 import express from "express";
 import WebSocket from "ws";
 import http from 'http'
 import firebase from "firebase/app";
 import "firebase/database";
 import { GameRoom } from '../codejam-chess/src/components/Constants';
+import bodyParser from 'body-parser'
 const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config()
@@ -44,6 +45,9 @@ webSocketServer.on('connection', (ws: WebSocket) => {
               name,
               color,
             });
+            if (color === 'w') {
+              db.ref(`${url}${roomId}/activePlayerId`).set(playerId)
+            }
             const selectPlayerMessage = {
               selectedPlayerId: playerId,
               event: 'set-selected-player',
@@ -88,16 +92,23 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         }
         const ref = db.ref(`rooms/${activeRoomId}/game/history/${time}`);
         console.log(message.payload);
-        ref.set({
+        const moveFigure = ref.set({
           time,
           move: {
             from, to
           }
-        }).then(() => {
-          webSocketServer.clients.forEach((client) => {
-            client.send(JSON.stringify(moveAction));
-          })
         });
+        const checkSquares = db.ref(`rooms/${activeRoomId}/game/checkSquares`).set(message.payload.checkSquares);
+        const checkmateSquares = db.ref(`rooms/${activeRoomId}/game/checkmateSquares`).set(message.payload.checkmateSquares);
+        db.ref(`rooms/${activeRoomId}/activePlayerId`).once('value', (item) => {
+          const activePlayerId = item.val();
+          const changeActivePlayer = db.ref(`rooms/${activeRoomId}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);
+          Promise.all([moveFigure, changeActivePlayer, checkSquares, checkmateSquares]).then(() => {
+            webSocketServer.clients.forEach((client) => {
+              client.send(JSON.stringify(moveAction));
+            })
+          });
+        })
         break;
 
       case 'stop-timer':
@@ -121,6 +132,9 @@ const app = express();
 const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
 app.set('port', SERVER_PORT);
 app.use(cors());
+app.use(bodyParser.json()) // handle json data
+app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
+
 
 app.get('/rooms', (req, res) => {
   const id = req.query.id;
@@ -140,54 +154,61 @@ app.get('/rooms', (req, res) => {
 });
 
 app.put('/room', (req, res) => {
+  const gameType = req.query.type;
   const id = uuidv4()
   const ref = db.ref(`rooms/${id}`);
+  const players = req.body.players !== undefined ? req.body.players : [];
   const defaultState = {
     id,
     name: 'Game',
-    players:
-      [
-      ],
-    activePlayerId: 2,
+    players,
+    activePlayerId: players.find((e: PlayerData) => e.color === 'w').id,
     game: {
       history: [null],
-      data: [[]],
-      time: 0,
-      isGameProcessActive: true,
-      validMoves: [],
-      areMarkersVisible: true,
-      historyTime: [],
-      areFieldMarkersVisible: true,
-      kingPosition: '',
-      checkSquares: [''],
-      checkmateSquares: [''],
       areRandomSidesEnabled: true,
       AILevel: 1,
-      gameType: 'Constants.AI_NAME',
+      gameType: gameType,
       draw: false,
       winnerId: 0,
+      isGameProcessActive: true
     },
   }
   ref.set({
     ...defaultState
   }).then(() => {
-    res.send(JSON.stringify({ status: true }))
-  })
+    res.send(JSON.stringify({ status: true, roomId: id }))
+  }).catch(() => res.send(JSON.stringify({ status: false, roomId: null })))
 })
 
 app.post('/move', (req, res) => {
-  const { from, to, id, time } = req.query;
-  db.ref(`rooms/`).once('value', (item) => {
-    if (from !== undefined && id !== undefined && to !== undefined && time !== undefined) {
-      const ref = db.ref(`rooms/${id}/history/${time}`);
-      ref.set({
-        time,
-        move: {
-          from, to
-        }
-      }).then(() => res.send({ status: true }));
-    }
-  })
+  const { from, to, id, time, color, piece } = req.query;
+  if (piece !== undefined && from !== undefined && id !== undefined && to !== undefined && time !== undefined && color !== undefined) {
+    const ref = db.ref(`rooms/${id}/game/history/${time}`);
+    const setMoveIntoHistory = ref.set({
+      time,
+      move: {
+        from, to, color, piece
+      }
+    });
+    const setActivePlayer = db.ref(`rooms/${id}/activePlayerId`).once('value', (item) => {
+      const activePlayerId = item.val();
+      db.ref(`rooms/${id}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);
+    })
+    Promise.all([setMoveIntoHistory, setActivePlayer]).then(() => res.send({ status: true }));
+  }
+})
+
+app.post('/room/winner', (req, res) => {
+  const { id, winnerId } = req.query;
+  if (id !== undefined && winnerId !== undefined) {
+    const ref = db.ref(`rooms/${id}/game`);
+    ref.update({
+      winnerId: +winnerId,
+      isGameProcessActive: false
+    }).then(() => {
+      res.send({ status: true })
+    });
+  }
 })
 
 

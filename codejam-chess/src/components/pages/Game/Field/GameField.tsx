@@ -15,7 +15,7 @@ interface GameFieldProps {
   chess: NewChess;
   cleanValidMoves: () => void;
   drawField: () => void;
-  turnMove: () => void;
+  turnMove: (data: unknown) => void;
   turnAiMove: () => void;
   makeFieldMarkersVisible: () => void;
   areFieldMarkersVisible: boolean;
@@ -53,54 +53,61 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       selectedPlayerId,
     } = this.props;
     const activePlayer = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
-    // const notAiPlayer = players.find((e) => e.id === Constants.NOT_AI_PLAYER_ID) || { color: null, id: null };
     const selectedPlayer = players.find((e) => e.id === selectedPlayerId) || { color: null, id: null };
     return (
       <div className='field-container'>
-        <FieldMarkers
-          activePlayerId={activePlayerId}
-          players={players}
-          areFieldMarkersVisible={areFieldMarkersVisible}
-        />
-        <div
-          className={`field
-        ${gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b" ? " field_rotated" : " "}
-        ${gameType === Constants.PVP_ONLINE_NAME && selectedPlayer.color === "b" ? " field_rotated" : ""}
-        ${activePlayerId === selectedPlayerId ? "" : " field_blocked"}
+        {data.length > 1 && (
+          <>
+            <FieldMarkers
+              activePlayerId={activePlayerId}
+              players={players}
+              areFieldMarkersVisible={areFieldMarkersVisible}
+            />
+            <div
+              className={`field
+        ${
+          (gameType === Constants.PVP_ONLINE_NAME || gameType === Constants.AI_NAME) && selectedPlayer.color === "b"
+            ? " field_rotated"
+            : ""
+        }
+        ${gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b" ? " field_rotated" : ""}
+        ${gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId ? " field_blocked" : ""}
         `}
-        >
-          {data.map((row, rowNumber) => (
-            <div key={this.getKeyNumber()} className='field__row'>
-              {row.map((element, elementNumber) => (
-                <Square
-                  validMoves={validMoves}
-                  key={this.getKeyNumber()}
-                  elementNumber={elementNumber}
-                  rowNumber={rowNumber}
-                  position={this.getPositionKey(rowNumber, elementNumber)}
-                  squaresThatMadeCheck={squaresThatMadeCheck}
-                  squaresThatMadeCheckMate={squaresThatMadeCheckMate}
-                />
+            >
+              {data.map((row, rowNumber) => (
+                <div key={this.getKeyNumber()} className='field__row'>
+                  {row.map((element, elementNumber) => (
+                    <Square
+                      validMoves={validMoves}
+                      key={this.getKeyNumber()}
+                      elementNumber={elementNumber}
+                      rowNumber={rowNumber}
+                      position={this.getPositionKey(rowNumber, elementNumber)}
+                      squaresThatMadeCheck={squaresThatMadeCheck}
+                      squaresThatMadeCheckMate={squaresThatMadeCheckMate}
+                    />
+                  ))}
+                </div>
+              ))}
+
+              {data.map((row, rowNumber) => (
+                <>
+                  {row.map(
+                    (element, elementNumber) =>
+                      element !== null && (
+                        <FigureContainer
+                          element={element}
+                          rowNumber={rowNumber}
+                          elementNumber={elementNumber}
+                          position={this.getPositionKey(rowNumber, elementNumber)}
+                        />
+                      )
+                  )}
+                </>
               ))}
             </div>
-          ))}
-
-          {data.map((row, rowNumber) => (
-            <>
-              {row.map(
-                (element, elementNumber) =>
-                  element !== null && (
-                    <FigureContainer
-                      element={element}
-                      rowNumber={rowNumber}
-                      elementNumber={elementNumber}
-                      position={this.getPositionKey(rowNumber, elementNumber)}
-                    />
-                  )
-              )}
-            </>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     );
   };

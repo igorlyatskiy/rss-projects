@@ -1,3 +1,5 @@
+// import axios from "axios";
+// import axios, { AxiosResponse } from "axios";
 import React from "react";
 import NewChess from "../../../../../chess.js/chess";
 import Constants, { FigureData, PlayerData } from "../../../../Constants";
@@ -8,6 +10,8 @@ import Pawn from "../../../../Figures/Pawn/Pawn";
 import Queen from "../../../../Figures/Queen/Queen";
 import Rook from "../../../../Figures/Rook/Rook";
 import "./Figure.sass";
+
+const axios = require("axios");
 
 interface FigureProps {
   element: FigureData;
@@ -21,7 +25,7 @@ interface FigureProps {
   cleanValidMoves: () => void;
   drawField: () => void;
   turnAiMove: () => void;
-  turnMove: () => void;
+  turnMove: (data: unknown) => void;
   makeFieldMarkersVisible: () => void;
   setWinner: (id: number) => void;
   players: PlayerData[];
@@ -29,6 +33,10 @@ interface FigureProps {
   wsConnection: WebSocket;
   roomId: number | string;
   time: number;
+  winnerId: number;
+  checkSquares: string[];
+  checkmateSquares: string[];
+  getHighlightedSquares: () => void;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -116,7 +124,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   checkMove = (paramTarget: HTMLElement, startTop: number, startLeft: number) => {
     const currentTarget = paramTarget;
-    const { position, chess, drawField, wsConnection, roomId, time } = this.props; //  , turnMove, gameType, turnAiMove
+    const { position, chess } = this.props;
     const moveToBottom = (startTop - parseFloat(currentTarget.style.top)) / Constants.squareSize;
     const moveToRight = (startLeft - parseFloat(currentTarget.style.left)) / Constants.squareSize;
     const newPosition = `${Constants.letters[Constants.letters.indexOf(position[0]) - moveToRight]}${
@@ -125,21 +133,57 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
     const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
     if (moveStatus) {
+      this.makeMove(position, newPosition);
+    } else {
+      currentTarget.style.left = `${startLeft}px`;
+      currentTarget.style.top = `${startTop}px`;
+    }
+  };
+
+  makeMove = async (position: string, newPosition: string) => {
+    const {
+      drawField,
+      wsConnection,
+      roomId,
+      time,
+      gameType,
+      turnMove,
+      // turnAiMove,
+      element,
+      chess,
+      activePlayerId,
+      getHighlightedSquares,
+    } = this.props;
+    drawField();
+    if (gameType === Constants.PVP_ONLINE_NAME) {
+      turnMove({});
       const message = {
         event: "move",
         payload: { from: position, to: newPosition, promotion: "q", roomId, time },
       };
       wsConnection.send(JSON.stringify(message));
-      drawField();
-      // if (gameType === Constants.AI_NAME) {
-      //   turnAiMove();
-      // }
-      // if (gameType === Constants.PVP_OFFLINE_NAME) {
-      //   turnMove();
-      // }
     } else {
-      currentTarget.style.left = `${startLeft}px`;
-      currentTarget.style.top = `${startTop}px`;
+      const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
+      const url = `${baseURL}/move?id=${roomId}&from=${position}&to=${newPosition}&time=${time}&color=${element.color}&piece=${element.type}`;
+      const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
+      const moveFigure = await axios({
+        method: "post",
+        url,
+        mode: "cors",
+      });
+      if (moveFigure.status === 200) {
+        await this.checkGameStatus(chess, baseURL as string, roomId as string, activePlayerId);
+        const getRoomInfo = await axios.get(getRoomUrl);
+        turnMove(getRoomInfo);
+        getHighlightedSquares();
+      }
+    }
+  };
+
+  checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string, activePlayerId: number) => {
+    if (!chess.isGameActive()) {
+      const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${activePlayerId}`;
+      await axios.post(setWinnerUrl);
     }
   };
 

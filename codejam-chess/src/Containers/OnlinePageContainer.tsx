@@ -12,17 +12,24 @@ import {
 export interface OnlinePageContainerProps {
   name: string;
   setStoreFunc: (data: unknown, id: string | number) => void;
-  startGameFunc: () => void;
+  startGameFunc: (type: string, id: string) => void;
   increaseTimeFunc: () => void;
   setSelectedPlayerFunc: (id: number) => void;
   setWebsocketConnectionFunc: (ws: WebSocket) => void;
-  isGameProcessActive:boolean
+  isGameProcessActive: boolean;
 }
 
 class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> {
   render() {
-    const { name,isGameProcessActive, setStoreFunc, startGameFunc, setSelectedPlayerFunc, setWebsocketConnectionFunc, increaseTimeFunc } =
-      this.props;
+    const {
+      name,
+      isGameProcessActive,
+      setStoreFunc,
+      startGameFunc,
+      setSelectedPlayerFunc,
+      setWebsocketConnectionFunc,
+      increaseTimeFunc,
+    } = this.props;
     return (
       <OnlinePage
         onlineName={name}

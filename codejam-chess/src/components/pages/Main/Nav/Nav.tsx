@@ -8,22 +8,47 @@ import {
   // Redirect,
   // useLocation,
 } from "react-router-dom";
+import Constants, { PlayerData } from "../../../Constants";
+
+const axios = require("axios").default;
+require("dotenv").config();
 
 interface NavProps {
-  startGame: () => void;
+  startGame: (type: string, id: string) => void;
   increaseTime: () => void;
+  checkAndRandomizeColors: () => void;
   isGameActive: boolean;
   setTimerFunc: (number: number) => void;
+  players: PlayerData[];
 }
 
 export default class Nav extends React.PureComponent<NavProps> {
   startGameFunc = () => {
-    const { startGame, setTimerFunc, increaseTime } = this.props;
-    startGame();
+    const { setTimerFunc, increaseTime } = this.props;
+    this.createGameRoom();
     const interval = window.setInterval(() => {
       increaseTime();
     }, 1000);
     setTimerFunc(interval);
+  };
+
+  createGameRoom = async () => {
+    const { startGame, players, checkAndRandomizeColors } = this.props;
+    const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
+    const url = `${baseURL}/room?type=${Constants.PVP_OFFLINE_NAME}`;
+    checkAndRandomizeColors();
+    const responce = await axios({
+      method: "put",
+      url,
+      data: {
+        players,
+      },
+    });
+    console.log(responce);
+    if (responce.status === 200 && responce.data.status === true) {
+      const id = responce.data.roomId;
+      startGame(Constants.PVP_OFFLINE_NAME, id);
+    }
   };
 
   render() {

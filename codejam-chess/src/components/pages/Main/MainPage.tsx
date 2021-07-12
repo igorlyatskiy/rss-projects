@@ -9,8 +9,9 @@ interface MainPageProps {
   setActivePlayer: (id: number) => void;
   showPopap: () => void;
   usersData: PlayerData[];
-  startGame: () => void;
+  startGame: (type: string, id: string) => void;
   increaseTime: () => void;
+  checkAndRandomizeColors: () => void;
   setTimerFunc: (number: number) => void;
   isGameActive: boolean;
 }
@@ -23,7 +24,7 @@ export default class MainPage extends React.PureComponent<MainPageProps> {
   };
 
   render() {
-    const { usersData, startGame, increaseTime, isGameActive, setTimerFunc } = this.props;
+    const { usersData, startGame, increaseTime, isGameActive, setTimerFunc, checkAndRandomizeColors } = this.props;
     const firstPlayer = usersData.find((e) => e.id === 1);
     const secondPlayer = usersData.find((e) => e.id === 2);
     if (!firstPlayer || !secondPlayer) {
@@ -37,6 +38,8 @@ export default class MainPage extends React.PureComponent<MainPageProps> {
           increaseTime={increaseTime}
           isGameActive={isGameActive}
           setTimerFunc={setTimerFunc}
+          checkAndRandomizeColors={checkAndRandomizeColors}
+          players={usersData}
         />
         <Player number={2} onNameClick={this.onNameClick} data={secondPlayer} />
         <PopapContainer />

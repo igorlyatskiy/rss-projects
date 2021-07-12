@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import React from "react";
-import { GameRoom } from "../../Constants";
+import Constants, { GameRoom } from "../../Constants";
 import "./OnlinePage.sass";
 import boardImage from "../../../img/chessboard.jpg";
 
@@ -19,7 +19,7 @@ interface OnlinePageState {
 interface OnlinePageProps {
   onlineName: string;
   setStore: (data: unknown, id: string | number) => void;
-  startGame: () => void;
+  startGame: (type: string, id: string) => void;
   increaseTime: () => void;
   setSelectedPlayer: (id: number) => void;
   setWsConnection: (wsConnection: WebSocket) => void;
@@ -39,15 +39,16 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   }
 
   createRoom = () => {
-    const url = `http://127.0.0.1:${port}/room`;
+    const url = `${process.env.REACT_APP_FULL_SERVER_URL}/room?type=${Constants.PVP_ONLINE_NAME}`;
     axios({
       method: "put",
       url,
       mode: "cors",
+      body: {},
     }).then(() => this.getNewRoomsData());
   };
 
-  joinGame = (roomId: number | string) => {
+  joinGame = (roomId: string) => {
     const { onlineName, startGame, setWsConnection } = this.props;
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
     const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
@@ -88,7 +89,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
                 mode: "cors",
               }).then((e: AxiosResponse) => {
                 setStore(e.data, roomId);
-                startGame();
+                startGame(Constants.PVP_ONLINE_NAME, roomId);
               });
             }
             break;
@@ -152,9 +153,13 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     const { data } = this.state;
     const cleanData = data?.filter((e) => {
       if (e.players !== undefined) {
-        return Object.values(e.players).length !== 2 && e.game.isGameProcessActive === true;
+        return (
+          Object.values(e.players).length !== 2 &&
+          e.game.isGameProcessActive === true &&
+          e.game.gameType === Constants.PVP_ONLINE_NAME
+        );
       }
-      return e.game.isGameProcessActive === true;
+      return e.game.isGameProcessActive === true && e.game.gameType === Constants.PVP_ONLINE_NAME;
     });
     return (
       <section className='online-page'>
@@ -177,19 +182,19 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
                 </div>
               ))}
             </div>
-            <section className='interaction-menu'>
-              <button type='button' className='interaction-menu__random-game'>
-                Random game
-              </button>
-              <button type='button' className='interaction-menu__create-game' onClick={() => this.createRoom()}>
-                Create game
-              </button>
-              <button type='button' className='interaction-menu__reload' onClick={() => this.getNewRoomsData()}>
-                Refresh
-              </button>
-            </section>
           </>
         )}
+        <section className='interaction-menu'>
+          <button type='button' className='interaction-menu__random-game'>
+            Random game
+          </button>
+          <button type='button' className='interaction-menu__create-game' onClick={() => this.createRoom()}>
+            Create game
+          </button>
+          <button type='button' className='interaction-menu__reload' onClick={() => this.getNewRoomsData()}>
+            Refresh
+          </button>
+        </section>
       </section>
     );
   }
