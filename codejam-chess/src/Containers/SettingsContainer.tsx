@@ -8,17 +8,28 @@ interface SettingsContainerContainerProps {
   areRandomSidesEnabled: boolean;
   changeAiLevelFunc: (number: number) => void;
   changeGameModeFunc: (type: string) => void;
+  AILevel: number;
+  gameType: string;
 }
 
 class SettingsContainer extends React.PureComponent<SettingsContainerContainerProps> {
   render() {
-    const { changeRandomPlayerSidesFunc, areRandomSidesEnabled, changeAiLevelFunc,changeGameModeFunc } = this.props;
+    const {
+      changeRandomPlayerSidesFunc,
+      areRandomSidesEnabled,
+      AILevel,
+      gameType,
+      changeAiLevelFunc,
+      changeGameModeFunc,
+    } = this.props;
     return (
       <Settings
         changeAiLevel={changeAiLevelFunc}
         areRandomSidesEnabled={areRandomSidesEnabled}
         changeRandomPlayerSides={changeRandomPlayerSidesFunc}
         changeGameMode={changeGameModeFunc}
+        AILevel={AILevel}
+        gameType={gameType}
       />
     );
   }
@@ -28,6 +39,8 @@ const pushStateToProps = (state: any) => {
   const { mainPageReducer } = state;
   return {
     areRandomSidesEnabled: mainPageReducer.game.areRandomSidesEnabled,
+    AILevel: mainPageReducer.game.AILevel,
+    gameType: mainPageReducer.game.gameType,
   };
 };
 

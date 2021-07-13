@@ -967,7 +967,6 @@ export default class NewChess {
     const moves = this.chess.moves({ verbose: true });
     const otherMoves = this.chess.moves();
     const attackMove = otherMoves.find((e) => e.includes('#')) || otherMoves.find((e) => e.includes('+')) || otherMoves.find((e) => e.includes('x'));
-    console.log(attackMove);
     if (attackMove !== undefined) {
       const result = attackMove.match(/\w\d/g);
       const square = result !== null ? result[0] : '';

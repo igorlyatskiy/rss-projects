@@ -8,6 +8,8 @@ interface SettingsProps {
   changeAiLevel: (number: number) => void;
   changeGameMode: (type: string) => void;
   areRandomSidesEnabled: boolean;
+  AILevel: number;
+  gameType: string;
 }
 
 export default class Settings extends React.PureComponent<SettingsProps> {
@@ -28,7 +30,7 @@ export default class Settings extends React.PureComponent<SettingsProps> {
   };
 
   render() {
-    const { areRandomSidesEnabled } = this.props;
+    const { areRandomSidesEnabled, AILevel, gameType } = this.props;
     return (
       <div className='settings'>
         <>
@@ -60,15 +62,33 @@ export default class Settings extends React.PureComponent<SettingsProps> {
           <div className='settings__block'>
             <h3 className='settings__heading'>Bot level</h3>
             <p>
-              <input type='radio' id='ez-bot' name='bot-level' defaultChecked onInput={() => this.changeBotLevel(1)} />
+              <input
+                type='radio'
+                id='ez-bot'
+                name='bot-level'
+                checked={AILevel === 1}
+                onClick={() => this.changeBotLevel(1)}
+              />
               <label htmlFor='ez-bot'>Eazy</label>
             </p>
             <p>
-              <input type='radio' id='hard-bot' name='bot-level' onInput={() => this.changeBotLevel(2)} />
+              <input
+                type='radio'
+                id='hard-bot'
+                name='bot-level'
+                checked={AILevel === 2}
+                onClick={() => this.changeBotLevel(2)}
+              />
               <label htmlFor='hard-bot'>Hard</label>
             </p>
             <p>
-              <input type='radio' id='unreal-bot' name='bot-level' onInput={() => this.changeBotLevel(3)} />
+              <input
+                type='radio'
+                id='unreal-bot'
+                name='bot-level'
+                checked={AILevel === 3}
+                onClick={() => this.changeBotLevel(3)}
+              />
               <label htmlFor='unreal-bot'>Unreal</label>
             </p>
           </div>
@@ -79,8 +99,8 @@ export default class Settings extends React.PureComponent<SettingsProps> {
                 type='radio'
                 id='game-mode-pvp'
                 name='game-mode'
-                defaultChecked
-                onInput={() => this.changeGameMode(Constants.PVP_OFFLINE_NAME)}
+                checked={gameType === Constants.PVP_OFFLINE_NAME}
+                onClick={() => this.changeGameMode(Constants.PVP_OFFLINE_NAME)}
               />
               <label htmlFor='game-mode-pvp'>PvP (offline)</label>
             </p>
@@ -89,7 +109,8 @@ export default class Settings extends React.PureComponent<SettingsProps> {
                 type='radio'
                 id='game-mode-ai'
                 name='game-mode'
-                onInput={() => this.changeGameMode(Constants.AI_NAME)}
+                checked={gameType === Constants.AI_NAME}
+                onClick={() => this.changeGameMode(Constants.AI_NAME)}
               />
               <label htmlFor='game-mode-ai'>AI</label>
             </p>

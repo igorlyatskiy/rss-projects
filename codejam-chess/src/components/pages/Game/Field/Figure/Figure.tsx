@@ -245,12 +245,12 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   moveFigureWithTimeout = () => {
     const { requestMove, chess, cleanSlowFigureMove, turnMove, roomId, element, getHighlightedSquares } = this.props;
-    // const { cleanSlowFigureMove } = this.props;
     setTimeout(async () => {
       chess.move({
         from: requestMove.move?.from as string,
         to: requestMove.move?.to as string,
       });
+      await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string, 2);
       const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
       const { time } = this.props;
       const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
