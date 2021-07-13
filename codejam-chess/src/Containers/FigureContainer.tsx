@@ -1,15 +1,17 @@
 import React from "react";
 import { connect } from "react-redux";
 import NewChess from "../chess.js/chess";
-import { FigureData, PlayerData } from "../components/Constants";
+import { FigureData, PlayerData, RequestMove } from "../components/Constants";
 import Figure from "../components/pages/Game/Field/Figure/Figure";
 import {
   checkValidMoves,
+  cleanSlowFigureMove,
   cleanValidMoves,
   drawField,
   getHighlightedSquares,
   makeFieldMarkersVisible,
   setWinner,
+  slowFigureMove,
   turnAiMove,
   turnMove,
 } from "../store/mainPage/actions";
@@ -27,6 +29,7 @@ interface FigureContainerProps {
   drawFieldFunc: () => void;
   turnAiMoveFunc: () => void;
   turnMoveFunc: (data: unknown) => void;
+  slowFigureMoveFunc: (data: unknown) => void;
   makeFieldMarkersVisibleFunc: () => void;
   setWinnerFunc: (id: number) => void;
   players?: PlayerData[];
@@ -37,7 +40,11 @@ interface FigureContainerProps {
   checkSquares: string[];
   checkmateSquares: string[];
   getHighlightedSquaresFunc: () => void;
-  winnerId: number
+  winnerId: number;
+  selectedPlayerId: number;
+  requestMove: RequestMove;
+  AILevel: number;
+  cleanSlowFigureMoveFunc: () => void;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -49,6 +56,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       turnMoveFunc,
       makeFieldMarkersVisibleFunc,
       setWinnerFunc,
+      requestMove,
       element,
       rowNumber,
       elementNumber,
@@ -65,7 +73,11 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       checkSquares,
       getHighlightedSquaresFunc,
       cleanValidMovesFunc,
-      winnerId
+      AILevel,
+      winnerId,
+      selectedPlayerId,
+      slowFigureMoveFunc,
+      cleanSlowFigureMoveFunc,
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -102,6 +114,11 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         checkSquares={checkSquares}
         getHighlightedSquares={getHighlightedSquaresFunc}
         winnerId={winnerId}
+        selectedPlayerId={selectedPlayerId}
+        requestMove={requestMove}
+        AILevel={AILevel}
+        slowFigureMove={slowFigureMoveFunc}
+        cleanSlowFigureMove={cleanSlowFigureMoveFunc}
       />
     );
   }
@@ -120,7 +137,10 @@ const pushStateToProps = (state: any) => {
     time: mainPageReducer.game.time,
     checkSquares: mainPageReducer.game.checkSquares,
     checkmateSquares: mainPageReducer.game.checkmateSquares,
-    winnerId: mainPageReducer.game.winnerId
+    winnerId: mainPageReducer.game.winnerId,
+    selectedPlayerId: mainPageReducer.game.selectedPlayerId,
+    requestMove: mainPageReducer.game.requestMove,
+    AILevel: mainPageReducer.game.AILevel,
   };
 };
 
@@ -133,6 +153,8 @@ const mapDispatchToProps = {
   setWinnerFunc: setWinner,
   cleanValidMovesFunc: cleanValidMoves,
   getHighlightedSquaresFunc: getHighlightedSquares,
+  slowFigureMoveFunc: slowFigureMove,
+  cleanSlowFigureMoveFunc: cleanSlowFigureMove,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(FigureContainer);

@@ -14,6 +14,11 @@ export interface Color {
   color: 'b' | 'w'
 }
 
+export interface RequestMove {
+  status: boolean,
+  move: HistoryMove | null
+}
+
 export interface UserAction extends ReduxAction {
   payload: {
     name: string,
@@ -69,6 +74,8 @@ interface StoreGame {
 }
 
 export default class Constants {
+  static FIGURE_MOVEMENT_TIME = 500;
+  static FIGURE_WAITING_TIME = 500;
   static NOT_AI_PLAYER_ID = 1;
   static PVP_OFFLINE_NAME = 'pvp-offline'
   static PVP_ONLINE_NAME = 'pvp-online'
@@ -107,5 +114,5 @@ export default class Constants {
   static startTimeValue = -1;
   static squareSize = 91;
   static rowNumbers = 8;
-  static BOARD_ROTATION_TIME = 1200
+  static BOARD_ROTATION_TIME = 100
 }

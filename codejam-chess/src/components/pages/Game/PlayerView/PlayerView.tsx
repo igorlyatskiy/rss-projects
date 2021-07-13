@@ -50,7 +50,7 @@ export default class PlayerView extends React.PureComponent<PlayerViewProps> {
     const playerColor = player.color;
     const playerHistory = history.filter((e: HistoryElement) => e.color === playerColor);
     const playerHistoryTimeNumber = player.color === "w" ? 0 : 1;
-    const playerHistoryTime = historyTime.filter((e, i) => i % 2 === playerHistoryTimeNumber);
+    const playerHistoryTime = historyTime.sort((a, b) => a - b).filter((e, i) => i % 2 === playerHistoryTimeNumber);
     return (
       <div className={`player-view player-view_${playerColor} ${winnerId === player.id ? "player-view_winner" : ""}`}>
         {draw && <div className='player-view__draw'>No winner</div>}

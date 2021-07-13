@@ -14,6 +14,8 @@ export interface Color {
   color: 'b' | 'w'
 }
 
+export const AI_NAME = 'ai';
+
 export const fireBaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
   authDomain: process.env.REACT_APP_AUTHDOMAIN,

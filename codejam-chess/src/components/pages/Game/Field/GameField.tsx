@@ -32,6 +32,26 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   public markersClassName: string = "";
   public keyNumber = 0;
 
+  getFieldClassName = (
+    gameType: string,
+    selectedPlayer: PlayerData,
+    activePlayer: PlayerData,
+    activePlayerId: number,
+    selectedPlayerId: number
+  ) => {
+    let className = "";
+    if ((gameType === Constants.PVP_ONLINE_NAME || gameType === Constants.AI_NAME) && selectedPlayer.color === "b") {
+      className += " field_rotated";
+    }
+    if (gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b") {
+      className += " field_rotated";
+    }
+    if (gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId) {
+      className += " field_blocked";
+    }
+    return className;
+  };
+
   getKeyNumber = () => {
     this.keyNumber += 1;
     return this.keyNumber;
@@ -62,17 +82,24 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               activePlayerId={activePlayerId}
               players={players}
               areFieldMarkersVisible={areFieldMarkersVisible}
+              rotated={
+                !this.getFieldClassName(
+                  gameType,
+                  selectedPlayer as PlayerData,
+                  activePlayer as PlayerData,
+                  activePlayerId,
+                  selectedPlayerId
+                ).includes("field_rotated")
+              }
             />
             <div
-              className={`field
-        ${
-          (gameType === Constants.PVP_ONLINE_NAME || gameType === Constants.AI_NAME) && selectedPlayer.color === "b"
-            ? " field_rotated"
-            : ""
-        }
-        ${gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b" ? " field_rotated" : ""}
-        ${gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId ? " field_blocked" : ""}
-        `}
+              className={`field ${this.getFieldClassName(
+                gameType,
+                selectedPlayer as PlayerData,
+                activePlayer as PlayerData,
+                activePlayerId,
+                selectedPlayerId
+              )}`}
             >
               {data.map((row, rowNumber) => (
                 <div key={this.getKeyNumber()} className='field__row'>

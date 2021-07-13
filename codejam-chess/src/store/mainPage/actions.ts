@@ -24,6 +24,8 @@ export const SERVER_SET_SELECTED_PLAYER = 'SERVER_SET_SELECTED_PLAYER'
 export const SERVER_SET_WS_CONNECTION = 'SERVER_SET_WS_CONNECTION'
 export const GAME_GET_HIGHLIGHTED_SQUARES = 'GAME_GET_HIGHLIGHTED_SQUARES'
 export const GAME_RANDOMIZE_COLORS = 'GAME_RANDOMIZE_COLORS'
+export const GAME_SLOW_MOVE_FIGURE = 'GAME_SLOW_MOVE_FIGURE'
+export const GAME_CLEAN_SLOW_FIGURE_MOVE = 'GAME_CLEAN_SLOW_FIGURE_MOVE'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -153,5 +155,15 @@ export const getHighlightedSquares = () => ({
 
 export const checkAndRandomizeColors = () => ({
   type: GAME_RANDOMIZE_COLORS,
+  payload: true
+})
+
+export const slowFigureMove = (data: unknown) => ({
+  type: GAME_SLOW_MOVE_FIGURE,
+  payload: data
+})
+
+export const cleanSlowFigureMove = () => ({
+  type: GAME_CLEAN_SLOW_FIGURE_MOVE,
   payload: true
 })

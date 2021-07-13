@@ -946,32 +946,36 @@ export default class NewChess {
   moveAI = (level: number) => {
     switch (level) {
       case 1:
-        this.makeRandomAiMove()
+        return this.makeRandomAiMove()
         break;
       case 2:
-        this.makeRandomAttackAiMove()
+        return this.makeRandomAttackAiMove()
         break;
       default:
         break;
     }
-    this.turn();
+    return this.makeRandomAiMove();
   }
 
   makeRandomAiMove = () => {
-    const moves = this.chess.moves();
+    const moves = this.chess.moves({ verbose: true });
     const move = moves[Math.floor(Math.random() * moves.length)]
-    this.move(move)
+    return move;
   }
 
   makeRandomAttackAiMove = () => {
-    const moves = this.chess.moves();
-    console.log(moves);
-    const attackMove = moves.find((e) => e.includes('#')) || moves.find((e) => e.includes('+')) || moves.find((e) => e.includes('x'));
+    const moves = this.chess.moves({ verbose: true });
+    const otherMoves = this.chess.moves();
+    const attackMove = otherMoves.find((e) => e.includes('#')) || otherMoves.find((e) => e.includes('+')) || otherMoves.find((e) => e.includes('x'));
+    console.log(attackMove);
     if (attackMove !== undefined) {
-      this.move(attackMove)
-    } else {
-      const move = moves[Math.floor(Math.random() * moves.length)]
-      this.move(move)
+      const result = attackMove.match(/\w\d/g);
+      const square = result !== null ? result[0] : '';
+      if (moves.find((e) => e.to === square) !== undefined) {
+        return moves.find((e) => e.to === square)
+      }
     }
+    const move = moves[Math.floor(Math.random() * moves.length)]
+    return move
   }
 }

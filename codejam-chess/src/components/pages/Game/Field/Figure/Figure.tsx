@@ -2,7 +2,7 @@
 // import axios, { AxiosResponse } from "axios";
 import React from "react";
 import NewChess from "../../../../../chess.js/chess";
-import Constants, { FigureData, PlayerData } from "../../../../Constants";
+import Constants, { FigureData, PlayerData, RequestMove } from "../../../../Constants";
 import Bishop from "../../../../Figures/Bishop/Bishop";
 import King from "../../../../Figures/King/King";
 import Knight from "../../../../Figures/Knight/Knight";
@@ -26,6 +26,7 @@ interface FigureProps {
   drawField: () => void;
   turnAiMove: () => void;
   turnMove: (data: unknown) => void;
+  slowFigureMove: (data: unknown) => void;
   makeFieldMarkersVisible: () => void;
   setWinner: (id: number) => void;
   players: PlayerData[];
@@ -37,9 +38,14 @@ interface FigureProps {
   checkSquares: string[];
   checkmateSquares: string[];
   getHighlightedSquares: () => void;
+  cleanSlowFigureMove: () => void;
+  selectedPlayerId: number;
+  requestMove: RequestMove;
+  AILevel: number;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
+  public isFigureAlreadyMoved = false;
   getFigure = () => {
     const { elementNumber, rowNumber, element } = this.props;
     const unicId = `${elementNumber}, ${rowNumber}`;
@@ -112,11 +118,10 @@ export default class Figure extends React.PureComponent<FigureProps> {
     };
 
     document.onmouseup = () => {
-      const { cleanValidMoves, makeFieldMarkersVisible } = this.props;
+      const { cleanValidMoves } = this.props;
       this.checkFigurePosition(currentTarget, startLeft, startTop);
       this.checkMove(currentTarget, startTop, startLeft);
       cleanValidMoves();
-      setTimeout(() => makeFieldMarkersVisible(), Constants.BOARD_ROTATION_TIME);
       document.onmousemove = null;
       document.onmouseup = null;
     };
@@ -133,14 +138,14 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
     const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
     if (moveStatus) {
-      this.makeMove(position, newPosition);
+      this.makeMove(position, newPosition, chess);
     } else {
       currentTarget.style.left = `${startLeft}px`;
       currentTarget.style.top = `${startTop}px`;
     }
   };
 
-  makeMove = async (position: string, newPosition: string) => {
+  makeMove = async (position: string, newPosition: string, chess: NewChess) => {
     const {
       drawField,
       wsConnection,
@@ -148,11 +153,10 @@ export default class Figure extends React.PureComponent<FigureProps> {
       time,
       gameType,
       turnMove,
-      // turnAiMove,
       element,
-      chess,
       activePlayerId,
       getHighlightedSquares,
+      makeFieldMarkersVisible,
     } = this.props;
     drawField();
     if (gameType === Constants.PVP_ONLINE_NAME) {
@@ -175,8 +179,23 @@ export default class Figure extends React.PureComponent<FigureProps> {
         await this.checkGameStatus(chess, baseURL as string, roomId as string, activePlayerId);
         const getRoomInfo = await axios.get(getRoomUrl);
         turnMove(getRoomInfo);
+        if (gameType === Constants.AI_NAME) {
+          this.turnAiMove(chess);
+        } else {
+          setTimeout(() => makeFieldMarkersVisible, Constants.BOARD_ROTATION_TIME);
+        }
         getHighlightedSquares();
       }
+    }
+  };
+
+  turnAiMove = (chess: NewChess) => {
+    const { AILevel, slowFigureMove } = this.props;
+    const move = chess.moveAI(AILevel);
+    if (move !== null && move !== undefined) {
+      setTimeout(() => {
+        slowFigureMove(move);
+      }, Constants.FIGURE_WAITING_TIME);
     }
   };
 
@@ -224,26 +243,87 @@ export default class Figure extends React.PureComponent<FigureProps> {
     return false;
   };
 
+  moveFigureWithTimeout = () => {
+    const { requestMove, chess, cleanSlowFigureMove, turnMove, roomId, element, getHighlightedSquares } = this.props;
+    // const { cleanSlowFigureMove } = this.props;
+    setTimeout(async () => {
+      chess.move({
+        from: requestMove.move?.from as string,
+        to: requestMove.move?.to as string,
+      });
+      const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
+      const { time } = this.props;
+      const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
+      const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
+      const responce = await axios.post(moveUrl);
+      if (responce.status === 200) {
+        const data = await axios.get(getRoomUrl);
+        turnMove(data);
+        this.isFigureAlreadyMoved = false;
+        cleanSlowFigureMove();
+        getHighlightedSquares();
+      }
+    }, Constants.FIGURE_MOVEMENT_TIME);
+  };
+
+  getBlockedClassname = () => {
+    const { gameType, activePlayerId, element, selectedPlayerId, players } = this.props;
+    const playerId = players.find((e) => e.color === element.color)?.id;
+
+    switch (gameType) {
+      case Constants.PVP_OFFLINE_NAME: {
+        if (activePlayerId !== playerId) {
+          return " figure-container_blocked";
+        }
+        break;
+      }
+      case Constants.PVP_ONLINE_NAME: {
+        if (selectedPlayerId !== activePlayerId) {
+          return " figure-container_blocked";
+        }
+        break;
+      }
+      case Constants.AI_NAME: {
+        if (selectedPlayerId !== activePlayerId) {
+          return " figure-container_blocked";
+        }
+        break;
+      }
+      default:
+        return "";
+    }
+    return "";
+  };
+
   getReversedClassName = () => {
     const { element } = this.props;
     return element.color === Constants.FIGURES_COLORS_NAMES.black ? " figure-container_reversed" : "";
   };
 
   render() {
-    const { rowNumber, elementNumber, isGameProcessActive, element, activePlayerId, players } = this.props;
-    const playerId = players.find((e) => e.color === element.color)?.id;
+    const { rowNumber, elementNumber, requestMove, position } = this.props;
+    let newRowNumber = rowNumber;
+    let newColNumber = elementNumber;
+    if (requestMove.status === true && position === requestMove.move?.from) {
+      newRowNumber = Constants.rowNumbers - +requestMove.move?.to[1];
+      newColNumber = Constants.letters.indexOf(requestMove.move.to[0]);
+      if (this.isFigureAlreadyMoved === false) {
+        this.moveFigureWithTimeout();
+        this.isFigureAlreadyMoved = true;
+      }
+    }
     return (
       <div
         role='presentation'
         className={`figure-container
-          ${playerId === activePlayerId ? " figure-container_active" : " figure-container_blocked"}
-          ${isGameProcessActive ? "" : " figure-container_blocked"}
-          ${this.getReversedClassName()}`}
+          ${this.getBlockedClassname()}
+          ${this.getReversedClassName()}
+          ${requestMove.status === true ? " figure-container_long-move" : ""}`}
         onMouseDown={this.mouseDown}
         onDragStart={this.startDrag}
         style={{
-          top: `${Constants.squareSize * rowNumber}px`,
-          left: `${Constants.squareSize * elementNumber}px`,
+          top: `${Constants.squareSize * newRowNumber}px`,
+          left: `${Constants.squareSize * newColNumber}px`,
         }}
         draggable
       >

@@ -1,4 +1,4 @@
-import { fireBaseConfig, PlayerData, TimerInfo } from './Constants';
+import { AI_NAME, fireBaseConfig, PlayerData, TimerInfo } from './Constants';
 import express from "express";
 import WebSocket from "ws";
 import http from 'http'
@@ -169,7 +169,8 @@ app.put('/room', (req, res) => {
       gameType: gameType,
       draw: false,
       winnerId: 0,
-      isGameProcessActive: true
+      isGameProcessActive: true,
+      selectedPlayerId: gameType === AI_NAME ? 1 : 0
     },
   }
   ref.set({

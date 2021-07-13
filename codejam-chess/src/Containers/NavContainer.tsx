@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { PlayerData } from "../components/Constants";
-import MainPage from "../components/pages/Main/MainPage";
+import Nav from "../components/pages/Main/Nav/Nav";
 import {
   setActivePlayer,
   showPopap,
@@ -13,7 +13,7 @@ import {
   setStore,
 } from "../store/mainPage/actions";
 
-export interface MainContainerProps {
+export interface NavContainerProps {
   setActivePlayerFunc: (id: number) => void;
   showPopapFunc: () => void;
   startGameFunc: (type: string, id: string) => void;
@@ -22,36 +22,35 @@ export interface MainContainerProps {
   checkAndRandomizeColorsFunc: () => void;
   setTimerFunction: (number: number) => void;
   gameStatus: boolean;
+  areRandomSidesEnabled: boolean;
   gameType: string;
   setStoreFunc: (store: unknown, roomId: string | number) => void;
 }
 
-class MainContainer extends React.PureComponent<MainContainerProps> {
+class NavContainer extends React.PureComponent<NavContainerProps> {
   render() {
     const {
-      setActivePlayerFunc,
-      checkAndRandomizeColorsFunc,
-      showPopapFunc,
       startGameFunc,
       increaseTimeFunc,
-      setTimerFunction,
-      users,
       gameStatus,
+      setTimerFunction,
+      checkAndRandomizeColorsFunc,
+      users,
       gameType,
       setStoreFunc,
+      areRandomSidesEnabled,
     } = this.props;
     return (
-      <MainPage
-        setActivePlayer={setActivePlayerFunc}
-        showPopap={showPopapFunc}
-        usersData={users}
+      <Nav
         startGame={startGameFunc}
         increaseTime={increaseTimeFunc}
         isGameActive={gameStatus}
         setTimerFunc={setTimerFunction}
         checkAndRandomizeColors={checkAndRandomizeColorsFunc}
+        players={users}
         gameType={gameType}
         setStore={setStoreFunc}
+        areRandomSidesEnabled={areRandomSidesEnabled}
       />
     );
   }
@@ -61,6 +60,7 @@ const pushStateToProps = (state: any) => ({
   users: state.mainPageReducer.players,
   gameStatus: state.mainPageReducer.game.isGamePageActive,
   gameType: state.mainPageReducer.game.gameType,
+  areRandomSidesEnabled: state.mainPageReducer.game.areRandomSidesEnabled,
 });
 
 const mapDispatchToProps = {
@@ -74,4 +74,4 @@ const mapDispatchToProps = {
   setStoreFunc: setStore,
 };
 
-export default connect(pushStateToProps, mapDispatchToProps)(MainContainer);
+export default connect(pushStateToProps, mapDispatchToProps)(NavContainer);

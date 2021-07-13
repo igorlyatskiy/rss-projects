@@ -18,9 +18,11 @@ interface NavProps {
   increaseTime: () => void;
   checkAndRandomizeColors: () => void;
   isGameActive: boolean;
+  areRandomSidesEnabled: boolean;
   setTimerFunc: (number: number) => void;
   players: PlayerData[];
   gameType: string;
+  setStore: (store: unknown, roomId: string | number) => void;
 }
 
 export default class Nav extends React.PureComponent<NavProps> {
@@ -34,21 +36,48 @@ export default class Nav extends React.PureComponent<NavProps> {
   };
 
   createGameRoom = async () => {
-    const { startGame, players, checkAndRandomizeColors, gameType } = this.props;
+    const { players, gameType, setStore, startGame } = this.props;
     const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
     const url = `${baseURL}/room?type=${gameType}`;
-    checkAndRandomizeColors();
     const responce = await axios({
       method: "put",
       url,
       data: {
-        players,
+        players: this.randomizeColors(players),
       },
     });
     if (responce.status === 200 && responce.data.status === true) {
       const id = responce.data.roomId;
-      startGame(Constants.PVP_OFFLINE_NAME, id);
+      const roomUrl = `${baseURL}/rooms?id=${id}`;
+      const roomInfo = await axios.get(roomUrl);
+      if (roomInfo.status === 200) {
+        setStore(roomInfo.data, id);
+        if (gameType !== Constants.PVP_ONLINE_NAME) {
+          startGame(gameType, id);
+        }
+      }
     }
+  };
+
+  randomizeColors = (players: PlayerData[]) => {
+    const { areRandomSidesEnabled, gameType } = this.props;
+    let newPlayers = [...players];
+    if (areRandomSidesEnabled) {
+      const firstPlayerColor = Math.random() - 0.5 > 0 ? "w" : "b";
+      const secondPlayerColor = firstPlayerColor === "w" ? "b" : "w";
+      newPlayers = [
+        {
+          ...(players.find((e) => e.id === 1) as PlayerData),
+          color: firstPlayerColor,
+        },
+        {
+          ...(players.find((e) => e.id === 2) as PlayerData),
+          color: secondPlayerColor,
+          name: gameType === Constants.AI_NAME ? "AI bot" : (players.find((e) => e.id === 2)?.name as string),
+        },
+      ];
+    }
+    return newPlayers;
   };
 
   render() {

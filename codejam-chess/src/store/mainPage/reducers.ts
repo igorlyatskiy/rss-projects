@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants, { HistoryAction, PlayerData } from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
   players:
@@ -9,13 +9,13 @@ const defaultState = {
         name: Constants.defaultPlayers[0].name,
         image: Constants.defaultPlayers[0].image,
         id: 1,
-        color: Constants.FIGURES_COLORS_NAMES.black
+        color: Constants.FIGURES_COLORS_NAMES.white
       },
       {
         name: Constants.defaultPlayers[1].name,
         image: Constants.defaultPlayers[1].image,
         id: 2,
-        color: Constants.FIGURES_COLORS_NAMES.white
+        color: Constants.FIGURES_COLORS_NAMES.black
       }
     ],
   activePlayerId: 2,
@@ -41,12 +41,16 @@ const defaultState = {
     checkSquares: [''],
     checkmateSquares: [''],
     arePlayersColorsReversed: true,
-    areRandomSidesEnabled: true,
+    areRandomSidesEnabled: false,
     AILevel: 1,
-    gameType: Constants.PVP_OFFLINE_NAME,
+    gameType: Constants.AI_NAME,
     draw: false,
     winnerId: 0,
-    wsConnection: null
+    wsConnection: null,
+    requestMove: {
+      status: false,
+      move: null
+    }
   },
   isUserLogined: false,
 }
@@ -162,7 +166,11 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           historyTime: [],
           winnerId: 0,
           gameType: action.payload.type,
-          roomId: action.payload.id
+          roomId: action.payload.id,
+          requestMove: {
+            status: false,
+            move: null
+          }
         },
         activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
         isUserLogined: true,
@@ -260,7 +268,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     case GAME_TURN_MOVE: {
       state.game.chess.turn();
       const { data } = action.payload;
-      const history = Object.values(data.game.history).filter((e) => e !== null) as HistoryAction[]
+      let history = Object.values(data.game.history).filter((e) => e !== null) as HistoryAction[]
+      history = history.sort((a, b: HistoryAction) => a.time - b.time)
       if (!data.game.isGameProcessActive) {
         clearInterval(state.game.timerFunction);
         state.game.timerFunction = 0;
@@ -283,9 +292,10 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         activePlayerId: data.activePlayerId,
         game: {
           ...state.game,
+          data: state.game.chess.board(),
           history: [...history.map((e) => e.move)],
           historyTime: [...history.map((e) => e.time)],
-          areFieldMarkersVisible: false,
+          areFieldMarkersVisible: true,
           isGameProcessActive: data.game.isGameProcessActive,
           draw: data.game.draw,
           winnerId: data.game.winnerId,
@@ -293,37 +303,38 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       }
     }
 
-    case GAME_TURN_AI_MOVE: {
-      state.game.chess.turn();
-      state.game.chess.moveAI(state.game.AILevel);
-      state.game.checkSquares = [...state.game.chess.checkSquares];
-      state.game.checkmateSquares = [...state.game.chess.checkmateSquares];
-      const isGameFinished = state.game.chess.chess.gameOver()
-      let draw = false;
-      if (isGameFinished) {
-        window.clearInterval(state.game.timerFunction)
-        draw = !state.game.chess.chess.inCheckmate();
-      }
+    case GAME_SLOW_MOVE_FIGURE: {
       return {
         ...state,
-        activePlayerId: state.activePlayerId,
         game: {
           ...state.game,
-          history: state.game.chess.history(),
-          historyTime: isGameFinished ? [
-            ...state.game.historyTime,
-            state.game.time,
-          ] : [
-            ...state.game.historyTime,
-            state.game.time,
-            state.game.time,
-          ],
-          areFieldMarkersVisible: false,
-          isGameProcessActive: !isGameFinished,
-          data: state.game.chess.board(),
-          draw,
-          winnerId: state.game.chess.chess.inCheckmate() ? state.activePlayerId : 0,
-        },
+          requestMove: {
+            status: true,
+            move: {
+              from: action.payload.from,
+              to: action.payload.to
+            }
+          }
+        }
+      }
+    }
+
+    case GAME_CLEAN_SLOW_FIGURE_MOVE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          requestMove: {
+            status: false,
+            move: null
+          }
+        }
+      }
+    }
+
+    case GAME_TURN_AI_MOVE: {
+      return {
+        ...state,
       }
     }
 
@@ -380,10 +391,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     case SERVER_SET_STORE: {
       const data = action.payload.store;
       const players = Object.values(data.players) as PlayerData[];
-      if (data.game.history !== undefined) {
-        const historyArray = Object.values(data.game.history) as HistoryAction[];
-        state.game.chess.move(historyArray[historyArray.length - 1].move)
-      }
       return {
         ...state,
         activePlayerId: data.activePlayerId,
@@ -405,6 +412,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           gameType: data.game.gameType,
           data: state.game.chess.board(),
           winnerId: data.game.winnerId,
+          selectedPlayerId: data.game.selectedPlayerId,
+          isGameProcessActive: data.game.isGameProcessActive
         }
       }
     }

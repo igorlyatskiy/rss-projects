@@ -1,9 +1,9 @@
 import React from "react";
 import Player from "./Player/Player";
 import "./MainPage.sass";
-import Nav from "./Nav/Nav";
 import PopapContainer from "../../../Containers/PopapContainer";
 import { PlayerData } from "../../Constants";
+import NavContainer from "../../../Containers/NavContainer";
 
 interface MainPageProps {
   setActivePlayer: (id: number) => void;
@@ -15,6 +15,7 @@ interface MainPageProps {
   setTimerFunc: (number: number) => void;
   isGameActive: boolean;
   gameType: string;
+  setStore: (store: unknown, roomId: string | number) => void;
 }
 
 export default class MainPage extends React.PureComponent<MainPageProps> {
@@ -25,7 +26,7 @@ export default class MainPage extends React.PureComponent<MainPageProps> {
   };
 
   render() {
-    const { usersData, startGame, increaseTime, isGameActive, setTimerFunc,gameType, checkAndRandomizeColors } = this.props;
+    const { usersData } = this.props;
     const firstPlayer = usersData.find((e) => e.id === 1);
     const secondPlayer = usersData.find((e) => e.id === 2);
     if (!firstPlayer || !secondPlayer) {
@@ -34,15 +35,7 @@ export default class MainPage extends React.PureComponent<MainPageProps> {
     return (
       <section className='main-page'>
         <Player number={1} onNameClick={this.onNameClick} data={firstPlayer} />
-        <Nav
-          startGame={startGame}
-          increaseTime={increaseTime}
-          isGameActive={isGameActive}
-          setTimerFunc={setTimerFunc}
-          checkAndRandomizeColors={checkAndRandomizeColors}
-          players={usersData}
-          gameType={gameType}
-        />
+        <NavContainer />
         <Player number={2} onNameClick={this.onNameClick} data={secondPlayer} />
         <PopapContainer />
       </section>
