@@ -1,10 +1,12 @@
 import React, { FormEvent } from "react";
 import "./Settings.sass";
 import "./Bootstrap.css";
+import Constants from "../../Constants";
 
 interface SettingsProps {
   changeRandomPlayerSides: (status: boolean) => void;
   changeAiLevel: (number: number) => void;
+  changeGameMode: (type: string) => void;
   areRandomSidesEnabled: boolean;
 }
 
@@ -18,6 +20,11 @@ export default class Settings extends React.PureComponent<SettingsProps> {
   changeBotLevel = (level: number) => {
     const { changeAiLevel } = this.props;
     changeAiLevel(level);
+  };
+
+  changeGameMode = (type: string) => {
+    const { changeGameMode } = this.props;
+    changeGameMode(type);
   };
 
   render() {
@@ -53,22 +60,38 @@ export default class Settings extends React.PureComponent<SettingsProps> {
           <div className='settings__block'>
             <h3 className='settings__heading'>Bot level</h3>
             <p>
-              <input
-                type='radio'
-                id='ez-bot'
-                name='radio-group'
-                defaultChecked
-                onInput={() => this.changeBotLevel(1)}
-              />
+              <input type='radio' id='ez-bot' name='bot-level' defaultChecked onInput={() => this.changeBotLevel(1)} />
               <label htmlFor='ez-bot'>Eazy</label>
             </p>
             <p>
-              <input type='radio' id='hard-bot' name='radio-group' onInput={() => this.changeBotLevel(2)} />
+              <input type='radio' id='hard-bot' name='bot-level' onInput={() => this.changeBotLevel(2)} />
               <label htmlFor='hard-bot'>Hard</label>
             </p>
             <p>
-              <input type='radio' id='unreal-bot' name='radio-group' onInput={() => this.changeBotLevel(3)} />
+              <input type='radio' id='unreal-bot' name='bot-level' onInput={() => this.changeBotLevel(3)} />
               <label htmlFor='unreal-bot'>Unreal</label>
+            </p>
+          </div>
+          <div className='settings__block'>
+            <h3 className='settings__heading'>Game mode</h3>
+            <p>
+              <input
+                type='radio'
+                id='game-mode-pvp'
+                name='game-mode'
+                defaultChecked
+                onInput={() => this.changeGameMode(Constants.PVP_OFFLINE_NAME)}
+              />
+              <label htmlFor='game-mode-pvp'>PvP (offline)</label>
+            </p>
+            <p>
+              <input
+                type='radio'
+                id='game-mode-ai'
+                name='game-mode'
+                onInput={() => this.changeGameMode(Constants.AI_NAME)}
+              />
+              <label htmlFor='game-mode-ai'>AI</label>
             </p>
           </div>
         </>

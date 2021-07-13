@@ -14,6 +14,7 @@ interface MainPageProps {
   checkAndRandomizeColors: () => void;
   setTimerFunc: (number: number) => void;
   isGameActive: boolean;
+  gameType: string;
 }
 
 export default class MainPage extends React.PureComponent<MainPageProps> {
@@ -24,7 +25,7 @@ export default class MainPage extends React.PureComponent<MainPageProps> {
   };
 
   render() {
-    const { usersData, startGame, increaseTime, isGameActive, setTimerFunc, checkAndRandomizeColors } = this.props;
+    const { usersData, startGame, increaseTime, isGameActive, setTimerFunc,gameType, checkAndRandomizeColors } = this.props;
     const firstPlayer = usersData.find((e) => e.id === 1);
     const secondPlayer = usersData.find((e) => e.id === 2);
     if (!firstPlayer || !secondPlayer) {
@@ -40,6 +41,7 @@ export default class MainPage extends React.PureComponent<MainPageProps> {
           setTimerFunc={setTimerFunc}
           checkAndRandomizeColors={checkAndRandomizeColors}
           players={usersData}
+          gameType={gameType}
         />
         <Player number={2} onNameClick={this.onNameClick} data={secondPlayer} />
         <PopapContainer />

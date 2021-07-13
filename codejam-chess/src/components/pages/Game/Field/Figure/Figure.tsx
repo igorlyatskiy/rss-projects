@@ -182,8 +182,13 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string, activePlayerId: number) => {
     if (!chess.isGameActive()) {
-      const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${activePlayerId}`;
-      await axios.post(setWinnerUrl);
+      if (chess.inCheckmate()) {
+        const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${activePlayerId}`;
+        await axios.post(setWinnerUrl);
+      } else {
+        const setDrawUrl = `${baseURL}/room/draw?id=${roomId}`;
+        await axios.post(setDrawUrl);
+      }
     }
   };
 

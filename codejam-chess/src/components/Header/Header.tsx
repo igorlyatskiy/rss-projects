@@ -8,6 +8,7 @@ import {
   // useLocation,
 } from "react-router-dom";
 import "./Header.sass";
+import axios from "axios";
 import logo from "../../img/svg/logo.svg";
 
 interface HeaderProps {
@@ -17,20 +18,29 @@ interface HeaderProps {
   setWinner: (id: number) => void;
   activePlayerId: number;
   isGameProcessActive: boolean;
+  roomId: string;
+  setStore: (store: unknown, roomId: string | number) => void;
 }
 
 class Header extends React.PureComponent<HeaderProps> {
-  breakGameFunc = () => {
-    const { breakGame } = this.props;
-    breakGame();
+  breakGameFunc = async () => {
+    const { breakGame, roomId } = this.props;
+    const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
+    const breakGameResponce = await axios.post(url);
+    console.log("break");
+    if (breakGameResponce.status === 200) {
+      breakGame();
+    }
   };
 
-  admitLoss = () => {
-    const FIRST_PLAYER_ID = 1;
-    const SECOND_PLAYER_ID = 2;
-    const { setWinner, activePlayerId } = this.props;
-    const winnerId = activePlayerId === FIRST_PLAYER_ID ? SECOND_PLAYER_ID : FIRST_PLAYER_ID;
-    setWinner(winnerId);
+  admitLoss = async () => {
+    const { roomId, activePlayerId, setWinner } = this.props;
+    const winnerId = activePlayerId === 1 ? 2 : 1;
+    const setWinnerUrl = `${process.env.REACT_APP_FULL_SERVER_URL}/room/winner?id=${roomId}&winnerId=${winnerId}`;
+    const setWinnerResponce = await axios.post(setWinnerUrl);
+    if (setWinnerResponce.status === 200) {
+      setWinner(winnerId);
+    }
   };
 
   render() {
@@ -58,7 +68,7 @@ class Header extends React.PureComponent<HeaderProps> {
           )}
 
           {isGameWinned && (
-            <Link to='/' onClick={breakGame}>
+            <Link to='/' onClick={this.breakGameFunc}>
               <button type='button' className='header__lobby-btn'>
                 TO LOBBY
               </button>

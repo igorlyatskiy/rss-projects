@@ -20,6 +20,7 @@ interface NavProps {
   isGameActive: boolean;
   setTimerFunc: (number: number) => void;
   players: PlayerData[];
+  gameType: string;
 }
 
 export default class Nav extends React.PureComponent<NavProps> {
@@ -33,9 +34,9 @@ export default class Nav extends React.PureComponent<NavProps> {
   };
 
   createGameRoom = async () => {
-    const { startGame, players, checkAndRandomizeColors } = this.props;
+    const { startGame, players, checkAndRandomizeColors, gameType } = this.props;
     const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
-    const url = `${baseURL}/room?type=${Constants.PVP_OFFLINE_NAME}`;
+    const url = `${baseURL}/room?type=${gameType}`;
     checkAndRandomizeColors();
     const responce = await axios({
       method: "put",
@@ -44,7 +45,6 @@ export default class Nav extends React.PureComponent<NavProps> {
         players,
       },
     });
-    console.log(responce);
     if (responce.status === 200 && responce.data.status === true) {
       const id = responce.data.roomId;
       startGame(Constants.PVP_OFFLINE_NAME, id);

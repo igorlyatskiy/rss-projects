@@ -21,6 +21,7 @@ export interface MainContainerProps {
   checkAndRandomizeColorsFunc: () => void;
   setTimerFunction: (number: number) => void;
   gameStatus: boolean;
+  gameType: string;
 }
 
 class MainContainer extends React.PureComponent<MainContainerProps> {
@@ -34,6 +35,7 @@ class MainContainer extends React.PureComponent<MainContainerProps> {
       setTimerFunction,
       users,
       gameStatus,
+      gameType
     } = this.props;
     return (
       <MainPage
@@ -45,6 +47,7 @@ class MainContainer extends React.PureComponent<MainContainerProps> {
         isGameActive={gameStatus}
         setTimerFunc={setTimerFunction}
         checkAndRandomizeColors={checkAndRandomizeColorsFunc}
+        gameType={gameType}
       />
     );
   }
@@ -53,6 +56,7 @@ class MainContainer extends React.PureComponent<MainContainerProps> {
 const pushStateToProps = (state: any) => ({
   users: state.mainPageReducer.players,
   gameStatus: state.mainPageReducer.game.isGamePageActive,
+  gameType: state.mainPageReducer.game.gameType,
 });
 
 const mapDispatchToProps = {

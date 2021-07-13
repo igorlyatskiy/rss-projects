@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants, { HistoryAction, PlayerData } from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
+import { GAME_BREAK_GAME, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
   players:
@@ -43,7 +43,7 @@ const defaultState = {
     arePlayersColorsReversed: true,
     areRandomSidesEnabled: true,
     AILevel: 1,
-    gameType: Constants.AI_NAME,
+    gameType: Constants.PVP_OFFLINE_NAME,
     draw: false,
     winnerId: 0,
     wsConnection: null
@@ -130,7 +130,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       }
       const firstPlayer = { ...state.players.find((e) => e.id === 1) || '' }
       const secondPlayer = { ...state.players.find((e) => e.id === 2) || '' }
-      console.log(firstPlayerColor);
       return {
         ...state,
         players: [
@@ -227,7 +226,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_GET_VALID_MOVES: {
       const validMoves = state.game.chess.moves(action.payload);
-      console.log(validMoves);
+      // console.log(validMoves);
       return {
         ...state,
         game: {
@@ -260,17 +259,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_TURN_MOVE: {
       state.game.chess.turn();
-      // state.game.checkSquares = [...state.game.chess.checkSquares];
-      // state.game.checkmateSquares = [...state.game.chess.checkmateSquares];
-      // const isGameFinished = state.game.chess.chess.gameOver()
-      // let draw = false;
-      // if (isGameFinished) {
-      //   window.clearInterval(state.game.timerFunction)
-      //   draw = !state.game.chess.chess.inCheckmate();
-      // }
       const { data } = action.payload;
       const history = Object.values(data.game.history).filter((e) => e !== null) as HistoryAction[]
-      console.log(data);
       if (!data.game.isGameProcessActive) {
         clearInterval(state.game.timerFunction);
         state.game.timerFunction = 0;
@@ -278,6 +268,18 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       }
       return {
         ...state,
+        players: [{
+          id: 1,
+          color: data.players.find((e: PlayerData) => e.id === 1)?.color,
+          image: data.players.find((e: PlayerData) => e.id === 1)?.image,
+          name: data.players.find((e: PlayerData) => e.id === 1)?.name
+        },
+        {
+          id: 2,
+          color: data.players.find((e: PlayerData) => e.id === 2)?.color,
+          image: data.players.find((e: PlayerData) => e.id === 2)?.image,
+          name: data.players.find((e: PlayerData) => e.id === 2)?.name
+        }],
         activePlayerId: data.activePlayerId,
         game: {
           ...state.game,
@@ -285,7 +287,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           historyTime: [...history.map((e) => e.time)],
           areFieldMarkersVisible: false,
           isGameProcessActive: data.game.isGameProcessActive,
-          // draw,
+          draw: data.game.draw,
           winnerId: data.game.winnerId,
         },
       }
@@ -355,6 +357,16 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       }
     }
 
+    case SETTINGS_CHANGE_GAME_MODE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          gameType: action.payload
+        }
+      }
+    }
+
     case SETTINGS_CHANGE_AI_LEVEL: {
       return {
         ...state,
@@ -390,10 +402,9 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         game: {
           ...state.game,
           roomId: action.payload.id,
-          gameType: Constants.PVP_ONLINE_NAME,
+          gameType: data.game.gameType,
           data: state.game.chess.board(),
-          checkSquares: state.game.chess.checkSquares,
-          checkmateSquares: state.game.checkmateSquares
+          winnerId: data.game.winnerId,
         }
       }
     }

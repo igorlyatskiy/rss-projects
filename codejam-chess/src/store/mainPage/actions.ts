@@ -18,6 +18,7 @@ export const GAME_MAKE_FIELD_MARKERS_INVISIBLE = 'GAME_MAKE_FIELD_MARKERS_INVISI
 export const GAME_TURN_AI_MOVE = 'GAME_TURN_AI_MOVE';
 export const SETTINGS_CHANGE_RANDOM_PLAYER_SIDES = 'SETTINGS_CHANGE_RANDOM_PLAYER_SIDES';
 export const SETTINGS_CHANGE_AI_LEVEL = 'SETTINGS_CHANGE_AI_LEVEL'
+export const SETTINGS_CHANGE_GAME_MODE = 'SETTINGS_CHANGE_GAME_MODE'
 export const SERVER_SET_STORE = 'SERVER_SET_STORE';
 export const SERVER_SET_SELECTED_PLAYER = 'SERVER_SET_SELECTED_PLAYER'
 export const SERVER_SET_WS_CONNECTION = 'SERVER_SET_WS_CONNECTION'
@@ -120,6 +121,11 @@ export const changeRandomPlayerSides = (status: boolean) => ({
 export const changeAiLevel = (number: number) => ({
   type: SETTINGS_CHANGE_AI_LEVEL,
   payload: number
+})
+
+export const changeGameMode = (type: string) => ({
+  type: SETTINGS_CHANGE_GAME_MODE,
+  payload: type
 })
 
 export const setStore = (store: unknown, roomId: string | number) => ({

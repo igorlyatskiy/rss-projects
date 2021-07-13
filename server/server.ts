@@ -165,7 +165,6 @@ app.put('/room', (req, res) => {
     activePlayerId: players.find((e: PlayerData) => e.color === 'w').id,
     game: {
       history: [null],
-      areRandomSidesEnabled: true,
       AILevel: 1,
       gameType: gameType,
       draw: false,
@@ -211,6 +210,34 @@ app.post('/room/winner', (req, res) => {
   }
 })
 
+
+app.post('/room/draw', (req, res) => {
+  const { id } = req.query;
+  if (id !== undefined) {
+    const ref = db.ref(`rooms/${id}/game`);
+    ref.update({
+      winnerId: 0,
+      isGameProcessActive: false,
+      draw: true
+    }).then(() => {
+      res.send({ status: true })
+    });
+  }
+})
+
+app.post('/game/break', (req, res) => {
+  const { id } = req.query;
+  if (id !== undefined) {
+    const ref = db.ref(`rooms/${id}/game`);
+    ref.update({
+      winnerId: 0,
+      isGameProcessActive: false,
+      draw: false
+    }).then(() => {
+      res.send({ status: true })
+    });
+  }
+})
 
 app.listen(SERVER_PORT, () => {
   console.log(`Main server is running on port ${SERVER_PORT}`)
