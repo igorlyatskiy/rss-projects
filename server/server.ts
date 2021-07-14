@@ -20,9 +20,9 @@ const WEBSOCKET_PORT = process.env.REACT_APP_WEBSOCKET_PORT || 5001;
 socketApp.set('port', WEBSOCKET_PORT);
 const server = http.createServer(socketApp);
 const webSocketServer = new WebSocket.Server({ server, port: +WEBSOCKET_PORT }, () => console.log(`Websocket server started on port ${WEBSOCKET_PORT}`));
+const timers: TimerInfo[] = [];
 
 webSocketServer.on('connection', (ws: WebSocket) => {
-  const timers: TimerInfo[] = [];
   ws.on('message', (data: string) => {
     const message = JSON.parse(data);
     switch (message.event) {
@@ -68,6 +68,11 @@ webSocketServer.on('connection', (ws: WebSocket) => {
               const timerInterval = setInterval(() => {
                 webSocketServer.clients.forEach((client) => client.send(JSON.stringify(timerMessage)))
               }, 1000)
+              timers.forEach((timer) => {
+                if (timer.roomId === roomId) {
+                  clearInterval(timer.timerInterval);
+                }
+              });
               timers.push({ roomId, timerInterval });
               const timerMessage = {
                 event: 'timer',
@@ -116,7 +121,7 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         const { winnerId, draw, roomId } = message.payload;
         const ref = db.ref(`rooms/${roomId}/game`);
         ref.update({
-          winnerId: winnerId,
+          winnerId,
           isGameProcessActive: false,
           draw: draw,
         })
@@ -125,11 +130,11 @@ webSocketServer.on('connection', (ws: WebSocket) => {
           id: roomId,
         }
 
-        const selectedTimer = timers.find((e) => e.roomId === roomId);
-        if (selectedTimer) {
-          clearInterval(selectedTimer?.timerInterval);
-          timers.splice(timers.indexOf(selectedTimer), 1);
-        }
+        timers.forEach((timer) => {
+          if (timer.roomId === roomId) {
+            clearInterval(timer.timerInterval);
+          }
+        });
         webSocketServer.clients.forEach((client) => {
           client.send(JSON.stringify(finishGameAction))
         })
@@ -253,6 +258,16 @@ app.post('/game/break', (req, res) => {
       isGameProcessActive: false,
       draw: false
     }).then(() => {
+      res.send({ status: true })
+    });
+  }
+})
+
+app.post('/game/clean', (req, res) => {
+  const { id } = req.query;
+  if (id) {
+    const ref = db.ref(`rooms/${id}/players`);
+    ref.set([]).then(() => {
       res.send({ status: true })
     });
   }

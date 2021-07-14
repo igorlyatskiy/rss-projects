@@ -26,6 +26,7 @@ export const GAME_GET_HIGHLIGHTED_SQUARES = 'GAME_GET_HIGHLIGHTED_SQUARES'
 export const GAME_RANDOMIZE_COLORS = 'GAME_RANDOMIZE_COLORS'
 export const GAME_SLOW_MOVE_FIGURE = 'GAME_SLOW_MOVE_FIGURE'
 export const GAME_CLEAN_SLOW_FIGURE_MOVE = 'GAME_CLEAN_SLOW_FIGURE_MOVE'
+export const GAME_CLEAN_FIELD = 'GAME_CLEAN_FIELD'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -165,5 +166,10 @@ export const slowFigureMove = (data: unknown) => ({
 
 export const cleanSlowFigureMove = () => ({
   type: GAME_CLEAN_SLOW_FIGURE_MOVE,
+  payload: true
+})
+
+export const cleanField = () => ({
+  type: GAME_CLEAN_FIELD,
   payload: true
 })

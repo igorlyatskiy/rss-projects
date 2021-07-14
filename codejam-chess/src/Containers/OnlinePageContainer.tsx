@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { PlayerData } from "../components/Constants";
 import OnlinePage from "../components/pages/Online/OnlinePage";
 import {
+  cleanField,
   cleanSlowFigureMove,
   increaseTime,
   setSelectedPlayer,
@@ -23,6 +24,7 @@ export interface OnlinePageContainerProps {
   isGameProcessActive: boolean;
   slowFigureMoveFunc: (data: unknown) => void;
   cleanSlowFigureMoveFunc: () => void;
+  cleanFieldFunc: () => void;
 }
 
 class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> {
@@ -38,6 +40,7 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
       increaseTimeFunc,
       slowFigureMoveFunc,
       cleanSlowFigureMoveFunc,
+      cleanFieldFunc
     } = this.props;
     return (
       <OnlinePage
@@ -51,6 +54,7 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
         slowFigureMove={slowFigureMoveFunc}
         cleanSlowFigureMove={cleanSlowFigureMoveFunc}
         onlineImage={image}
+        cleanField={cleanFieldFunc}
       />
     );
   }
@@ -70,6 +74,7 @@ const mapDispatchToProps = {
   increaseTimeFunc: increaseTime,
   slowFigureMoveFunc: slowFigureMove,
   cleanSlowFigureMoveFunc: cleanSlowFigureMove,
+  cleanFieldFunc:cleanField
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(OnlinePageContainer);

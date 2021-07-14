@@ -27,6 +27,7 @@ interface OnlinePageProps {
   isGameProcessActive: boolean;
   slowFigureMove: (data: unknown) => void;
   cleanSlowFigureMove: () => void;
+  cleanField: () => void;
 }
 
 const port = process.env.REACT_APP_SERVER_PORT;
@@ -52,7 +53,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   };
 
   joinGame = (roomId: string) => {
-    const { onlineName, onlineImage, startGame, setWsConnection } = this.props;
+    const { onlineName, onlineImage, startGame, setWsConnection, cleanField } = this.props;
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
     const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
     setWsConnection(wsConnection);
@@ -66,6 +67,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
         },
       };
       wsConnection.send(JSON.stringify(action));
+      cleanField();
       console.log("%c Connected.", "color: #00FF00");
     };
 
@@ -121,6 +123,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
             const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
             const roomInfo = await axios.get(getRoomUrl);
             setStore(roomInfo.data, roomId);
+            wsConnection.close();
             break;
           }
           default:
@@ -147,7 +150,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
         this.setState({ data: Object.values(roomsData.rooms) });
       })
       .catch(() => {
-        throw new Error("while getting the axiosResponce at the online page");
+        alert("Somebody has broken the database! 😠\nGo to the main page and start any offline game!");
       });
   };
 
@@ -173,21 +176,25 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           <div className='error'>Wait, while server is loading the info</div>
         ) : (
           <>
-            <div className='cards'>
-              {cleanData.map((e) => (
-                <div
-                  className={`game-card ${e.players === undefined ? " game-card_empty" : ""} ${
-                    e.players !== undefined && Object.values(e.players).length === 1 ? " game-card_waiting" : ""
-                  }`}
-                >
-                  <img src={boardImage} alt='Chess board' className='game-card__image' />
-                  <p className='game-card__name'>{e.name}</p>
-                  <Link to='/game' className='game-card__button' onClick={() => this.joinGame(e.id)}>
-                    Join
-                  </Link>
-                </div>
-              ))}
-            </div>
+            {cleanData.length !== 0 ? (
+              <div className='cards'>
+                {cleanData.map((e) => (
+                  <div
+                    className={`game-card ${e.players === undefined ? " game-card_empty" : ""} ${
+                      e.players !== undefined && Object.values(e.players).length === 1 ? " game-card_waiting" : ""
+                    }`}
+                  >
+                    <img src={boardImage} alt='Chess board' className='game-card__image' />
+                    <p className='game-card__name'>{e.name}</p>
+                    <Link to='/game' className='game-card__button' onClick={() => this.joinGame(e.id)}>
+                      Join
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className='online-page__empty-message'>It&apos;s a little bit empty here... ☹</p>
+            )}
           </>
         )}
         <section className='interaction-menu'>

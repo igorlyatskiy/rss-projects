@@ -12,6 +12,9 @@ export interface MainContainerProps {
   isGameProcessActive: boolean;
   roomId: string;
   setStoreFunc: (store: unknown, roomId: string | number) => void;
+  gameType: string;
+  wsConnection: WebSocket;
+  selectedPlayerId: number;
 }
 
 class HeaderContainer extends React.PureComponent<MainContainerProps> {
@@ -25,6 +28,9 @@ class HeaderContainer extends React.PureComponent<MainContainerProps> {
       setWinnerFunc,
       activePlayerId,
       isGameProcessActive,
+      gameType,
+      wsConnection,
+      selectedPlayerId
     } = this.props;
     return (
       <Header
@@ -36,6 +42,9 @@ class HeaderContainer extends React.PureComponent<MainContainerProps> {
         isGameProcessActive={isGameProcessActive}
         roomId={roomId}
         setStore={setStoreFunc}
+        gameType={gameType}
+        wsConnection={wsConnection}
+        selectedPlayerId={selectedPlayerId}
       />
     );
   }
@@ -47,6 +56,9 @@ const pushStateToProps = (state: any) => ({
   activePlayerId: state.mainPageReducer.activePlayerId,
   isGameProcessActive: state.mainPageReducer.game.isGameProcessActive,
   roomId: state.mainPageReducer.game.roomId,
+  gameType: state.mainPageReducer.game.gameType,
+  wsConnection: state.mainPageReducer.game.wsConnection,
+  selectedPlayerId: state.mainPageReducer.game.selectedPlayerId,
 });
 
 const mapDispatchToProps = {
