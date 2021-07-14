@@ -27,7 +27,6 @@ class Header extends React.PureComponent<HeaderProps> {
     const { breakGame, roomId } = this.props;
     const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
     const breakGameResponce = await axios.post(url);
-    console.log("break");
     if (breakGameResponce.status === 200) {
       breakGame();
     }

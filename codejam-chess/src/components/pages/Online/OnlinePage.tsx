@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import React from "react";
-import Constants, { GameRoom } from "../../Constants";
+import Constants, { GameRoom, HistoryAction } from "../../Constants";
 import "./OnlinePage.sass";
 import boardImage from "../../../img/chessboard.jpg";
 
@@ -18,12 +18,15 @@ interface OnlinePageState {
 
 interface OnlinePageProps {
   onlineName: string;
+  onlineImage: string;
   setStore: (data: unknown, id: string | number) => void;
   startGame: (type: string, id: string) => void;
   increaseTime: () => void;
   setSelectedPlayer: (id: number) => void;
   setWsConnection: (wsConnection: WebSocket) => void;
   isGameProcessActive: boolean;
+  slowFigureMove: (data: unknown) => void;
+  cleanSlowFigureMove: () => void;
 }
 
 const port = process.env.REACT_APP_SERVER_PORT;
@@ -49,7 +52,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   };
 
   joinGame = (roomId: string) => {
-    const { onlineName, startGame, setWsConnection } = this.props;
+    const { onlineName, onlineImage, startGame, setWsConnection } = this.props;
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
     const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
     setWsConnection(wsConnection);
@@ -59,13 +62,14 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
         payload: {
           roomId,
           name: onlineName,
+          image: onlineImage,
         },
       };
       wsConnection.send(JSON.stringify(action));
       console.log("%c Connected.", "color: #00FF00");
     };
 
-    wsConnection.onmessage = (event) => {
+    wsConnection.onmessage = async (event) => {
       const { setStore, setSelectedPlayer, increaseTime } = this.props;
       const message = JSON.parse(event.data);
       const { selectedPlayerId } = message;
@@ -83,44 +87,46 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           case "start-game":
             {
               const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
-              axios({
+              const responce = await axios({
                 method: "get",
                 url,
                 mode: "cors",
-              }).then((e: AxiosResponse) => {
-                setStore(e.data, roomId);
-                startGame(Constants.PVP_ONLINE_NAME, roomId);
               });
+              setStore(responce.data, roomId);
+              startGame(Constants.PVP_ONLINE_NAME, roomId);
             }
             break;
           case "move-figure":
             {
+              const { slowFigureMove } = this.props;
               const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
-              axios({
+              const roomInfo = await axios({
                 method: "get",
                 url,
                 mode: "cors",
-              }).then((e: AxiosResponse) => {
-                setStore(e.data, roomId);
               });
+              console.log(roomInfo.data);
+              const { history } = roomInfo.data.game;
+              const historyArray = Object.values(history);
+              const lastMove = historyArray[historyArray.length - 1] as HistoryAction;
+              setTimeout(() => {
+                slowFigureMove(lastMove.move);
+                // setStore(roomInfo.data, roomId);
+              }, Constants.FIGURE_WAITING_TIME);
             }
             break;
+
+          case "finish-game": {
+            const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
+            const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
+            const roomInfo = await axios.get(getRoomUrl);
+            setStore(roomInfo.data, roomId);
+            break;
+          }
           default:
             throw new Error("at the online page");
         }
       }
-    };
-
-    wsConnection.onclose = (event) => {
-      if (event.wasClean) {
-        console.log("Connection was closed sucsessfully");
-      } else {
-        console.log("Connection error", event);
-      }
-    };
-
-    wsConnection.onerror = (e: any) => {
-      console.log(e);
     };
   };
 

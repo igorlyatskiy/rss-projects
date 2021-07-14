@@ -30,6 +30,7 @@ interface FigureContainerProps {
   turnAiMoveFunc: () => void;
   turnMoveFunc: (data: unknown) => void;
   slowFigureMoveFunc: (data: unknown) => void;
+  cleanSlowFigureMoveFunc: () => void;
   makeFieldMarkersVisibleFunc: () => void;
   setWinnerFunc: (id: number) => void;
   players?: PlayerData[];
@@ -44,7 +45,6 @@ interface FigureContainerProps {
   selectedPlayerId: number;
   requestMove: RequestMove;
   AILevel: number;
-  cleanSlowFigureMoveFunc: () => void;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {

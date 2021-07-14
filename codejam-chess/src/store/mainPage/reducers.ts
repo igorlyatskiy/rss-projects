@@ -50,7 +50,7 @@ const defaultState = {
     requestMove: {
       status: false,
       move: null
-    }
+    },
   },
   isUserLogined: false,
 }
@@ -154,6 +154,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_START_GAME: {
+      state.game.chess.reset();
       return {
         ...state,
         game: {
@@ -275,19 +276,20 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         state.game.timerFunction = 0;
         state.game.time = history.map((e) => e.time)[history.map((e) => e.time).length - 1];
       }
+      const dataPlayers = Object.values(data.players) as PlayerData[];
       return {
         ...state,
         players: [{
           id: 1,
-          color: data.players.find((e: PlayerData) => e.id === 1)?.color,
-          image: data.players.find((e: PlayerData) => e.id === 1)?.image,
-          name: data.players.find((e: PlayerData) => e.id === 1)?.name
+          color: dataPlayers.find((e: PlayerData) => e.id === 1)?.color,
+          image: dataPlayers.find((e: PlayerData) => e.id === 1)?.image,
+          name: dataPlayers.find((e: PlayerData) => e.id === 1)?.name
         },
         {
           id: 2,
-          color: data.players.find((e: PlayerData) => e.id === 2)?.color,
-          image: data.players.find((e: PlayerData) => e.id === 2)?.image,
-          name: data.players.find((e: PlayerData) => e.id === 2)?.name
+          color: dataPlayers.find((e: PlayerData) => e.id === 2)?.color,
+          image: dataPlayers.find((e: PlayerData) => e.id === 2)?.image,
+          name: dataPlayers.find((e: PlayerData) => e.id === 2)?.name
         }],
         activePlayerId: data.activePlayerId,
         game: {
@@ -304,6 +306,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_SLOW_MOVE_FIGURE: {
+      console.log(action.payload);
       return {
         ...state,
         game: {
@@ -412,7 +415,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           gameType: data.game.gameType,
           data: state.game.chess.board(),
           winnerId: data.game.winnerId,
-          selectedPlayerId: data.game.selectedPlayerId,
+          selectedPlayerId: data.game.gameType === Constants.AI_NAME ? data.game.selectedPlayerId : state.game.selectedPlayerId,
           isGameProcessActive: data.game.isGameProcessActive
         }
       }

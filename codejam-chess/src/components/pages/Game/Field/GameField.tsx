@@ -39,6 +39,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     activePlayerId: number,
     selectedPlayerId: number
   ) => {
+    const { isGameProcessActive } = this.props;
     let className = "";
     if ((gameType === Constants.PVP_ONLINE_NAME || gameType === Constants.AI_NAME) && selectedPlayer.color === "b") {
       className += " field_rotated";
@@ -47,6 +48,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       className += " field_rotated";
     }
     if (gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId) {
+      className += " field_blocked";
+    }
+    if (isGameProcessActive === false) {
       className += " field_blocked";
     }
     return className;

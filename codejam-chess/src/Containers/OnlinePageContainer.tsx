@@ -1,34 +1,43 @@
 import React from "react";
 import { connect } from "react-redux";
+import { PlayerData } from "../components/Constants";
 import OnlinePage from "../components/pages/Online/OnlinePage";
 import {
+  cleanSlowFigureMove,
   increaseTime,
   setSelectedPlayer,
   setStore,
   setWebsocketConnection,
+  slowFigureMove,
   startGame,
 } from "../store/mainPage/actions";
 
 export interface OnlinePageContainerProps {
   name: string;
+  image: string;
   setStoreFunc: (data: unknown, id: string | number) => void;
   startGameFunc: (type: string, id: string) => void;
   increaseTimeFunc: () => void;
   setSelectedPlayerFunc: (id: number) => void;
   setWebsocketConnectionFunc: (ws: WebSocket) => void;
   isGameProcessActive: boolean;
+  slowFigureMoveFunc: (data: unknown) => void;
+  cleanSlowFigureMoveFunc: () => void;
 }
 
 class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> {
   render() {
     const {
       name,
+      image,
       isGameProcessActive,
       setStoreFunc,
       startGameFunc,
       setSelectedPlayerFunc,
       setWebsocketConnectionFunc,
       increaseTimeFunc,
+      slowFigureMoveFunc,
+      cleanSlowFigureMoveFunc,
     } = this.props;
     return (
       <OnlinePage
@@ -39,13 +48,17 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
         setWsConnection={setWebsocketConnectionFunc}
         increaseTime={increaseTimeFunc}
         isGameProcessActive={isGameProcessActive}
+        slowFigureMove={slowFigureMoveFunc}
+        cleanSlowFigureMove={cleanSlowFigureMoveFunc}
+        onlineImage={image}
       />
     );
   }
 }
 
 const pushStateToProps = (state: any) => ({
-  name: state.mainPageReducer.players.find((e: any) => e.id === 1).name,
+  name: state.mainPageReducer.players.find((e: PlayerData) => e.id === 1).name,
+  image: state.mainPageReducer.players.find((e: PlayerData) => e.id === 1).image,
   isGameProcessActive: state.mainPageReducer.game.isGameProcessActive,
 });
 
@@ -55,6 +68,8 @@ const mapDispatchToProps = {
   setSelectedPlayerFunc: setSelectedPlayer,
   setWebsocketConnectionFunc: setWebsocketConnection,
   increaseTimeFunc: increaseTime,
+  slowFigureMoveFunc: slowFigureMove,
+  cleanSlowFigureMoveFunc: cleanSlowFigureMove,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(OnlinePageContainer);

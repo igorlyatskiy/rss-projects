@@ -27,7 +27,7 @@ webSocketServer.on('connection', (ws: WebSocket) => {
     const message = JSON.parse(data);
     switch (message.event) {
       case "join-room":
-        const { roomId, name } = message.payload;
+        const { roomId, name, image } = message.payload;
         const url = `rooms/`;
         db.ref(url).once('value', (item) => {
           const rooms = item.val();
@@ -44,6 +44,7 @@ webSocketServer.on('connection', (ws: WebSocket) => {
               id: playerId,
               name,
               color,
+              image
             });
             if (color === 'w') {
               db.ref(`${url}${roomId}/activePlayerId`).set(playerId)
@@ -67,10 +68,6 @@ webSocketServer.on('connection', (ws: WebSocket) => {
               const timerInterval = setInterval(() => {
                 webSocketServer.clients.forEach((client) => client.send(JSON.stringify(timerMessage)))
               }, 1000)
-              const activeTimeoutRoom = timers.find((e) => e.roomId === roomId);
-              if (activeTimeoutRoom !== undefined) {
-                clearInterval(activeTimeoutRoom.timerInterval)
-              }
               timers.push({ roomId, timerInterval });
               const timerMessage = {
                 event: 'timer',
@@ -84,26 +81,23 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         break;
 
       case 'move':
-        const { to, from, time } = message.payload;
+        const { to, from, time, color, piece } = message.payload;
         const activeRoomId = message.payload.roomId;
         const moveAction = {
           event: 'move-figure',
           id: activeRoomId,
         }
         const ref = db.ref(`rooms/${activeRoomId}/game/history/${time}`);
-        console.log(message.payload);
         const moveFigure = ref.set({
           time,
           move: {
-            from, to
+            from, to, color, piece
           }
         });
-        const checkSquares = db.ref(`rooms/${activeRoomId}/game/checkSquares`).set(message.payload.checkSquares);
-        const checkmateSquares = db.ref(`rooms/${activeRoomId}/game/checkmateSquares`).set(message.payload.checkmateSquares);
         db.ref(`rooms/${activeRoomId}/activePlayerId`).once('value', (item) => {
           const activePlayerId = item.val();
           const changeActivePlayer = db.ref(`rooms/${activeRoomId}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);
-          Promise.all([moveFigure, changeActivePlayer, checkSquares, checkmateSquares]).then(() => {
+          Promise.all([moveFigure, changeActivePlayer]).then(() => {
             webSocketServer.clients.forEach((client) => {
               client.send(JSON.stringify(moveAction));
             })
@@ -118,6 +112,29 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         }
         break;
 
+      case 'finish-game': {
+        const { winnerId, draw, roomId } = message.payload;
+        const ref = db.ref(`rooms/${roomId}/game`);
+        ref.update({
+          winnerId: winnerId,
+          isGameProcessActive: false,
+          draw: draw,
+        })
+        const finishGameAction = {
+          event: 'finish-game',
+          id: roomId,
+        }
+
+        const selectedTimer = timers.find((e) => e.roomId === roomId);
+        if (selectedTimer) {
+          clearInterval(selectedTimer?.timerInterval);
+          timers.splice(timers.indexOf(selectedTimer), 1);
+        }
+        webSocketServer.clients.forEach((client) => {
+          client.send(JSON.stringify(finishGameAction))
+        })
+        break;
+      }
       default: ws.send((new Error("Wrong query")).message);
     }
   });
@@ -157,12 +174,13 @@ app.put('/room', (req, res) => {
   const gameType = req.query.type;
   const id = uuidv4()
   const ref = db.ref(`rooms/${id}`);
-  const players = req.body.players !== undefined ? req.body.players : [];
+  const players = req.body.players !== undefined ? req.body.players : [{}];
+  const whitePlayer = players.find((e: PlayerData) => e.color === 'w');
   const defaultState = {
     id,
     name: 'Game',
     players,
-    activePlayerId: players.find((e: PlayerData) => e.color === 'w').id,
+    activePlayerId: whitePlayer !== undefined ? whitePlayer.id : 0,
     game: {
       history: [null],
       AILevel: 1,

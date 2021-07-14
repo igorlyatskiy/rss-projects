@@ -159,17 +159,27 @@ export default class Figure extends React.PureComponent<FigureProps> {
       makeFieldMarkersVisible,
     } = this.props;
     drawField();
+    const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
+    const url = `${baseURL}/move?id=${roomId}&from=${position}&to=${newPosition}&time=${time}&color=${element.color}&piece=${element.type}`;
+    const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
     if (gameType === Constants.PVP_ONLINE_NAME) {
-      turnMove({});
       const message = {
         event: "move",
-        payload: { from: position, to: newPosition, promotion: "q", roomId, time },
+        payload: {
+          from: position,
+          to: newPosition,
+          promotion: "q",
+          roomId,
+          time,
+          color: element.color,
+          piece: element.type,
+        },
       };
-      wsConnection.send(JSON.stringify(message));
+      await wsConnection.send(JSON.stringify(message));
+      const getRoomInfo = await axios.get(getRoomUrl);
+      turnMove(getRoomInfo);
+      getHighlightedSquares();
     } else {
-      const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
-      const url = `${baseURL}/move?id=${roomId}&from=${position}&to=${newPosition}&time=${time}&color=${element.color}&piece=${element.type}`;
-      const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
       const moveFigure = await axios({
         method: "post",
         url,
@@ -200,8 +210,21 @@ export default class Figure extends React.PureComponent<FigureProps> {
   };
 
   checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string, activePlayerId: number) => {
+    const { wsConnection, gameType, players } = this.props;
     if (!chess.isGameActive()) {
-      if (chess.inCheckmate()) {
+      if (gameType === Constants.PVP_ONLINE_NAME) {
+        const loserColor = chess.turn();
+        const winner = players.find((e) => e.color !== loserColor);
+        const data = {
+          event: "finish-game",
+          payload: {
+            winnerId: winner?.id,
+            draw: !chess.inCheckmate(),
+            roomId,
+          },
+        };
+        wsConnection.send(JSON.stringify(data));
+      } else if (chess.inCheckmate()) {
         const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${activePlayerId}`;
         await axios.post(setWinnerUrl);
       } else {
@@ -244,24 +267,34 @@ export default class Figure extends React.PureComponent<FigureProps> {
   };
 
   moveFigureWithTimeout = () => {
-    const { requestMove, chess, cleanSlowFigureMove, turnMove, roomId, element, getHighlightedSquares } = this.props;
+    const { requestMove, chess, cleanSlowFigureMove, turnMove, roomId, gameType, element, getHighlightedSquares } =
+      this.props;
     setTimeout(async () => {
       chess.move({
         from: requestMove.move?.from as string,
         to: requestMove.move?.to as string,
+        promotion: "q",
       });
       await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string, 2);
       const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
       const { time } = this.props;
       const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
       const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
-      const responce = await axios.post(moveUrl);
-      if (responce.status === 200) {
+      if (gameType === Constants.PVP_ONLINE_NAME) {
         const data = await axios.get(getRoomUrl);
         turnMove(data);
         this.isFigureAlreadyMoved = false;
         cleanSlowFigureMove();
         getHighlightedSquares();
+      } else {
+        const responce = await axios.post(moveUrl);
+        if (responce.status === 200) {
+          const data = await axios.get(getRoomUrl);
+          turnMove(data);
+          this.isFigureAlreadyMoved = false;
+          cleanSlowFigureMove();
+          getHighlightedSquares();
+        }
       }
     }, Constants.FIGURE_MOVEMENT_TIME);
   };
@@ -278,13 +311,13 @@ export default class Figure extends React.PureComponent<FigureProps> {
         break;
       }
       case Constants.PVP_ONLINE_NAME: {
-        if (selectedPlayerId !== activePlayerId) {
+        if (selectedPlayerId !== activePlayerId || selectedPlayerId !== playerId) {
           return " figure-container_blocked";
         }
         break;
       }
       case Constants.AI_NAME: {
-        if (selectedPlayerId !== activePlayerId) {
+        if (selectedPlayerId !== activePlayerId || selectedPlayerId !== playerId) {
           return " figure-container_blocked";
         }
         break;
