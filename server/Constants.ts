@@ -14,6 +14,32 @@ export interface Color {
   color: 'b' | 'w'
 }
 
+export interface HistoryAction {
+  move: HistoryMove,
+  time: number
+}
+
+interface HistoryMove {
+  from: string,
+  to: string
+}
+
+export interface GameRoom {
+  id: string,
+  players: PlayerData[],
+  isGameActive: boolean,
+  name: string,
+  game: StoreGame
+}
+
+interface StoreGame {
+  isGameProcessActive: boolean,
+  gameType: string,
+  history: HistoryAction[],
+  winnerId: number
+}
+
+
 export const AI_NAME = 'ai';
 
 export const fireBaseConfig = {

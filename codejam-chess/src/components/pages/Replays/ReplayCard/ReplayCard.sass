@@ -1,0 +1,73 @@
+.replay-card
+  width: 564px
+  height: 300px
+  background: #85CDCA
+  border: 5px solid #40B3A2
+  margin: 0 auto
+  position: relative
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  &__avatar
+    width: 125px
+    height: 125px
+    position: absolute
+    border: 5px solid #E8A87C
+    border-radius: 50%
+    display: flex
+    justify-content: center
+    align-items: center
+    font-family: Open Sans
+    font-size: 72px
+    font-style: normal
+    font-weight: 700
+    line-height: 98px
+    letter-spacing: 0em
+    text-align: center
+
+    &_winner .replay-card__winner-icon
+      opacity: 1
+    &_1
+      background: #40B3A2
+      color: #fff
+      top: -62.5px
+      left: -62.5px
+      .replay-card__winner-icon
+        background: #40B3A2
+
+    &_2
+      background: #fff
+      color: #40B3A2
+      top: -62.5px
+      right: -62.5px
+      .replay-card__winner-icon
+        background: #fff
+
+  &__winner-icon
+    position: absolute
+    left: -10px
+    bottom: -10px
+    width: 50px
+    height: 50px
+    border: 5px solid #E8A87C
+    border-radius: 50%
+    display: flex
+    justify-content: center
+    align-items: center
+    opacity: 0
+    transition: all linear 200ms
+    .replay-card__winner-icon-image
+      width: 26px
+      height: 26px
+      display: block
+
+  &__info
+    font-family: Open Sans
+    font-size: 24px
+    font-style: normal
+    font-weight: 700
+    line-height: 33px
+    letter-spacing: 0em
+    text-align: center
+    color: #fff

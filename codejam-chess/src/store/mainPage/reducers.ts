@@ -235,7 +235,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
 
     case GAME_GET_VALID_MOVES: {
       const validMoves = state.game.chess.moves(action.payload);
-      // console.log(validMoves);
       return {
         ...state,
         game: {
@@ -306,7 +305,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_SLOW_MOVE_FIGURE: {
-      console.log(action.payload);
       return {
         ...state,
         game: {

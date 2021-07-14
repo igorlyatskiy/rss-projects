@@ -28,14 +28,19 @@ interface HeaderProps {
 
 class Header extends React.PureComponent<HeaderProps> {
   clickToMain = () => {
-    const { breakGame, isGameProcessActive, roomId } = this.props;
+    const { breakGame, isGameProcessActive, gameType } = this.props;
     breakGame();
-    if (isGameProcessActive) {
+    if (isGameProcessActive && gameType === Constants.PVP_ONLINE_NAME) {
       this.admitLoss();
-    } else {
-      const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/clean?id=${roomId}`;
-      axios.post(url);
     }
+    // else if (isGameProcessActive && gameType !== Constants.PVP_ONLINE_NAME) {
+    //   const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
+    //   axios.post(url);
+    // }
+    // else {
+    //   const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/clean?id=${roomId}`;
+    //   axios.post(url);
+    // }
   };
 
   breakGameFunc = async () => {
@@ -78,6 +83,7 @@ class Header extends React.PureComponent<HeaderProps> {
     const minutes = Math.floor(time / 60) >= 10 ? Math.floor(time / 60) : `0${Math.floor(time / 60)}`;
     const seconds = time % 60 >= 10 ? time % 60 : `0${time % 60}`;
     const isGameWinned = isGamePageActive && !isGameProcessActive;
+    const isReplaysPage = window.location.href.includes("replays");
     return (
       <header className='header'>
         <Link to='/' onClick={() => this.clickToMain()}>
@@ -97,13 +103,14 @@ class Header extends React.PureComponent<HeaderProps> {
             </button>
           )}
 
-          {isGameWinned && (
-            <Link to='/' onClick={this.breakGameFunc}>
-              <button type='button' className='header__lobby-btn'>
-                TO LOBBY
-              </button>
-            </Link>
-          )}
+          {isGameWinned ||
+            (isReplaysPage && (
+              <Link to='/' onClick={this.breakGameFunc}>
+                <button type='button' className='header__lobby-btn'>
+                  TO LOBBY
+                </button>
+              </Link>
+            ))}
 
           {isGameWinned && (
             <button type='button' className='header__replay-btn'>

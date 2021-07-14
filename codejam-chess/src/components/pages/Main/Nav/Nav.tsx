@@ -93,7 +93,7 @@ export default class Nav extends React.PureComponent<NavProps> {
           <div className='main-page__settings'>Settings</div>
         </Link>
         <Link to='/replays'>
-          <div className='main-page__nav__element main-page__replays'>View replays</div>
+          <div className='main-page__nav__element main-page__nav__element_active main-page__replays'>View replays</div>
         </Link>
       </nav>
     );

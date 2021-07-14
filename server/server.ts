@@ -1,10 +1,9 @@
-import { AI_NAME, fireBaseConfig, PlayerData, TimerInfo } from './Constants';
+import { AI_NAME, fireBaseConfig, GameRoom, PlayerData, TimerInfo } from './Constants';
 import express from "express";
 import WebSocket from "ws";
 import http from 'http'
 import firebase from "firebase/app";
 import "firebase/database";
-import { GameRoom } from '../codejam-chess/src/components/Constants';
 import bodyParser from 'body-parser'
 const { v4: uuidv4 } = require('uuid');
 
@@ -175,10 +174,30 @@ app.get('/rooms', (req, res) => {
   })
 });
 
+app.get('/history', (req, res) => {
+  db.ref('rooms/').once('value', (responce) => {
+    let rooms = Object.values(responce.val()) as GameRoom[]
+    rooms = (rooms.filter((e) => e.game.winnerId !== 0 && e.players !== undefined && e.game.isGameProcessActive === false));
+    const history = (rooms.map((e) => e.game.history)).filter((e) => e !== undefined && e !== null).map((e) => Object.values(e));
+    const names = rooms.map((e) => e.players);
+    const resultArray: any = [];
+    const winnerIdArray = rooms.map((e) => e.game.winnerId);
+    names.forEach((currentNames, index) => {
+      resultArray.push({
+        history: history[index],
+        winner: winnerIdArray[index],
+        names: currentNames
+      })
+    })
+    res.send(resultArray);
+  })
+})
+
 app.put('/room', (req, res) => {
   const gameType = req.query.type;
   const id = uuidv4()
   const ref = db.ref(`rooms/${id}`);
+  console.log(req.body.players);
   const players = req.body.players !== undefined ? req.body.players : [{}];
   const whitePlayer = players.find((e: PlayerData) => e.color === 'w');
   const defaultState = {
@@ -265,7 +284,7 @@ app.post('/game/break', (req, res) => {
 
 app.post('/game/clean', (req, res) => {
   const { id } = req.query;
-  if (id) {
+  if (id !== undefined) {
     const ref = db.ref(`rooms/${id}/players`);
     ref.set([]).then(() => {
       res.send({ status: true })

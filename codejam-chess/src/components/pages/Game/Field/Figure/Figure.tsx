@@ -154,7 +154,6 @@ export default class Figure extends React.PureComponent<FigureProps> {
       gameType,
       turnMove,
       element,
-      activePlayerId,
       getHighlightedSquares,
       makeFieldMarkersVisible,
     } = this.props;
@@ -186,7 +185,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
         mode: "cors",
       });
       if (moveFigure.status === 200) {
-        await this.checkGameStatus(chess, baseURL as string, roomId as string, activePlayerId);
+        await this.checkGameStatus(chess, baseURL as string, roomId as string);
         const getRoomInfo = await axios.get(getRoomUrl);
         turnMove(getRoomInfo);
         if (gameType === Constants.AI_NAME) {
@@ -209,12 +208,12 @@ export default class Figure extends React.PureComponent<FigureProps> {
     }
   };
 
-  checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string, activePlayerId: number) => {
+  checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string) => {
     const { wsConnection, gameType, players } = this.props;
     if (!chess.isGameActive()) {
+      const loserColor = chess.turn();
+      const winner = players.find((e) => e.color !== loserColor);
       if (gameType === Constants.PVP_ONLINE_NAME) {
-        const loserColor = chess.turn();
-        const winner = players.find((e) => e.color !== loserColor);
         const data = {
           event: "finish-game",
           payload: {
@@ -225,7 +224,8 @@ export default class Figure extends React.PureComponent<FigureProps> {
         };
         wsConnection.send(JSON.stringify(data));
       } else if (chess.inCheckmate()) {
-        const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${activePlayerId}`;
+        console.log("set winner");
+        const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${winner?.id}`;
         await axios.post(setWinnerUrl);
       } else {
         const setDrawUrl = `${baseURL}/room/draw?id=${roomId}`;
@@ -275,7 +275,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
         to: requestMove.move?.to as string,
         promotion: "q",
       });
-      await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string, 2);
+      await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string);
       const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
       const { time } = this.props;
       const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;

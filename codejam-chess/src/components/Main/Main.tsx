@@ -12,6 +12,7 @@ import MainPageContainer from "../../Containers/MainPageContainer";
 import GamePage from "../pages/Game/GamePage";
 import SettingsContainer from "../../Containers/SettingsContainer";
 import OnlinePageContainer from "../../Containers/OnlinePageContainer";
+import ReplaysContainer from "../../Containers/ReplaysContainer";
 
 interface MainProps {
   isUserLogined: boolean;
@@ -35,6 +36,9 @@ export default class Main extends React.PureComponent<MainProps> {
           </Route>
           <Route exact path='/online'>
             <OnlinePageContainer />
+          </Route>
+          <Route exact path='/replays'>
+            <ReplaysContainer />
           </Route>
           <Route path='*'>
             <div className='routing-error'>Something has gone wrong...</div>

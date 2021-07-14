@@ -70,7 +70,8 @@ export interface GameRoom {
 
 interface StoreGame {
   isGameProcessActive: boolean,
-  gameType: string
+  gameType: string,
+  history: HistoryAction[]
 }
 
 export default class Constants {
