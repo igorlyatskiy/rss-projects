@@ -45,6 +45,7 @@ interface FigureContainerProps {
   selectedPlayerId: number;
   requestMove: RequestMove;
   AILevel: number;
+  isReplay: boolean;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -78,6 +79,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       selectedPlayerId,
       slowFigureMoveFunc,
       cleanSlowFigureMoveFunc,
+      isReplay,
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -119,6 +121,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         AILevel={AILevel}
         slowFigureMove={slowFigureMoveFunc}
         cleanSlowFigureMove={cleanSlowFigureMoveFunc}
+        isReplay={isReplay}
       />
     );
   }
@@ -141,6 +144,7 @@ const pushStateToProps = (state: any) => {
     selectedPlayerId: mainPageReducer.game.selectedPlayerId,
     requestMove: mainPageReducer.game.requestMove,
     AILevel: mainPageReducer.game.AILevel,
+    isReplay: mainPageReducer.replay.isReplay,
   };
 };
 

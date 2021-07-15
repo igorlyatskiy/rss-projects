@@ -75,6 +75,14 @@ interface StoreGame {
 }
 
 export default class Constants {
+  static APP_PAGES = {
+    MAIN: 'main',
+    GAME: 'game',
+    ALL_REPLAYS: 'replays-page',
+    SETTINGS: 'settings',
+    REPLAY: 'replay',
+    ONLINE: 'online',
+  }
   static FIGURE_MOVEMENT_TIME = 500;
   static FIGURE_WAITING_TIME = 500;
   static NOT_AI_PLAYER_ID = 1;

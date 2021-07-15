@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import Header from "../components/Header/Header";
-import { breakGame, setStore, setWinner } from "../store/mainPage/actions";
+import { breakGame, setPage, setStore, setWinner } from "../store/mainPage/actions";
 
 export interface MainContainerProps {
   time: number;
@@ -15,6 +15,8 @@ export interface MainContainerProps {
   gameType: string;
   wsConnection: WebSocket;
   selectedPlayerId: number;
+  activePage: string;
+  changeActivePageFunc: (page: string) => void;
 }
 
 class HeaderContainer extends React.PureComponent<MainContainerProps> {
@@ -26,11 +28,13 @@ class HeaderContainer extends React.PureComponent<MainContainerProps> {
       gameStatus,
       breakGameFunc,
       setWinnerFunc,
+      changeActivePageFunc,
       activePlayerId,
       isGameProcessActive,
       gameType,
       wsConnection,
-      selectedPlayerId
+      activePage,
+      selectedPlayerId,
     } = this.props;
     return (
       <Header
@@ -45,6 +49,8 @@ class HeaderContainer extends React.PureComponent<MainContainerProps> {
         gameType={gameType}
         wsConnection={wsConnection}
         selectedPlayerId={selectedPlayerId}
+        activePage={activePage}
+        changeActivePage={changeActivePageFunc}
       />
     );
   }
@@ -59,12 +65,14 @@ const pushStateToProps = (state: any) => ({
   gameType: state.mainPageReducer.game.gameType,
   wsConnection: state.mainPageReducer.game.wsConnection,
   selectedPlayerId: state.mainPageReducer.game.selectedPlayerId,
+  activePage: state.mainPageReducer.gamePage,
 });
 
 const mapDispatchToProps = {
   breakGameFunc: breakGame,
   setWinnerFunc: setWinner,
   setStoreFunc: setStore,
+  changeActivePageFunc: setPage,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(HeaderContainer);

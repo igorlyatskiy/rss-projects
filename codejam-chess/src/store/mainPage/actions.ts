@@ -27,6 +27,9 @@ export const GAME_RANDOMIZE_COLORS = 'GAME_RANDOMIZE_COLORS'
 export const GAME_SLOW_MOVE_FIGURE = 'GAME_SLOW_MOVE_FIGURE'
 export const GAME_CLEAN_SLOW_FIGURE_MOVE = 'GAME_CLEAN_SLOW_FIGURE_MOVE'
 export const GAME_CLEAN_FIELD = 'GAME_CLEAN_FIELD'
+export const APP_SET_PAGE = 'APP_SET_PAGE'
+export const APP_CHANGE_PLAYERS = 'APP_CHANGE_PLAYERS'
+export const REPLAY_START_REPLAY='REPLAY_START_REPLAY'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -171,5 +174,20 @@ export const cleanSlowFigureMove = () => ({
 
 export const cleanField = () => ({
   type: GAME_CLEAN_FIELD,
+  payload: true
+})
+
+export const setPage = (page: string) => ({
+  type: APP_SET_PAGE,
+  payload: page
+})
+
+export const changePlayers = (data: unknown) => ({
+  type: APP_CHANGE_PLAYERS,
+  payload: data
+})
+
+export const startReplay=() => ({
+  type: REPLAY_START_REPLAY,
   payload: true
 })

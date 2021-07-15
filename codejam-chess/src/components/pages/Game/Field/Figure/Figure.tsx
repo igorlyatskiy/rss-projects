@@ -42,6 +42,7 @@ interface FigureProps {
   selectedPlayerId: number;
   requestMove: RequestMove;
   AILevel: number;
+  isReplay: boolean;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -267,34 +268,52 @@ export default class Figure extends React.PureComponent<FigureProps> {
   };
 
   moveFigureWithTimeout = () => {
-    const { requestMove, chess, cleanSlowFigureMove, turnMove, roomId, gameType, element, getHighlightedSquares } =
-      this.props;
+    const {
+      isReplay,
+      requestMove,
+      chess,
+      cleanSlowFigureMove,
+      turnMove,
+      roomId,
+      gameType,
+      element,
+      getHighlightedSquares,
+      drawField,
+    } = this.props;
     setTimeout(async () => {
-      chess.move({
+      const chessMove = chess.move({
         from: requestMove.move?.from as string,
         to: requestMove.move?.to as string,
         promotion: "q",
       });
+      console.log(chessMove, chess.board());
       await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string);
-      const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
-      const { time } = this.props;
-      const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
-      const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
-      if (gameType === Constants.PVP_ONLINE_NAME) {
-        const data = await axios.get(getRoomUrl);
-        turnMove(data);
-        this.isFigureAlreadyMoved = false;
-        cleanSlowFigureMove();
-        getHighlightedSquares();
-      } else {
-        const responce = await axios.post(moveUrl);
-        if (responce.status === 200) {
+      if (!isReplay) {
+        const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
+        const { time } = this.props;
+        const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
+        const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
+        if (gameType === Constants.PVP_ONLINE_NAME) {
           const data = await axios.get(getRoomUrl);
           turnMove(data);
           this.isFigureAlreadyMoved = false;
           cleanSlowFigureMove();
           getHighlightedSquares();
+        } else {
+          const responce = await axios.post(moveUrl);
+          if (responce.status === 200) {
+            const data = await axios.get(getRoomUrl);
+            turnMove(data);
+            this.isFigureAlreadyMoved = false;
+            cleanSlowFigureMove();
+            getHighlightedSquares();
+          }
         }
+      } else {
+        chess.turn();
+        cleanSlowFigureMove();
+        getHighlightedSquares();
+        drawField();
       }
     }, Constants.FIGURE_MOVEMENT_TIME);
   };

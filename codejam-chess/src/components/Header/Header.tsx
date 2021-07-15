@@ -24,15 +24,18 @@ interface HeaderProps {
   setStore: (store: unknown, roomId: string | number) => void;
   gameType: string;
   wsConnection: WebSocket;
+  activePage: string;
+  changeActivePage: (page: string) => void;
 }
 
 class Header extends React.PureComponent<HeaderProps> {
   clickToMain = () => {
-    const { breakGame, isGameProcessActive, gameType } = this.props;
+    const { breakGame, isGameProcessActive, changeActivePage, gameType } = this.props;
     breakGame();
     if (isGameProcessActive && gameType === Constants.PVP_ONLINE_NAME) {
       this.admitLoss();
     }
+    changeActivePage(Constants.APP_PAGES.MAIN);
     // else if (isGameProcessActive && gameType !== Constants.PVP_ONLINE_NAME) {
     //   const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
     //   axios.post(url);
@@ -44,7 +47,8 @@ class Header extends React.PureComponent<HeaderProps> {
   };
 
   breakGameFunc = async () => {
-    const { breakGame, roomId } = this.props;
+    const { breakGame, roomId, changeActivePage } = this.props;
+    changeActivePage(Constants.APP_PAGES.MAIN);
     const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
     const breakGameResponce = await axios.post(url);
     if (breakGameResponce.status === 200) {
@@ -53,12 +57,14 @@ class Header extends React.PureComponent<HeaderProps> {
   };
 
   admitLoss = async () => {
-    const { gameType, wsConnection, roomId, activePlayerId, setWinner, selectedPlayerId } = this.props;
+    const { changeActivePage, gameType, wsConnection, roomId, activePlayerId, setWinner, selectedPlayerId } =
+      this.props;
     let winnerId = activePlayerId === 1 ? 2 : 1;
     if (gameType === Constants.AI_NAME) {
       winnerId = selectedPlayerId === 1 ? 2 : 1;
     }
 
+    changeActivePage(Constants.APP_PAGES.MAIN);
     if (gameType === Constants.PVP_ONLINE_NAME) {
       const finishGame = {
         event: "finish-game",
@@ -79,11 +85,11 @@ class Header extends React.PureComponent<HeaderProps> {
   };
 
   render() {
-    const { time, isGamePageActive, isGameProcessActive } = this.props;
+    const { time, isGamePageActive, isGameProcessActive, activePage } = this.props;
     const minutes = Math.floor(time / 60) >= 10 ? Math.floor(time / 60) : `0${Math.floor(time / 60)}`;
     const seconds = time % 60 >= 10 ? time % 60 : `0${time % 60}`;
     const isGameWinned = isGamePageActive && !isGameProcessActive;
-    const isReplaysPage = window.location.href.includes("replays");
+    const isReplaysPage = activePage === Constants.APP_PAGES.ALL_REPLAYS;
     return (
       <header className='header'>
         <Link to='/' onClick={() => this.clickToMain()}>
@@ -103,19 +109,20 @@ class Header extends React.PureComponent<HeaderProps> {
             </button>
           )}
 
-          {isGameWinned ||
-            (isReplaysPage && (
-              <Link to='/' onClick={this.breakGameFunc}>
-                <button type='button' className='header__lobby-btn'>
-                  TO LOBBY
-                </button>
-              </Link>
-            ))}
+          {(isGameWinned || isReplaysPage) && (
+            <Link to='/' onClick={this.breakGameFunc}>
+              <button type='button' className='header__lobby-btn'>
+                TO LOBBY
+              </button>
+            </Link>
+          )}
 
           {isGameWinned && (
-            <button type='button' className='header__replay-btn'>
-              REPLAY
-            </button>
+            <Link to='/replays'>
+              <button type='button' className='header__replay-btn'>
+                REPLAY
+              </button>
+            </Link>
           )}
         </div>
       </header>

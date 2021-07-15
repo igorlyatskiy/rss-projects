@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants, { HistoryAction, PlayerData } from '../../components/Constants';
-import { GAME_BREAK_GAME, GAME_CLEAN_FIELD, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
+import { APP_CHANGE_PLAYERS, APP_SET_PAGE, GAME_BREAK_GAME, GAME_CLEAN_FIELD, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, REPLAY_START_REPLAY, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
   players:
@@ -53,6 +53,11 @@ const defaultState = {
     },
   },
   isUserLogined: false,
+  gamePage: Constants.APP_PAGES.MAIN,
+  replay: {
+    speed: 1,
+    isReplay: false
+  }
 }
 
 const mainPageReducer = (paramState = defaultState, action: any) => {
@@ -459,6 +464,48 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           ...state.game,
           checkSquares: state.game.chess.checkSquares,
           checkmateSquares: state.game.chess.checkmateSquares
+        }
+      }
+    }
+
+    case APP_SET_PAGE: {
+      return {
+        ...state,
+        gamePage: action.payload
+      }
+    }
+
+    case APP_CHANGE_PLAYERS: {
+      const newPlayers = action.payload as PlayerData[];
+      return {
+        ...state,
+        players: [
+          {
+            ...newPlayers.find((e) => e.id === 1),
+            id: 1
+          },
+          {
+            ...newPlayers.find((e) => e.id === 2),
+            id: 2
+          },
+        ]
+      }
+    }
+
+    case REPLAY_START_REPLAY: {
+      state.game.chess.reset();
+      return {
+        ...state,
+        activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
+        game: {
+          ...state.game,
+          data: state.game.chess.board(),
+          checkSquares: [],
+          checkmateSquares: []
+        },
+        replay: {
+          ...state.replay,
+          isReplay: true,
         }
       }
     }

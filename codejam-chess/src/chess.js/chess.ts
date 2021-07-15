@@ -39,7 +39,7 @@ export default class NewChess {
     return moves
       .map((e) => {
         const reg = /\w\d/g;
-        const result: any = e.match(reg);
+        const result: any = e.match(reg)?.filter((move) => move[0].toUpperCase() !== move[0]);
         if (e.includes('=Q')) {
           return `${result[0]}x=`;
         }

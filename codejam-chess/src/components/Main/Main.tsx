@@ -13,6 +13,7 @@ import GamePage from "../pages/Game/GamePage";
 import SettingsContainer from "../../Containers/SettingsContainer";
 import OnlinePageContainer from "../../Containers/OnlinePageContainer";
 import ReplaysContainer from "../../Containers/ReplaysContainer";
+import ReplayPlayerContainer from "../pages/Replays/Containers/ReplayPlayerContainer";
 
 interface MainProps {
   isUserLogined: boolean;
@@ -37,6 +38,7 @@ export default class Main extends React.PureComponent<MainProps> {
           <Route exact path='/online'>
             <OnlinePageContainer />
           </Route>
+          <Route path='/replay' component={ReplayPlayerContainer} />
           <Route exact path='/replays'>
             <ReplaysContainer />
           </Route>

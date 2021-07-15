@@ -1,20 +1,31 @@
 import React from "react";
 import { connect } from "react-redux";
 import ReplaysPage from "../components/pages/Replays/Replays";
+import { setPage, slowFigureMove } from "../store/mainPage/actions";
 
-interface ReplaysContainerProps {}
+interface ReplaysContainerProps {
+  changeActivePageFunc: (page: string) => void;
+  page: string;
+  slowFigureMoveFunc: (data: unknown) => void;
+}
 
 class ReplaysContainer extends React.PureComponent<ReplaysContainerProps> {
   render() {
-    return <ReplaysPage />;
+    const { changeActivePageFunc, page, slowFigureMoveFunc } = this.props;
+    return <ReplaysPage page={page} changeActivePage={changeActivePageFunc} slowFigureMove={slowFigureMoveFunc} />;
   }
 }
 
-const pushStateToProps = () => ({
-  // const { mainPageReducer } = state;
-  // return {};
-});
+const pushStateToProps = (state: any) => {
+  const { mainPageReducer } = state;
+  return {
+    page: mainPageReducer.gamePage,
+  };
+};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  changeActivePageFunc: setPage,
+  slowFigureMoveFunc: slowFigureMove,
+};
 
 export default connect(pushStateToProps, mapDispatchToProps)(ReplaysContainer);

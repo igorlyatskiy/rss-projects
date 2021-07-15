@@ -1,6 +1,6 @@
 .replay-card
   width: 564px
-  height: 300px
+  min-height: 300px
   background: #85CDCA
   border: 5px solid #40B3A2
   margin: 0 auto
@@ -9,6 +9,14 @@
   flex-direction: column
   justify-content: center
   align-items: center
+  cursor: pointer
+  margin-bottom: 90px
+  &__link
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    top: 0
   &__avatar
     width: 125px
     height: 125px
@@ -25,6 +33,7 @@
     line-height: 98px
     letter-spacing: 0em
     text-align: center
+    user-select: none
 
     &_winner .replay-card__winner-icon
       opacity: 1
@@ -61,6 +70,7 @@
       width: 26px
       height: 26px
       display: block
+      pointer-events: none
 
   &__info
     font-family: Open Sans
@@ -71,3 +81,27 @@
     letter-spacing: 0em
     text-align: center
     color: #fff
+    user-select: none
+
+  &__vs-icon
+    position: absolute
+    left: calc(50% - 22.5px)
+    top: -30px
+    width: 55px
+    height: 55px
+    border-radius: 50%
+    background: #C4C4C4
+    border: 5px solid #E8A87C
+    font-family: Open Sans
+    font-size: 13px
+    font-style: normal
+    font-weight: 700
+    line-height: 18px
+    letter-spacing: 0em
+    text-align: center
+    color: #fff
+    display: flex
+    justify-content: center
+    align-items: center
+    text-transform: uppercase
+    user-select: none

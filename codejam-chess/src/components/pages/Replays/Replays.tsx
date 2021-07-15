@@ -1,10 +1,14 @@
 import React from "react";
 import axios, { AxiosResponse } from "axios";
-import { HistoryAction, PlayerData } from "../../Constants";
+import Constants, { HistoryAction, PlayerData } from "../../Constants";
 import "./Replays.sass";
 import ReplayCard from "./ReplayCard/ReplayCard";
 
-interface ReplaysPageProps {}
+interface ReplaysPageProps {
+  changeActivePage: (page: string) => void;
+  page: string;
+  slowFigureMove: (data: unknown) => void;
+}
 
 interface ReplaysPageState {
   data: ReplayCardData[] | null;
@@ -14,6 +18,7 @@ interface ReplayCardData {
   history: HistoryAction[];
   winner: number;
   names: PlayerData[];
+  id: string;
 }
 
 export default class ReplaysPage extends React.PureComponent<ReplaysPageProps, ReplaysPageState> {
@@ -43,14 +48,16 @@ export default class ReplaysPage extends React.PureComponent<ReplaysPageProps, R
   };
 
   componentDidMount = () => {
+    const { changeActivePage } = this.props;
     this.getAllReplaysData();
+    changeActivePage(Constants.APP_PAGES.ALL_REPLAYS);
   };
   render() {
     const { data } = this.state;
     return (
       <section className='replays'>
         {data?.map((e) => (
-          <ReplayCard history={e.history} winnerId={e.winner} players={e.names} />
+          <ReplayCard history={e.history} winnerId={e.winner} players={e.names} id={e.id} />
         ))}
       </section>
     );
