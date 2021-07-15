@@ -10,10 +10,12 @@ import {
   drawField,
   getHighlightedSquares,
   makeFieldMarkersVisible,
+  setPage,
   setWinner,
   slowFigureMove,
   turnAiMove,
   turnMove,
+  turnReplayMove,
 } from "../store/mainPage/actions";
 
 interface FigureContainerProps {
@@ -45,7 +47,9 @@ interface FigureContainerProps {
   selectedPlayerId: number;
   requestMove: RequestMove;
   AILevel: number;
-  isReplay: boolean;
+  gamePage: string;
+  turnReplayMoveFunc: () => void;
+  setPageFunc: (page: string) => void;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -79,7 +83,9 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       selectedPlayerId,
       slowFigureMoveFunc,
       cleanSlowFigureMoveFunc,
-      isReplay,
+      gamePage,
+      turnReplayMoveFunc,
+      setPageFunc
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -121,7 +127,9 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         AILevel={AILevel}
         slowFigureMove={slowFigureMoveFunc}
         cleanSlowFigureMove={cleanSlowFigureMoveFunc}
-        isReplay={isReplay}
+        gamePage={gamePage}
+        turnReplayMove={turnReplayMoveFunc}
+        setPage={setPageFunc}
       />
     );
   }
@@ -144,7 +152,7 @@ const pushStateToProps = (state: any) => {
     selectedPlayerId: mainPageReducer.game.selectedPlayerId,
     requestMove: mainPageReducer.game.requestMove,
     AILevel: mainPageReducer.game.AILevel,
-    isReplay: mainPageReducer.replay.isReplay,
+    gamePage: mainPageReducer.gamePage,
   };
 };
 
@@ -159,6 +167,8 @@ const mapDispatchToProps = {
   getHighlightedSquaresFunc: getHighlightedSquares,
   slowFigureMoveFunc: slowFigureMove,
   cleanSlowFigureMoveFunc: cleanSlowFigureMove,
+  turnReplayMoveFunc: turnReplayMove,
+  setPageFunc: setPage,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(FigureContainer);

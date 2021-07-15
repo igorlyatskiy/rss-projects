@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
+import { PlayerData } from "../components/Constants";
 import Header from "../components/Header/Header";
-import { breakGame, setPage, setStore, setWinner } from "../store/mainPage/actions";
+import { breakGame, changeReplaySpeed, setPage, setStore, setWinner } from "../store/mainPage/actions";
 
 export interface MainContainerProps {
   time: number;
@@ -17,6 +18,10 @@ export interface MainContainerProps {
   selectedPlayerId: number;
   activePage: string;
   changeActivePageFunc: (page: string) => void;
+  players: PlayerData[];
+  speed: number;
+  changeReplaySpeedFunc: (speed: number) => void;
+  replayWinnerId: number;
 }
 
 class HeaderContainer extends React.PureComponent<MainContainerProps> {
@@ -35,6 +40,10 @@ class HeaderContainer extends React.PureComponent<MainContainerProps> {
       wsConnection,
       activePage,
       selectedPlayerId,
+      players,
+      speed,
+      changeReplaySpeedFunc,
+      replayWinnerId,
     } = this.props;
     return (
       <Header
@@ -51,6 +60,10 @@ class HeaderContainer extends React.PureComponent<MainContainerProps> {
         selectedPlayerId={selectedPlayerId}
         activePage={activePage}
         changeActivePage={changeActivePageFunc}
+        players={players}
+        speed={speed}
+        changeReplaySpeed={changeReplaySpeedFunc}
+        replayWinnerId={replayWinnerId}
       />
     );
   }
@@ -66,6 +79,9 @@ const pushStateToProps = (state: any) => ({
   wsConnection: state.mainPageReducer.game.wsConnection,
   selectedPlayerId: state.mainPageReducer.game.selectedPlayerId,
   activePage: state.mainPageReducer.gamePage,
+  players: state.mainPageReducer.players,
+  speed: state.mainPageReducer.replay.speed,
+  replayWinnerId: state.mainPageReducer.replay.winnerId,
 });
 
 const mapDispatchToProps = {
@@ -73,6 +89,7 @@ const mapDispatchToProps = {
   setWinnerFunc: setWinner,
   setStoreFunc: setStore,
   changeActivePageFunc: setPage,
+  changeReplaySpeedFunc: changeReplaySpeed,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(HeaderContainer);

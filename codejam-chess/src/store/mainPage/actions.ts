@@ -29,7 +29,10 @@ export const GAME_CLEAN_SLOW_FIGURE_MOVE = 'GAME_CLEAN_SLOW_FIGURE_MOVE'
 export const GAME_CLEAN_FIELD = 'GAME_CLEAN_FIELD'
 export const APP_SET_PAGE = 'APP_SET_PAGE'
 export const APP_CHANGE_PLAYERS = 'APP_CHANGE_PLAYERS'
-export const REPLAY_START_REPLAY='REPLAY_START_REPLAY'
+export const REPLAY_START_REPLAY = 'REPLAY_START_REPLAY'
+export const REPLAY_TURN_MOVE = 'REPLAY_TURN_MOVE'
+export const REPLAY_CHANGE_SPEED = 'REPLAY_CHANGE_SPEED'
+export const REPLAY_CHANGE_WINNER = 'REPLAY_CHANGE_WINNER'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -187,7 +190,23 @@ export const changePlayers = (data: unknown) => ({
   payload: data
 })
 
-export const startReplay=() => ({
+export const startReplay = () => ({
   type: REPLAY_START_REPLAY,
   payload: true
 })
+
+export const turnReplayMove = () => ({
+  type: REPLAY_TURN_MOVE,
+  payload: true
+})
+
+export const changeReplaySpeed = (speed: number) => ({
+  type: REPLAY_CHANGE_SPEED,
+  payload: speed
+})
+
+export const changeReplayWinner = (id: number) => ({
+  type: REPLAY_CHANGE_WINNER,
+  payload: id
+})
+

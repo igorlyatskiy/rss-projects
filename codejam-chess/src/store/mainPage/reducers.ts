@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
 import Constants, { HistoryAction, PlayerData } from '../../components/Constants';
-import { APP_CHANGE_PLAYERS, APP_SET_PAGE, GAME_BREAK_GAME, GAME_CLEAN_FIELD, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, REPLAY_START_REPLAY, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
+import { APP_CHANGE_PLAYERS, APP_SET_PAGE, GAME_BREAK_GAME, GAME_CLEAN_FIELD, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, REPLAY_CHANGE_SPEED, REPLAY_CHANGE_WINNER, REPLAY_START_REPLAY, REPLAY_TURN_MOVE, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
   players:
@@ -43,7 +43,7 @@ const defaultState = {
     arePlayersColorsReversed: true,
     areRandomSidesEnabled: false,
     AILevel: 1,
-    gameType: Constants.AI_NAME,
+    gameType: Constants.PVP_OFFLINE_NAME,
     draw: false,
     winnerId: 0,
     wsConnection: null,
@@ -56,7 +56,10 @@ const defaultState = {
   gamePage: Constants.APP_PAGES.MAIN,
   replay: {
     speed: 1,
-    isReplay: false
+    activePlayerId: 0,
+    history: [],
+    historyTime: [],
+    winnerId: 0
   }
 }
 
@@ -496,16 +499,56 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
       state.game.chess.reset();
       return {
         ...state,
-        activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
+        replay: {
+          ...state.replay,
+          activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
+          history: [],
+          historyTime: []
+        },
         game: {
           ...state.game,
           data: state.game.chess.board(),
           checkSquares: [],
-          checkmateSquares: []
+          checkmateSquares: [],
+          time: 0,
+          winnerId: 0
+        },
+        gamePage: Constants.APP_PAGES.REPLAY
+      }
+    }
+
+    case REPLAY_TURN_MOVE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          data: state.game.chess.board()
         },
         replay: {
           ...state.replay,
-          isReplay: true,
+          activePlayerId: state.replay.activePlayerId === 1 ? 2 : 1,
+          history: state.game.chess.history(),
+          historyTime: [...state.replay.historyTime, state.game.time]
+        }
+      }
+    }
+
+    case REPLAY_CHANGE_SPEED: {
+      return {
+        ...state,
+        replay: {
+          ...state.replay,
+          speed: action.payload
+        }
+      }
+    }
+
+    case REPLAY_CHANGE_WINNER: {
+      return {
+        ...state,
+        replay: {
+          ...state.replay,
+          winnerId: action.payload
         }
       }
     }

@@ -191,7 +191,7 @@ app.get('/history', (req, res) => {
 
     db.ref('rooms/').once('value', (responce) => {
       let rooms = Object.values(responce.val()) as GameRoom[]
-      rooms = (rooms.filter((e) => e.game.winnerId !== 0 && e.players !== undefined && e.game.isGameProcessActive === false));
+      rooms = (rooms.filter((e) => e.game.winnerId !== 0 && e.players !== undefined && e.game.isGameProcessActive === false && e.game.history !== undefined));
       const history = (rooms.map((e) => e.game.history)).filter((e) => e !== undefined && e !== null).map((e) => Object.values(e));
       const names = rooms.map((e) => e.players);
       const roomsIdArray = rooms.map((e) => e.id);

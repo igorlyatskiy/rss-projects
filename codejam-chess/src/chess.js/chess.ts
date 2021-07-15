@@ -32,7 +32,11 @@ export default class NewChess {
 
   board = () => this.chess.board();
 
-  reset = () => this.chess.reset();
+  reset = () => {
+    this.checkSquares = []
+    this.checkmateSquares = []
+    this.chess.reset();
+  }
 
   moves = (data?: string) => {
     const moves = (data) ? this.chess.moves({ square: data }) : this.chess.moves();
@@ -459,7 +463,7 @@ export default class NewChess {
   }
 
   getAttackCheckmateMoves = (square: string) => {
-    const ableMoves: string[] = [];
+    let ableMoves: string[] = [];
     const kingMoves = this.getAllKingMoves();
     const figure = this.getSquare(square);
     const [rowNumber, colNumber] = this.getSquareIndex(square);
@@ -899,6 +903,7 @@ export default class NewChess {
       }
     }
     if (ableMoves.length !== 0) {
+      ableMoves = [];
       ableMoves.push(this.getSquareNameByIndex(rowNumber, colNumber));
     }
     return ableMoves;

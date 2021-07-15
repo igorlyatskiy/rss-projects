@@ -39,10 +39,12 @@ interface FigureProps {
   checkmateSquares: string[];
   getHighlightedSquares: () => void;
   cleanSlowFigureMove: () => void;
+  turnReplayMove: () => void;
   selectedPlayerId: number;
   requestMove: RequestMove;
   AILevel: number;
-  isReplay: boolean;
+  gamePage: string;
+  setPage: (page: string) => void;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -269,7 +271,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   moveFigureWithTimeout = () => {
     const {
-      isReplay,
+      gamePage,
       requestMove,
       chess,
       cleanSlowFigureMove,
@@ -278,17 +280,16 @@ export default class Figure extends React.PureComponent<FigureProps> {
       gameType,
       element,
       getHighlightedSquares,
-      drawField,
+      turnReplayMove,
     } = this.props;
     setTimeout(async () => {
-      const chessMove = chess.move({
+      chess.move({
         from: requestMove.move?.from as string,
         to: requestMove.move?.to as string,
         promotion: "q",
       });
-      console.log(chessMove, chess.board());
       await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string);
-      if (!isReplay) {
+      if (gamePage !== Constants.APP_PAGES.REPLAY) {
         const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
         const { time } = this.props;
         const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
@@ -310,10 +311,9 @@ export default class Figure extends React.PureComponent<FigureProps> {
           }
         }
       } else {
-        chess.turn();
         cleanSlowFigureMove();
+        turnReplayMove();
         getHighlightedSquares();
-        drawField();
       }
     }, Constants.FIGURE_MOVEMENT_TIME);
   };

@@ -54,10 +54,18 @@ export default class ReplaysPage extends React.PureComponent<ReplaysPageProps, R
   };
   render() {
     const { data } = this.state;
+    const { changeActivePage } = this.props;
+    console.log(data);
     return (
       <section className='replays'>
         {data?.map((e) => (
-          <ReplayCard history={e.history} winnerId={e.winner} players={e.names} id={e.id} />
+          <ReplayCard
+            history={e.history}
+            winnerId={e.winner}
+            players={e.names}
+            id={e.id}
+            changeActivePage={changeActivePage}
+          />
         ))}
       </section>
     );
