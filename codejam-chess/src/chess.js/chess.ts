@@ -1,6 +1,6 @@
-import { Chess, PartialMove } from '@lubert/chess.ts'
-import Constants from '../components/Constants';
-import ChessConstants from "./Constants";
+import { Chess, PartialMove, Piece, } from '@lubert/chess.ts'
+import Constants, { FigureData } from '../components/Constants';
+import ChessConstants, { bishopEvalBlack, bishopEvalWhite, evalQueen, kingEvalBlack, kingEvalWhite, knightEval, pawnEvalBlack, pawnEvalWhite, rookEvalBlack, rookEvalWhite } from "./Constants";
 
 
 export default class NewChess {
@@ -10,6 +10,7 @@ export default class NewChess {
   public activePlayer: string = ''
 
   turn = () => {
+    console.log(this.countBoardSituation(this.chess.board()))
     const returnValue = this.chess.turn();
     this.activePlayer = returnValue;
     this.checkSquares = [];
@@ -956,6 +957,11 @@ export default class NewChess {
       case 2:
         return this.makeRandomAttackAiMove()
         break;
+      case 3: {
+        const move = this.makeAnalisedAIMove();
+        console.log('move: ', move)
+        return move
+      }
       default:
         break;
     }
@@ -981,5 +987,111 @@ export default class NewChess {
     }
     const move = moves[Math.floor(Math.random() * moves.length)]
     return move
+  }
+
+  makeAnalisedAIMove = () => this.findBestMove(this.chess);
+
+  findBestMove = (chess: Chess) => {
+    const ANY_BIG_NEGATIVE_NUMBER = -Infinity;
+    const newGameMoves = chess.moves({ verbose: true });
+    let bestMove = null;
+    let bestValue = ANY_BIG_NEGATIVE_NUMBER;
+
+    newGameMoves.forEach((move) => {
+      chess.move(move);
+      const boardValue = this.minimax(chess, ChessConstants.AI_DEPTH - 1, -Infinity, +Infinity, false)
+      chess.undo();
+      if (boardValue >= bestValue) {
+        bestValue = boardValue;
+        bestMove = move
+      }
+    })
+    console.log(bestValue)
+    return bestMove;
+  }
+
+  getFigurePower = (figure: FigureData, rowIndex: number, colIndex: number) => {
+    switch (figure.type) {
+      case 'p': {
+        const pawnEval = figure.color === 'w' ? pawnEvalWhite[rowIndex][colIndex] : pawnEvalBlack[rowIndex][colIndex]
+        return 10 + pawnEval;
+      }
+      case 'n': {
+        const knightEvalVal = knightEval[rowIndex][colIndex]
+        return 30 + knightEvalVal;
+      }
+      case "b": {
+        const bishopEval = figure.color === 'w' ? bishopEvalWhite[rowIndex][colIndex] : bishopEvalBlack[rowIndex][colIndex]
+        return 30 + bishopEval;
+      }
+      case "r": {
+        const rookEval = figure.color === 'w' ? rookEvalWhite[rowIndex][colIndex] : rookEvalBlack[rowIndex][colIndex]
+        return 50 + rookEval;
+      }
+      case "q": {
+        const evalQueenval = evalQueen[rowIndex][colIndex];
+        return 90 + evalQueenval
+      }
+      case "k": {
+        const kingEval = figure.color === 'w' ? kingEvalWhite[rowIndex][colIndex] : kingEvalBlack[rowIndex][colIndex]
+        return 900 + kingEval;
+      }
+      default:
+        console.log(figure);
+        break;
+    }
+    return null
+  }
+
+  countBoardSituation = (board: (Piece | null)[][]) => {
+    let sum = 0;
+    board.forEach((row, rowIndex) => {
+      row.forEach((item, colIndex) => {
+        if (item !== null) {
+          if (item.color === this.activePlayer) {
+            sum += this.getFigurePower(item, rowIndex, colIndex) || 0;
+          } else {
+            sum -= this.getFigurePower(item, rowIndex, colIndex) || 0;
+          }
+        }
+      })
+    })
+    return sum;
+  }
+
+  minimax = (chess: Chess, depth: number, alphaParam: number, betaParam: number, maximizingPlayer: boolean) => {
+    if (depth === 0) {
+      return this.countBoardSituation(chess.board());
+    }
+    let alpha = alphaParam;
+    let beta = betaParam;
+    const newGameMoves = chess.moves({ verbose: true });
+    if (maximizingPlayer) {
+      let bestMove = -Infinity;
+      for (let i = 0; i < newGameMoves.length; i += 1) {
+        const move = newGameMoves[i];
+        chess.move(move);
+        bestMove = Math.max(bestMove, this.minimax(chess, depth - 1, alpha, beta, !maximizingPlayer) as number)
+        chess.undo();
+        alpha = Math.max(alpha, bestMove);
+        if (beta <= alpha) {
+          return bestMove;
+        }
+        return bestMove;
+      }
+    }
+    // and if maximising is false
+    let bestMove = +Infinity;
+    for (let i = 0; i < newGameMoves.length; i += 1) {
+      const move = newGameMoves[i];
+      chess.move(move);
+      bestMove = Math.min(bestMove, this.minimax(chess, depth - 1, alpha, beta, !maximizingPlayer) as number);
+      chess.undo();
+      beta = Math.min(beta, bestMove);
+      if (beta <= alpha) {
+        return bestMove;
+      }
+    }
+    return bestMove
   }
 }
