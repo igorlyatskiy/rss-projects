@@ -1,6 +1,6 @@
 import { Chess, PartialMove, Piece, } from '@lubert/chess.ts'
 import Constants, { FigureData } from '../components/Constants';
-import ChessConstants, { bishopEvalBlack, bishopEvalWhite, evalQueen, kingEvalBlack, kingEvalWhite, knightEval, pawnEvalBlack, pawnEvalWhite, rookEvalBlack, rookEvalWhite } from "./Constants";
+import ChessConstants, { bishopEvalBlack, bishopEvalWhite, blackDebuts, evalQueen, kingEvalBlack, kingEvalWhite, knightEval, pawnEvalBlack, pawnEvalWhite, rookEvalBlack, rookEvalWhite, whiteDebuts } from "./Constants";
 
 
 export default class NewChess {
@@ -10,7 +10,7 @@ export default class NewChess {
   public activePlayer: string = ''
 
   turn = () => {
-    console.log(this.countBoardSituation(this.chess.board()))
+    console.log(this.chess.history())
     const returnValue = this.chess.turn();
     this.activePlayer = returnValue;
     this.checkSquares = [];
@@ -989,7 +989,22 @@ export default class NewChess {
     return move
   }
 
-  makeAnalisedAIMove = () => this.findBestMove(this.chess);
+  makeAnalisedAIMove = () =>
+    this.checkDebuts() === null ? this.findBestMove(this.chess) : this.checkDebuts();
+
+  checkDebuts = () => {
+    const history = this.chess.history();
+    const debuts = (this.activePlayer === ChessConstants.WHITE) ? whiteDebuts : blackDebuts;
+    const activeDebutPart = debuts.map((e) => e.slice(0, history.length));
+    const foundDebut = activeDebutPart.find((e) => JSON.stringify(e) === JSON.stringify(history));
+    if (foundDebut !== undefined) {
+      const debutIndex = activeDebutPart.indexOf(foundDebut as string[]);
+      const move = this.chess.move(debuts[debutIndex][history.length]);
+      this.chess.undo();
+      return move;
+    }
+    return null;
+  }
 
   findBestMove = (chess: Chess) => {
     const ANY_BIG_NEGATIVE_NUMBER = -Infinity;

@@ -1,4 +1,5 @@
 import React from "react";
+// import { Redirect } from "react-router-dom";
 import NewChess from "../../../../chess.js/chess";
 import FigureContainer from "../../../../Containers/FigureContainer";
 import Constants, { FigureData, PlayerData } from "../../../Constants";
@@ -26,6 +27,8 @@ interface GameFieldProps {
   gameType: string;
   selectedPlayerId: number;
   wsConnection: WebSocket;
+  breakGame: () => void;
+  changeActivePage: (page: string) => void;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -139,6 +142,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
             </div>
           </>
         )}
+        {data.length <= 1 && <div className='error'>Game is not active. Please go to the main.</div>}
       </div>
     );
   };

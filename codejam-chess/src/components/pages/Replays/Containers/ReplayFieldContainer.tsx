@@ -9,6 +9,8 @@ import {
   turnAiMove,
   makeFieldMarkersVisible,
   setWinner,
+  breakGame,
+  setPage,
 } from "../../../../store/mainPage/actions";
 import { FigureData, PlayerData } from "../../../Constants";
 import GameField from "../../Game/Field/GameField";
@@ -34,6 +36,8 @@ interface ReplayFieldContainerProps {
   selectedPlayerId: number;
   wsConnection: WebSocket;
   speed: number;
+  breakGameFunc: () => void;
+  changeActivePageFunc: (page: string) => void;
 }
 
 class ReplayFieldContainer extends React.PureComponent<ReplayFieldContainerProps> {
@@ -58,6 +62,8 @@ class ReplayFieldContainer extends React.PureComponent<ReplayFieldContainerProps
       turnAiMoveFunc,
       selectedPlayerId,
       wsConnection,
+      changeActivePageFunc,
+      breakGameFunc,
     } = this.props;
     return (
       <GameField
@@ -80,6 +86,8 @@ class ReplayFieldContainer extends React.PureComponent<ReplayFieldContainerProps
         turnAiMove={turnAiMoveFunc}
         selectedPlayerId={selectedPlayerId}
         wsConnection={wsConnection}
+        changeActivePage={changeActivePageFunc}
+        breakGame={breakGameFunc}
       />
     );
   }
@@ -112,6 +120,8 @@ const mapDispatchToProps = {
   turnAiMoveFunc: turnAiMove,
   makeFieldMarkersVisibleFunc: makeFieldMarkersVisible,
   setWinnerFunc: setWinner,
+  changeActivePageFunc: setPage,
+  breakGameFunc: breakGame,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(ReplayFieldContainer);

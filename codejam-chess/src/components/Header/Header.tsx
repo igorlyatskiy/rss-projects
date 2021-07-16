@@ -18,6 +18,7 @@ interface HeaderProps {
   selectedPlayerId: number;
   isGamePageActive: boolean;
   breakGame: () => void;
+  changeActivePage: (page: string) => void;
   setWinner: (id: number) => void;
   activePlayerId: number;
   isGameProcessActive: boolean;
@@ -26,7 +27,6 @@ interface HeaderProps {
   gameType: string;
   wsConnection: WebSocket;
   activePage: string;
-  changeActivePage: (page: string) => void;
   players: PlayerData[];
   speed: number;
   replayWinnerId: number;
@@ -37,10 +37,10 @@ class Header extends React.PureComponent<HeaderProps> {
   clickToMain = () => {
     const { breakGame, isGameProcessActive, changeActivePage, gameType } = this.props;
     breakGame();
+    changeActivePage(Constants.APP_PAGES.MAIN);
     if (isGameProcessActive && gameType === Constants.PVP_ONLINE_NAME) {
       this.admitLoss();
     }
-    changeActivePage(Constants.APP_PAGES.MAIN);
     // else if (isGameProcessActive && gameType !== Constants.PVP_ONLINE_NAME) {
     //   const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
     //   axios.post(url);

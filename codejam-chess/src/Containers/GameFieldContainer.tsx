@@ -4,10 +4,12 @@ import NewChess from "../chess.js/chess";
 import { FigureData, PlayerData } from "../components/Constants";
 import GameField from "../components/pages/Game/Field/GameField";
 import {
+  breakGame,
   checkValidMoves,
   cleanValidMoves,
   drawField,
   makeFieldMarkersVisible,
+  setPage,
   setWinner,
   turnAiMove,
   turnMove,
@@ -33,6 +35,8 @@ interface GameFieldContainerProps {
   turnAiMoveFunc: () => void;
   selectedPlayerId: number;
   wsConnection: WebSocket;
+  breakGameFunc: () => void;
+  changeActivePageFunc: (page: string) => void;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -57,6 +61,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       turnAiMoveFunc,
       selectedPlayerId,
       wsConnection,
+      changeActivePageFunc,
+      breakGameFunc,
     } = this.props;
     return (
       <GameField
@@ -79,6 +85,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         turnAiMove={turnAiMoveFunc}
         selectedPlayerId={selectedPlayerId}
         wsConnection={wsConnection}
+        changeActivePage={changeActivePageFunc}
+        breakGame={breakGameFunc}
       />
     );
   }
@@ -110,6 +118,8 @@ const mapDispatchToProps = {
   turnAiMoveFunc: turnAiMove,
   makeFieldMarkersVisibleFunc: makeFieldMarkersVisible,
   setWinnerFunc: setWinner,
+  changeActivePageFunc: setPage,
+  breakGameFunc: breakGame,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(GameFieldContainer);
