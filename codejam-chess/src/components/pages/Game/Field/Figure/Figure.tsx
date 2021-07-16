@@ -214,6 +214,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
   checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string) => {
     const { wsConnection, gameType, players } = this.props;
     if (!chess.isGameActive()) {
+      console.log("set winner");
       const loserColor = chess.turn();
       const winner = players.find((e) => e.color !== loserColor);
       if (gameType === Constants.PVP_ONLINE_NAME) {
@@ -227,7 +228,6 @@ export default class Figure extends React.PureComponent<FigureProps> {
         };
         wsConnection.send(JSON.stringify(data));
       } else if (chess.inCheckmate()) {
-        console.log("set winner");
         const setWinnerUrl = `${baseURL}/room/winner?id=${roomId}&winnerId=${winner?.id}`;
         await axios.post(setWinnerUrl);
       } else {

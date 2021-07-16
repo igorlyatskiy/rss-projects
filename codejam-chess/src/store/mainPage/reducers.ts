@@ -43,7 +43,7 @@ const defaultState = {
     arePlayersColorsReversed: true,
     areRandomSidesEnabled: false,
     AILevel: 3,
-    gameType: Constants.AI_NAME,
+    gameType: Constants.PVP_OFFLINE_NAME,
     draw: false,
     winnerId: 0,
     wsConnection: null,

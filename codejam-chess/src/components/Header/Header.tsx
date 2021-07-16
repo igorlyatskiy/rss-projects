@@ -54,9 +54,13 @@ class Header extends React.PureComponent<HeaderProps> {
   breakGameFunc = async () => {
     const { breakGame, roomId, changeActivePage } = this.props;
     changeActivePage(Constants.APP_PAGES.MAIN);
-    const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
-    const breakGameResponce = await axios.post(url);
-    if (breakGameResponce.status === 200) {
+    if (roomId !== undefined) {
+      const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
+      const breakGameResponce = await axios.post(url);
+      if (breakGameResponce.status === 200) {
+        breakGame();
+      }
+    } else {
       breakGame();
     }
   };
@@ -139,7 +143,7 @@ class Header extends React.PureComponent<HeaderProps> {
             </button>
           )}
 
-          {isGameWinned && !isReplaysPage && (
+          {isGameWinned && !isReplaysPage && activePage !== Constants.APP_PAGES.REPLAY && (
             <Link to='/replays' onClick={() => changeActivePage(Constants.APP_PAGES.ALL_REPLAYS)}>
               <button type='button' className='header__replay-btn'>
                 REPLAY

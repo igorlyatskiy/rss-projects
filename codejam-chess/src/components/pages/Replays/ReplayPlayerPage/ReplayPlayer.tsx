@@ -70,7 +70,6 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
 
   initInterval = () => {
     const { increaseTime, speed, gamePage, winnerId } = this.props;
-    console.log(winnerId);
     if (gamePage === Constants.APP_PAGES.REPLAY && winnerId !== 1 && winnerId !== 2) {
       setTimeout(() => {
         increaseTime();
@@ -86,7 +85,6 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
     if (history[number] !== undefined && gamePage === Constants.APP_PAGES.REPLAY) {
       const { slowFigureMove, speed } = this.props;
       const timeOut = number === 0 ? history[0].time : history[number].time - history[number - 1].time;
-      console.log(timeOut);
       this.timeoutsArray.push(
         window.setTimeout(() => {
           slowFigureMove(history[number].move);
@@ -101,7 +99,6 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
 
   render() {
     const { data } = this.state;
-    console.log(data);
     return data !== null ? (
       <section className='game-page'>
         <ReplayPlayerViewContainer propsColor='w' />

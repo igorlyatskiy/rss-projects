@@ -10,7 +10,6 @@ export default class NewChess {
   public activePlayer: string = ''
 
   turn = () => {
-    console.log(this.chess.history())
     const returnValue = this.chess.turn();
     this.activePlayer = returnValue;
     this.checkSquares = [];
