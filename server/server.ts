@@ -191,7 +191,7 @@ app.get('/history', (req, res) => {
 
     db.ref('rooms/').once('value', (responce) => {
       let rooms = Object.values(responce.val()) as GameRoom[]
-      rooms = (rooms.filter((e) => e.game.winnerId !== 0 && e.players !== undefined && e.game.isGameProcessActive === false && e.game.history !== undefined));
+      rooms = (rooms.filter((e) => e.players !== undefined && e.game.isGameProcessActive === false && e.game.history !== undefined));
       const history = (rooms.map((e) => e.game.history)).filter((e) => e !== undefined && e !== null).map((e) => Object.values(e));
       const names = rooms.map((e) => e.players);
       const roomsIdArray = rooms.map((e) => e.id);
@@ -239,14 +239,13 @@ app.put('/room', (req, res) => {
 })
 
 app.post('/move', (req, res) => {
-  const { from, to, id, time, color, piece } = req.query;
-  if (piece !== undefined && from !== undefined && id !== undefined && to !== undefined && time !== undefined && color !== undefined) {
-    const ref = db.ref(`rooms/${id}/game/history/${time}`);
-    const setMoveIntoHistory = ref.set({
-      time,
-      move: {
-        from, to, color, piece
-      }
+  const { id, time } = req.query;
+  const { history } = req.body;
+  if (history !== undefined && id !== undefined && time !== undefined) {
+    const ref = db.ref(`rooms/${id}/game/history`);
+    const setMoveIntoHistory = ref.push({
+      move: history[history.length - 1],
+      time
     });
     const setActivePlayer = db.ref(`rooms/${id}/activePlayerId`).once('value', (item) => {
       const activePlayerId = item.val();

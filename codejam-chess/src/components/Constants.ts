@@ -83,8 +83,8 @@ export default class Constants {
     REPLAY: 'replay',
     ONLINE: 'online',
   }
-  static FIGURE_MOVEMENT_TIME = 500;
-  static FIGURE_WAITING_TIME = 500;
+  static FIGURE_MOVEMENT_TIME = 300;
+  static FIGURE_WAITING_TIME = 0;
   static NOT_AI_PLAYER_ID = 1;
   static PVP_OFFLINE_NAME = 'pvp-offline'
   static PVP_ONLINE_NAME = 'pvp-online'

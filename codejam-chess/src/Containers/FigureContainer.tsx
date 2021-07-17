@@ -50,6 +50,7 @@ interface FigureContainerProps {
   gamePage: string;
   turnReplayMoveFunc: () => void;
   setPageFunc: (page: string) => void;
+  speed: number;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -85,7 +86,8 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       cleanSlowFigureMoveFunc,
       gamePage,
       turnReplayMoveFunc,
-      setPageFunc
+      setPageFunc,
+      speed,
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -130,6 +132,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         gamePage={gamePage}
         turnReplayMove={turnReplayMoveFunc}
         setPage={setPageFunc}
+        speed={speed}
       />
     );
   }
@@ -153,6 +156,7 @@ const pushStateToProps = (state: any) => {
     requestMove: mainPageReducer.game.requestMove,
     AILevel: mainPageReducer.game.AILevel,
     gamePage: mainPageReducer.gamePage,
+    speed: mainPageReducer.replay.speed,
   };
 };
 

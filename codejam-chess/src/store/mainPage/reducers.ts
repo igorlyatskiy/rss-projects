@@ -461,6 +461,9 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_GET_HIGHLIGHTED_SQUARES: {
+      // state.game.chess.activePlayer = (state.game.chess.activePlayer !== Constants.FIGURES_COLORS_NAMES.black || state.game.chess !== Constants.FIGURES_COLORS_NAMES.white) ?
+      state.players.find((e) => e.id === state.activePlayerId)?.color as string;
+      state.game.chess.getHighlightedSquares();
       return {
         ...state,
         game: {
@@ -503,7 +506,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           ...state.replay,
           activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
           history: [],
-          historyTime: []
+          historyTime: [],
+          winnerId: 0
         },
         game: {
           ...state.game,
@@ -518,6 +522,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case REPLAY_TURN_MOVE: {
+      const activePlayerId = state.replay.activePlayerId === 1 ? 2 : 1
+      state.game.chess.activePlayer = state.players.find((e) => e.id === activePlayerId)?.color as string;
       return {
         ...state,
         game: {
@@ -526,7 +532,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         },
         replay: {
           ...state.replay,
-          activePlayerId: state.replay.activePlayerId === 1 ? 2 : 1,
+          activePlayerId,
           history: state.game.chess.history(),
           historyTime: [...state.replay.historyTime, state.game.time]
         }

@@ -7,11 +7,16 @@ export default class NewChess {
   public chess = new Chess();
   public checkSquares: string[] = []
   public checkmateSquares: string[] = [];
-  public activePlayer: string = ''
+  public activePlayer: string = ChessConstants.WHITE
 
   turn = () => {
     const returnValue = this.chess.turn();
     this.activePlayer = returnValue;
+    this.getHighlightedSquares()
+    return returnValue
+  }
+
+  getHighlightedSquares = () => {
     this.checkSquares = [];
     this.checkmateSquares = [];
     if (this.chess.inCheck()) {
@@ -21,7 +26,6 @@ export default class NewChess {
         this.getCheckMoves();
       }
     }
-    return returnValue
   }
 
   inCheckmate = () => this.chess.inCheckmate();
@@ -958,7 +962,6 @@ export default class NewChess {
         break;
       case 3: {
         const move = this.makeAnalisedAIMove();
-        console.log('move: ', move)
         return move
       }
       default:
@@ -1020,7 +1023,6 @@ export default class NewChess {
         bestMove = move
       }
     })
-    console.log(bestValue)
     return bestMove;
   }
 
@@ -1051,7 +1053,7 @@ export default class NewChess {
         return 900 + kingEval;
       }
       default:
-        console.log(figure);
+        throw new Error('At the chess');
         break;
     }
     return null

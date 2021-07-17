@@ -45,6 +45,7 @@ interface FigureProps {
   AILevel: number;
   gamePage: string;
   setPage: (page: string) => void;
+  speed: number;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -162,7 +163,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
     } = this.props;
     drawField();
     const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
-    const url = `${baseURL}/move?id=${roomId}&from=${position}&to=${newPosition}&time=${time}&color=${element.color}&piece=${element.type}`;
+    const url = `${baseURL}/move?id=${roomId}&time=${time}`;
     const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
     if (gameType === Constants.PVP_ONLINE_NAME) {
       const message = {
@@ -186,6 +187,9 @@ export default class Figure extends React.PureComponent<FigureProps> {
         method: "post",
         url,
         mode: "cors",
+        data: {
+          history: chess.history(),
+        },
       });
       if (moveFigure.status === 200) {
         await this.checkGameStatus(chess, baseURL as string, roomId as string);
@@ -278,21 +282,22 @@ export default class Figure extends React.PureComponent<FigureProps> {
       turnMove,
       roomId,
       gameType,
-      element,
       getHighlightedSquares,
       turnReplayMove,
+      speed,
     } = this.props;
+    const movementTimeCoef = gamePage === Constants.APP_PAGES.REPLAY ? speed : 1;
+    chess.move({
+      from: requestMove.move?.from as string,
+      to: requestMove.move?.to as string,
+      promotion: "q",
+    });
     setTimeout(async () => {
-      chess.move({
-        from: requestMove.move?.from as string,
-        to: requestMove.move?.to as string,
-        promotion: "q",
-      });
-      await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string);
       if (gamePage !== Constants.APP_PAGES.REPLAY) {
+        await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string);
         const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
         const { time } = this.props;
-        const moveUrl = `${baseURL}/move?id=${roomId}&from=${requestMove.move?.from}&to=${requestMove.move?.to}&time=${time}&color=${element.color}&piece=${element.type}`;
+        const moveUrl = `${baseURL}/move?id=${roomId}&time=${time}`;
         const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
         if (gameType === Constants.PVP_ONLINE_NAME) {
           const data = await axios.get(getRoomUrl);
@@ -301,7 +306,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
           cleanSlowFigureMove();
           getHighlightedSquares();
         } else {
-          const responce = await axios.post(moveUrl);
+          const responce = await axios.post(moveUrl, { history: chess.history() });
           if (responce.status === 200) {
             const data = await axios.get(getRoomUrl);
             turnMove(data);
@@ -315,7 +320,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
         turnReplayMove();
         getHighlightedSquares();
       }
-    }, Constants.FIGURE_MOVEMENT_TIME);
+    }, Constants.FIGURE_MOVEMENT_TIME / movementTimeCoef);
   };
 
   getBlockedClassname = () => {
@@ -353,7 +358,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
   };
 
   render() {
-    const { rowNumber, elementNumber, requestMove, position } = this.props;
+    const { rowNumber, elementNumber, requestMove, position, speed, gamePage } = this.props;
     let newRowNumber = rowNumber;
     let newColNumber = elementNumber;
     if (requestMove.status === true && position === requestMove.move?.from) {
@@ -364,18 +369,25 @@ export default class Figure extends React.PureComponent<FigureProps> {
         this.isFigureAlreadyMoved = true;
       }
     }
+    let FIGURE_MOVEMENT_TIME = 0;
+    if (requestMove.status === true) {
+      FIGURE_MOVEMENT_TIME = Constants.FIGURE_MOVEMENT_TIME;
+    }
+    if (gamePage === Constants.APP_PAGES.REPLAY && requestMove.status === true) {
+      FIGURE_MOVEMENT_TIME = Constants.FIGURE_MOVEMENT_TIME / speed;
+    }
     return (
       <div
         role='presentation'
         className={`figure-container
           ${this.getBlockedClassname()}
-          ${this.getReversedClassName()}
-          ${requestMove.status === true ? " figure-container_long-move" : ""}`}
+          ${this.getReversedClassName()}`}
         onMouseDown={this.mouseDown}
         onDragStart={this.startDrag}
         style={{
           top: `${Constants.squareSize * newRowNumber}px`,
           left: `${Constants.squareSize * newColNumber}px`,
+          transition: `all linear ${FIGURE_MOVEMENT_TIME}ms`,
         }}
         draggable
       >

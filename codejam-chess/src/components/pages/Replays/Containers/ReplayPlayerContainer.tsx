@@ -23,6 +23,7 @@ interface ReplayPlayerContainerProps extends RouteComponentProps {
   changeReplayWinnerFunc: (id: number) => void;
   setWinnerFunc: (id: number) => void;
   winnerId: number;
+  time: number;
 }
 
 class ReplayPlayerContainer extends React.PureComponent<ReplayPlayerContainerProps> {
@@ -40,6 +41,7 @@ class ReplayPlayerContainer extends React.PureComponent<ReplayPlayerContainerPro
       increaseTimeFunc,
       setWinnerFunc,
       winnerId,
+      time,
     } = this.props;
     return (
       <ReplayPlayer
@@ -54,6 +56,7 @@ class ReplayPlayerContainer extends React.PureComponent<ReplayPlayerContainerPro
         increaseTime={increaseTimeFunc}
         winnerId={winnerId}
         setWinner={setWinnerFunc}
+        time={time}
       />
     );
   }
@@ -65,6 +68,7 @@ const pushStateToProps = (state: any) => {
     speed: mainPageReducer.replay.speed,
     gamePage: mainPageReducer.gamePage,
     winnerId: mainPageReducer.game.winnerId,
+    time: mainPageReducer.game.time,
   };
 };
 

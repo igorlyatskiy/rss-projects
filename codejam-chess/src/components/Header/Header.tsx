@@ -52,9 +52,9 @@ class Header extends React.PureComponent<HeaderProps> {
   };
 
   breakGameFunc = async () => {
-    const { breakGame, roomId, changeActivePage } = this.props;
+    const { breakGame, roomId, changeActivePage, activePage } = this.props;
     changeActivePage(Constants.APP_PAGES.MAIN);
-    if (roomId !== undefined) {
+    if (activePage === Constants.APP_PAGES.GAME) {
       const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
       const breakGameResponce = await axios.post(url);
       if (breakGameResponce.status === 200) {

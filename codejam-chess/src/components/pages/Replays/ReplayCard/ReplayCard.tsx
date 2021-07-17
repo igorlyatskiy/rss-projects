@@ -10,11 +10,12 @@ interface ReplayCardData {
   players: PlayerData[];
   id: string;
   changeActivePage: (page: string) => void;
+  winnerColor: string;
 }
 
 export default class ReplayCard extends React.PureComponent<ReplayCardData> {
   render() {
-    const { players, history, winnerId, id, changeActivePage } = this.props;
+    const { players, history, id, winnerColor, changeActivePage } = this.props;
     const { time } = history[history.length - 1];
     const minutes = Math.floor(time / 60) >= 10 ? Math.floor(time / 60) : `0${Math.floor(time / 60)}`;
     const seconds = time % 60 >= 10 ? time % 60 : `0${time % 60}`;
@@ -26,10 +27,12 @@ export default class ReplayCard extends React.PureComponent<ReplayCardData> {
           onClick={() => changeActivePage(Constants.APP_PAGES.REPLAY)}
         />
         <div
-          className={`replay-card__avatar replay-card__avatar_1 ${winnerId === 1 ? "replay-card__avatar_winner" : ""}`}
-          title={String(players.find((e) => e.id === 1)?.name)}
+          className={`replay-card__avatar replay-card__avatar_1 ${
+            winnerColor === Constants.FIGURES_COLORS_NAMES.black ? "replay-card__avatar_winner" : ""
+          }`}
+          title={String(players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.black)?.name)}
         >
-          {String(players.find((e) => e.id === 1)?.name[0]).toUpperCase()}
+          {String(players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.black)?.name[0]).toUpperCase()}
           <div className='replay-card__winner-icon'>
             <img src={winnerIcon} alt='Winner' className='replay-card__winner-icon-image' />
           </div>
@@ -40,10 +43,12 @@ export default class ReplayCard extends React.PureComponent<ReplayCardData> {
           Common time: {minutes}:{seconds}
         </p>
         <div
-          className={`replay-card__avatar replay-card__avatar_2 ${winnerId === 2 ? "replay-card__avatar_winner" : ""}`}
-          title={String(players.find((e) => e.id === 2)?.name)}
+          className={`replay-card__avatar replay-card__avatar_2 ${
+            winnerColor === Constants.FIGURES_COLORS_NAMES.white ? "replay-card__avatar_winner" : ""
+          }`}
+          title={String(players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.name)}
         >
-          {String(players.find((e) => e.id === 2)?.name[0]).toUpperCase()}
+          {String(players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.name[0]).toUpperCase()}
           <div className='replay-card__winner-icon'>
             <img src={winnerIcon} alt='Winner' className='replay-card__winner-icon-image' />
           </div>

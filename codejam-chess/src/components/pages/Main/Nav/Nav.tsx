@@ -63,7 +63,10 @@ export default class Nav extends React.PureComponent<NavProps> {
     const { areRandomSidesEnabled, gameType } = this.props;
     let newPlayers = [...players];
     if (areRandomSidesEnabled) {
-      const firstPlayerColor = Math.random() - 0.5 > 0 ? "w" : "b";
+      let firstPlayerColor: "w" | "b" = Math.random() - 0.5 > 0 ? "w" : "b";
+      if (gameType === Constants.AI_NAME) {
+        firstPlayerColor = "w";
+      }
       const secondPlayerColor = firstPlayerColor === "w" ? "b" : "w";
       newPlayers = [
         {
