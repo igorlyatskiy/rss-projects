@@ -36,6 +36,7 @@ interface GameFieldContainerProps {
   selectedPlayerId: number;
   wsConnection: WebSocket;
   breakGameFunc: () => void;
+  boardRotationEnabled: boolean;
   changeActivePageFunc: (page: string) => void;
 }
 
@@ -63,6 +64,7 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       wsConnection,
       changeActivePageFunc,
       breakGameFunc,
+      boardRotationEnabled,
     } = this.props;
     return (
       <GameField
@@ -87,6 +89,7 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         wsConnection={wsConnection}
         changeActivePage={changeActivePageFunc}
         breakGame={breakGameFunc}
+        boardRotationEnabled={boardRotationEnabled}
       />
     );
   }
@@ -107,6 +110,7 @@ const pushStateToProps = (state: any) => {
     gameType: mainPageReducer.game.gameType,
     selectedPlayerId: mainPageReducer.game.selectedPlayerId,
     wsConnection: mainPageReducer.game.wsConnection,
+    boardRotationEnabled: mainPageReducer.game.boardRotationEnabled,
   };
 };
 

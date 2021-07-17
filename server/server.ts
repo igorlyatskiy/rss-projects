@@ -193,7 +193,7 @@ app.get('/history', (req, res) => {
       let rooms = Object.values(responce.val()) as GameRoom[]
       rooms = (rooms.filter((e) => e.players !== undefined && e.game.isGameProcessActive === false && e.game.history !== undefined));
       const history = (rooms.map((e) => e.game.history)).filter((e) => e !== undefined && e !== null).map((e) => Object.values(e));
-      const names = rooms.map((e) => e.players);
+      const names = Object.values(rooms.map((e) => Object.values(e.players)));
       const roomsIdArray = rooms.map((e) => e.id);
       const resultArray: any = [];
       const winnerIdArray = rooms.map((e) => e.game.winnerId);
@@ -205,6 +205,7 @@ app.get('/history', (req, res) => {
           id: roomsIdArray[index]
         })
       })
+      console.log(resultArray);
       res.send(resultArray);
     })
   }

@@ -88,6 +88,7 @@ class ReplayFieldContainer extends React.PureComponent<ReplayFieldContainerProps
         wsConnection={wsConnection}
         changeActivePage={changeActivePageFunc}
         breakGame={breakGameFunc}
+        boardRotationEnabled={false}
       />
     );
   }

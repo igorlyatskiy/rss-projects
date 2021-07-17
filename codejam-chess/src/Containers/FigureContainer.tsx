@@ -51,6 +51,7 @@ interface FigureContainerProps {
   turnReplayMoveFunc: () => void;
   setPageFunc: (page: string) => void;
   speed: number;
+  boardRotationEnabled: boolean;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -88,6 +89,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       turnReplayMoveFunc,
       setPageFunc,
       speed,
+      boardRotationEnabled,
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -133,6 +135,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         turnReplayMove={turnReplayMoveFunc}
         setPage={setPageFunc}
         speed={speed}
+        boardRotationEnabled={boardRotationEnabled}
       />
     );
   }
@@ -157,6 +160,7 @@ const pushStateToProps = (state: any) => {
     AILevel: mainPageReducer.game.AILevel,
     gamePage: mainPageReducer.gamePage,
     speed: mainPageReducer.replay.speed,
+    boardRotationEnabled: mainPageReducer.game.boardRotationEnabled,
   };
 };
 

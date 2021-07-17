@@ -46,6 +46,7 @@ interface FigureProps {
   gamePage: string;
   setPage: (page: string) => void;
   speed: number;
+  boardRotationEnabled: boolean;
 }
 
 export default class Figure extends React.PureComponent<FigureProps> {
@@ -160,6 +161,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
       element,
       getHighlightedSquares,
       makeFieldMarkersVisible,
+      boardRotationEnabled,
     } = this.props;
     drawField();
     const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
@@ -197,8 +199,9 @@ export default class Figure extends React.PureComponent<FigureProps> {
         turnMove(getRoomInfo);
         if (gameType === Constants.AI_NAME) {
           this.turnAiMove(chess);
-        } else {
-          setTimeout(() => makeFieldMarkersVisible, Constants.BOARD_ROTATION_TIME);
+        }
+        if (gameType === Constants.PVP_OFFLINE_NAME && boardRotationEnabled === true) {
+          setTimeout(() => makeFieldMarkersVisible(), Constants.BOARD_ROTATION_TIME);
         }
         getHighlightedSquares();
       }

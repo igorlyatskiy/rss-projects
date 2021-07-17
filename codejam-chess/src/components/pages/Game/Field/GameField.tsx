@@ -29,6 +29,7 @@ interface GameFieldProps {
   wsConnection: WebSocket;
   breakGame: () => void;
   changeActivePage: (page: string) => void;
+  boardRotationEnabled: boolean;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -78,6 +79,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       players,
       gameType,
       selectedPlayerId,
+      boardRotationEnabled,
     } = this.props;
     const activePlayer = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
     const selectedPlayer = players.find((e) => e.id === selectedPlayerId) || { color: null, id: null };
@@ -107,6 +109,13 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                 activePlayerId,
                 selectedPlayerId
               )}`}
+              style={{
+                transition: `${
+                  boardRotationEnabled && gameType === Constants.PVP_OFFLINE_NAME
+                    ? `all linear ${Constants.BOARD_ROTATION_TIME}ms`
+                    : ""
+                }`,
+              }}
             >
               {data.map((row, rowNumber) => (
                 <div key={this.getKeyNumber()} className='field__row'>
@@ -142,7 +151,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
             </div>
           </>
         )}
-        {data.length <= 1 && <div className='error'>Game is not active. Please go to the main.</div>}
+        {data.length <= 1 && gameType !== Constants.PVP_ONLINE_NAME && (
+          <div className='error'>Game is not active. Please go to the main.</div>
+        )}
       </div>
     );
   };

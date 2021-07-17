@@ -51,6 +51,7 @@ const defaultState = {
       status: false,
       move: null
     },
+    boardRotationEnabled: false
   },
   isUserLogined: false,
   gamePage: Constants.APP_PAGES.MAIN,
@@ -284,6 +285,10 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         state.game.time = history.map((e) => e.time)[history.map((e) => e.time).length - 1];
       }
       const dataPlayers = Object.values(data.players) as PlayerData[];
+      let areMarkersVisible = true;
+      if (state.game.gameType === Constants.PVP_OFFLINE_NAME && state.game.boardRotationEnabled === true) {
+        areMarkersVisible = false;
+      }
       return {
         ...state,
         players: [{
@@ -304,7 +309,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           data: state.game.chess.board(),
           history: [...history.map((e) => e.move)],
           historyTime: [...history.map((e) => e.time)],
-          areFieldMarkersVisible: true,
+          areFieldMarkersVisible: areMarkersVisible,
           isGameProcessActive: data.game.isGameProcessActive,
           draw: data.game.draw,
           winnerId: data.game.winnerId,
@@ -348,6 +353,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_MAKE_FIELD_MARKERS_VISIBLE: {
+      console.log('making');
       return {
         ...state,
         game: {
@@ -445,7 +451,10 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         ...state,
         game: {
           ...state.game,
-          selectedPlayerId: action.payload
+          selectedPlayerId: action.payload,
+          winnerId: 0,
+          data: [[]],
+          gameType: Constants.PVP_ONLINE_NAME
         }
       }
     }

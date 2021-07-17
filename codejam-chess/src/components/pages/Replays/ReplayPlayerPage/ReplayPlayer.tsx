@@ -7,6 +7,8 @@ import "./ReplayPlayer.sass";
 
 interface ReplayPlayerState {
   data: HistoryData | null;
+  timerSpeed: number;
+  interval: any;
 }
 
 interface HistoryData {
@@ -31,16 +33,14 @@ interface ReplayPlayerProps {
 }
 
 export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps, ReplayPlayerState> {
-  public timerFunctionExists = false;
   public activeMovementTime = -1;
   public timeoutsArray: number[] = [];
   public lastMoveTime = -1;
   constructor(props: ReplayPlayerProps) {
     super(props);
-    this.state = { data: null };
+    this.state = { data: null, timerSpeed: 1, interval: 0 };
   }
   componentDidMount = async () => {
-    console.log("mount");
     const { id, changePlayers, changeReplayWinner, gamePage } = this.props;
     if (gamePage === Constants.APP_PAGES.REPLAY) {
       const responce = await this.getHistoryData(id);
@@ -48,14 +48,16 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
         this.setState({
           data: responce.data,
         });
-        console.log(responce.data);
         changePlayers(responce.data.names);
-        if (!this.timerFunctionExists) {
-          this.initTimerFunction();
-        }
+        this.initTimerFunction();
         changeReplayWinner(responce.data.winner);
       }
     }
+  };
+
+  componentWillUnmount = () => {
+    const { interval } = this.state;
+    clearInterval(interval);
   };
 
   getHistoryData = (id: string) => {
@@ -67,25 +69,31 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
     const { startReplay } = this.props;
     const { data } = this.state;
     const { history } = data as HistoryData;
-    console.log(history.map((e) => e.move));
     startReplay();
     this.initInterval();
     this.makeRecursiveFigureMovement(history, 0);
   };
 
   initInterval = () => {
-    const { increaseTime, speed, gamePage, time } = this.props;
-    const { data } = this.state;
+    const { increaseTime } = this.props;
+    const { data, interval } = this.state;
     const { history } = data as HistoryData;
-    let timeout;
-    if (time <= history[history.length - 1].time && gamePage === Constants.APP_PAGES.REPLAY) {
-      timeout = setTimeout(() => {
-        increaseTime();
-        this.initInterval();
-      }, 1000 / speed);
-    } else {
-      clearTimeout(timeout);
+    const { timerSpeed } = this.state;
+    if (interval) {
+      clearInterval(interval);
     }
+    const templ = setInterval(() => {
+      const { time, speed } = this.props;
+      if (speed !== timerSpeed) {
+        clearInterval(interval);
+        this.setState({ timerSpeed: speed });
+        this.initInterval();
+      }
+      if (time <= history[history.length - 1].time) {
+        increaseTime();
+      }
+    }, 1000 / timerSpeed);
+    this.setState({ interval: templ });
   };
 
   makeRecursiveFigureMovement = (history: HistoryAction[], moveNumber: number) => {
@@ -125,8 +133,27 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
     }
   };
 
+  // checkTimeout = () => {
+  //   const { gamePage, speed } = this.props;
+  //   const { timerSpeed, interval } = this.state;
+  //   const { data } = this.state;
+  //   console.log("timeout");
+  //   if (gamePage !== Constants.APP_PAGES.REPLAY) {
+  //     clearInterval(interval);
+  //   }
+  //   if (speed !== timerSpeed && gamePage === Constants.APP_PAGES.REPLAY) {
+  //     clearInterval(interval);
+  //     this.setState({ timerSpeed: speed });
+  //     if (data !== null) {
+  //       this.initInterval();
+  //     }
+  //   }
+  //   console.log(speed, timerSpeed);
+  // };
+
   render() {
     const { data } = this.state;
+    // this.checkTimeout();
     return data !== null ? (
       <section className='game-page'>
         <ReplayPlayerViewContainer propsColor='w' />
