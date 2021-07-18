@@ -139,6 +139,20 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         })
         break;
       }
+
+      case 'give-headstart': {
+        const { roomId, square } = message.payload;
+        const giveHeadStartMessage = {
+          event: 'give-headstart',
+          square,
+          id: roomId
+        }
+        webSocketServer.clients.forEach((client) => {
+          client.send(JSON.stringify(giveHeadStartMessage))
+        })
+        break;
+      }
+
       default: ws.send((new Error("Wrong query")).message);
     }
   });
@@ -183,7 +197,8 @@ app.get('/history', (req, res) => {
         history: Object.values(room.game.history),
         winner: room.game.winnerId,
         names: room.players,
-        id
+        id,
+        headstart: Object.values(room.game.headstart)
       }
       res.send(data);
     })
@@ -242,6 +257,7 @@ app.put('/room', (req, res) => {
 app.post('/move', (req, res) => {
   const { id, time } = req.query;
   const { history } = req.body;
+  console.log(history);
   if (history !== undefined && id !== undefined && time !== undefined) {
     const ref = db.ref(`rooms/${id}/game/history`);
     const setMoveIntoHistory = ref.push({
@@ -278,6 +294,19 @@ app.post('/room/draw', (req, res) => {
       winnerId: 0,
       isGameProcessActive: false,
       draw: true
+    }).then(() => {
+      res.send({ status: true })
+    });
+  }
+})
+
+app.post('/game/headstart', (req, res) => {
+  const { id } = req.query;
+  const { color, square } = req.body;
+  if (id !== undefined) {
+    const ref = db.ref(`rooms/${id}/game/headstart`);
+    ref.push({
+      color, square
     }).then(() => {
       res.send({ status: true })
     });

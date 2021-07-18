@@ -184,7 +184,8 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
         },
         activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
         isUserLogined: true,
-        draw: false
+        draw: false,
+        gamePage: Constants.APP_PAGES.GAME
       }
     }
 
@@ -491,7 +492,7 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case APP_CHANGE_PLAYERS: {
-      const newPlayers = action.payload as PlayerData[];
+      const newPlayers = Object.values(action.payload) as PlayerData[];
       return {
         ...state,
         players: [
@@ -508,7 +509,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case REPLAY_START_REPLAY: {
-      state.game.chess.reset();
       return {
         ...state,
         replay: {

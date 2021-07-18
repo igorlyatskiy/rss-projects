@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 // import { Redirect } from "react-router-dom";
 import NewChess from "../../../../chess.js/chess";
@@ -30,6 +31,8 @@ interface GameFieldProps {
   breakGame: () => void;
   changeActivePage: (page: string) => void;
   boardRotationEnabled: boolean;
+  gamePage: string;
+  roomId: string;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -68,6 +71,44 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   getPositionKey = (rowNumber: number, elementNumber: number) =>
     `${Constants.letters[elementNumber]}${Constants.rowNumbers - rowNumber}`;
 
+  removeRandomFigure = async () => {
+    const { chess, activePlayerId, players, drawField, roomId, gameType, selectedPlayerId, wsConnection } = this.props;
+    let color = players.find((e) => e.id === activePlayerId)?.color as string;
+    if (gameType === Constants.AI_NAME || gameType === Constants.PVP_ONLINE_NAME) {
+      color = players.find((e) => e.id === selectedPlayerId)?.color as string;
+    }
+    const square = chess.removeRandomFigure(color);
+    console.log(square);
+    drawField();
+    const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/headstart?id=${roomId}`;
+    const responce = await axios.post(url, {
+      color,
+      square,
+    });
+    if (responce.status === 200 && gameType === Constants.PVP_ONLINE_NAME) {
+      const data = {
+        event: "give-headstart",
+        payload: {
+          color,
+          square,
+          roomId,
+        },
+      };
+      wsConnection.send(JSON.stringify(data));
+    }
+    if (responce.status !== 200) {
+      throw new Error("at the remove random figure");
+    }
+  };
+
+  isHeadstartBtnShowed = () => {
+    const { gamePage, selectedPlayerId, activePlayerId } = this.props;
+    if (gamePage === Constants.AI_NAME || gamePage === Constants.PVP_ONLINE_NAME) {
+      return selectedPlayerId === activePlayerId;
+    }
+    return true;
+  };
+
   render = () => {
     const {
       data,
@@ -80,6 +121,8 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       gameType,
       selectedPlayerId,
       boardRotationEnabled,
+      chess,
+      gamePage,
     } = this.props;
     const activePlayer = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
     const selectedPlayer = players.find((e) => e.id === selectedPlayerId) || { color: null, id: null };
@@ -87,6 +130,11 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       <div className='field-container'>
         {data.length > 1 && (
           <>
+            {chess.history().length <= 1 && gamePage === Constants.APP_PAGES.GAME && this.isHeadstartBtnShowed() && (
+              <button type='button' className='field-container__head-start' onClick={() => this.removeRandomFigure()}>
+                Give a head start
+              </button>
+            )}
             <FieldMarkers
               activePlayerId={activePlayerId}
               players={players}

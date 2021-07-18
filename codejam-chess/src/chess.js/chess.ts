@@ -1110,4 +1110,20 @@ export default class NewChess {
     }
     return bestMove
   }
+
+  removeRandomFigure = (color: string) => {
+    let isFigureRemoved = false;
+    let returnValue = null;
+    this.chess.board().forEach((row, rowIndex) => {
+      row.forEach((element, colIndex) => {
+        if (element?.type === Constants.FIGURES_NAMES.PAWN && element.color === color && isFigureRemoved === false) {
+          isFigureRemoved = true;
+          const figurePosition = this.getSquareNameByIndex(rowIndex, colIndex);
+          this.chess.remove(figurePosition);
+          returnValue = figurePosition
+        }
+      })
+    })
+    return returnValue
+  }
 }

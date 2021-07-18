@@ -23,6 +23,8 @@ interface NavProps {
   players: PlayerData[];
   gameType: string;
   setStore: (store: unknown, roomId: string | number) => void;
+  setPage: (page: string) => void;
+  activePage: string;
 }
 
 export default class Nav extends React.PureComponent<NavProps> {
@@ -84,13 +86,21 @@ export default class Nav extends React.PureComponent<NavProps> {
   };
 
   render() {
+    const { gameType } = this.props;
+    const isGameActive = gameType !== Constants.PVP_ONLINE_NAME;
     return (
       <nav className='main-page__nav'>
         <Link to='/online'>
           <div className='main-page__nav__element main-page__online main-page__nav__element_active'>Online</div>
         </Link>
         <Link to='/game' onClick={this.startGameFunc}>
-          <div className='main-page__nav__element main-page__start'>Start</div>
+          <div
+            className={`main-page__nav__element main-page__start ${
+              isGameActive ? " main-page__nav__element_active" : ""
+            }`}
+          >
+            Start
+          </div>
         </Link>
         <Link to='/settings'>
           <div className='main-page__settings'>Settings</div>

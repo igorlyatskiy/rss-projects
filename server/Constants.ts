@@ -36,9 +36,14 @@ interface StoreGame {
   isGameProcessActive: boolean,
   gameType: string,
   history: HistoryAction[],
-  winnerId: number
+  winnerId: number,
+  headstart: HeadStart[]
 }
 
+interface HeadStart {
+  color: string,
+  square: string
+}
 
 export const AI_NAME = 'ai';
 

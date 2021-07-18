@@ -12,7 +12,7 @@ import {
   breakGame,
   setPage,
 } from "../../../../store/mainPage/actions";
-import { FigureData, PlayerData } from "../../../Constants";
+import Constants, { FigureData, PlayerData } from "../../../Constants";
 import GameField from "../../Game/Field/GameField";
 
 interface ReplayFieldContainerProps {
@@ -89,6 +89,8 @@ class ReplayFieldContainer extends React.PureComponent<ReplayFieldContainerProps
         changeActivePage={changeActivePageFunc}
         breakGame={breakGameFunc}
         boardRotationEnabled={false}
+        gamePage={Constants.APP_PAGES.REPLAY}
+        roomId={String(Math.random())}
       />
     );
   }

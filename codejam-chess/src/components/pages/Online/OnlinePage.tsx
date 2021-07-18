@@ -4,6 +4,7 @@ import React from "react";
 import Constants, { GameRoom, HistoryAction } from "../../Constants";
 import "./OnlinePage.sass";
 import boardImage from "../../../img/chessboard.jpg";
+import NewChess from "../../../chess.js/chess";
 
 require("dotenv").config();
 const axios = require("axios");
@@ -28,6 +29,7 @@ interface OnlinePageProps {
   slowFigureMove: (data: unknown) => void;
   cleanSlowFigureMove: () => void;
   cleanField: () => void;
+  chess: NewChess;
 }
 
 const port = process.env.REACT_APP_SERVER_PORT;
@@ -72,7 +74,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     };
 
     wsConnection.onmessage = async (event) => {
-      const { setStore, setSelectedPlayer, increaseTime } = this.props;
+      const { setStore, setSelectedPlayer, increaseTime, chess } = this.props;
       const message = JSON.parse(event.data);
       const { selectedPlayerId } = message;
       if (message.id === roomId) {
@@ -86,6 +88,10 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           case "timer":
             increaseTime();
             break;
+          case "give-headstart": {
+            chess.chess.remove(message.square);
+            break;
+          }
           case "start-game":
             {
               const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
@@ -94,6 +100,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
                 url,
                 mode: "cors",
               });
+              console.log(responce.data);
               setStore(responce.data, roomId);
               startGame(Constants.PVP_ONLINE_NAME, roomId);
             }
@@ -107,13 +114,11 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
                 url,
                 mode: "cors",
               });
-              console.log(roomInfo.data);
               const { history } = roomInfo.data.game;
               const historyArray = Object.values(history);
               const lastMove = historyArray[historyArray.length - 1] as HistoryAction;
               setTimeout(() => {
                 slowFigureMove(lastMove.move);
-                // setStore(roomInfo.data, roomId);
               }, Constants.FIGURE_WAITING_TIME);
             }
             break;
@@ -126,6 +131,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
             wsConnection.close();
             break;
           }
+
           default:
             throw new Error("at the online page");
         }

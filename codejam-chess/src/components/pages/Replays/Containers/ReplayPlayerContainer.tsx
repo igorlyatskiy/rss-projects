@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
+import NewChess from "../../../../chess.js/chess";
 import {
   changePlayers,
   changeReplayWinner,
@@ -24,6 +25,7 @@ interface ReplayPlayerContainerProps extends RouteComponentProps {
   setWinnerFunc: (id: number) => void;
   winnerId: number;
   time: number;
+  chess: NewChess;
 }
 
 class ReplayPlayerContainer extends React.PureComponent<ReplayPlayerContainerProps> {
@@ -42,6 +44,7 @@ class ReplayPlayerContainer extends React.PureComponent<ReplayPlayerContainerPro
       setWinnerFunc,
       winnerId,
       time,
+      chess,
     } = this.props;
     return (
       <ReplayPlayer
@@ -57,6 +60,7 @@ class ReplayPlayerContainer extends React.PureComponent<ReplayPlayerContainerPro
         winnerId={winnerId}
         setWinner={setWinnerFunc}
         time={time}
+        chess={chess}
       />
     );
   }
@@ -69,6 +73,7 @@ const pushStateToProps = (state: any) => {
     gamePage: mainPageReducer.gamePage,
     winnerId: mainPageReducer.game.winnerId,
     time: mainPageReducer.game.time,
+    chess: mainPageReducer.game.chess,
   };
 };
 

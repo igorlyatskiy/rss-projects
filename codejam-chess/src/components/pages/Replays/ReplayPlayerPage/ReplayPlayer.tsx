@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
-import Constants, { HistoryAction, PlayerData } from "../../../Constants";
+import NewChess from "../../../../chess.js/chess";
+import Constants, { HeadStart, HistoryAction, PlayerData } from "../../../Constants";
 import ReplayFieldContainer from "../Containers/ReplayFieldContainer";
 import ReplayPlayerViewContainer from "../Containers/ReplayPlayerViewContainer";
 import "./ReplayPlayer.sass";
@@ -15,6 +16,7 @@ interface HistoryData {
   history: HistoryAction[];
   winner: number;
   names: PlayerData[];
+  headstart: HeadStart[];
 }
 
 interface ReplayPlayerProps {
@@ -30,6 +32,7 @@ interface ReplayPlayerProps {
   setWinner: (id: number) => void;
   winnerId: number;
   time: number;
+  chess: NewChess;
 }
 
 export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps, ReplayPlayerState> {
@@ -41,7 +44,7 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
     this.state = { data: null, timerSpeed: 1, interval: 0 };
   }
   componentDidMount = async () => {
-    const { id, changePlayers, changeReplayWinner, gamePage } = this.props;
+    const { id, changePlayers, changeReplayWinner, gamePage, startReplay } = this.props;
     if (gamePage === Constants.APP_PAGES.REPLAY) {
       const responce = await this.getHistoryData(id);
       if (responce.status === 200) {
@@ -49,10 +52,21 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
           data: responce.data,
         });
         changePlayers(responce.data.names);
+        this.removeHeadstart();
+        startReplay();
         this.initTimerFunction();
         changeReplayWinner(responce.data.winner);
       }
     }
+  };
+
+  removeHeadstart = () => {
+    const { data } = this.state;
+    const { chess } = this.props;
+    chess.reset();
+    data?.headstart.forEach((e) => {
+      chess.chess.remove(e.square);
+    });
   };
 
   componentWillUnmount = () => {
@@ -66,10 +80,8 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
   };
 
   initTimerFunction = () => {
-    const { startReplay } = this.props;
     const { data } = this.state;
     const { history } = data as HistoryData;
-    startReplay();
     this.initInterval();
     this.makeRecursiveFigureMovement(history, 0);
   };

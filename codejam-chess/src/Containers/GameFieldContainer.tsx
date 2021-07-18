@@ -38,6 +38,8 @@ interface GameFieldContainerProps {
   breakGameFunc: () => void;
   boardRotationEnabled: boolean;
   changeActivePageFunc: (page: string) => void;
+  gamePage: string;
+  roomId: string;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -65,6 +67,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       changeActivePageFunc,
       breakGameFunc,
       boardRotationEnabled,
+      gamePage,
+      roomId
     } = this.props;
     return (
       <GameField
@@ -90,6 +94,8 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         changeActivePage={changeActivePageFunc}
         breakGame={breakGameFunc}
         boardRotationEnabled={boardRotationEnabled}
+        gamePage={gamePage}
+        roomId={roomId}
       />
     );
   }
@@ -111,6 +117,8 @@ const pushStateToProps = (state: any) => {
     selectedPlayerId: mainPageReducer.game.selectedPlayerId,
     wsConnection: mainPageReducer.game.wsConnection,
     boardRotationEnabled: mainPageReducer.game.boardRotationEnabled,
+    gamePage: mainPageReducer.gamePage,
+    roomId: mainPageReducer.game.roomId,
   };
 };
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import NewChess from "../chess.js/chess";
 import { PlayerData } from "../components/Constants";
 import OnlinePage from "../components/pages/Online/OnlinePage";
 import {
@@ -25,6 +26,7 @@ export interface OnlinePageContainerProps {
   slowFigureMoveFunc: (data: unknown) => void;
   cleanSlowFigureMoveFunc: () => void;
   cleanFieldFunc: () => void;
+  chess:NewChess
 }
 
 class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> {
@@ -40,7 +42,8 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
       increaseTimeFunc,
       slowFigureMoveFunc,
       cleanSlowFigureMoveFunc,
-      cleanFieldFunc
+      cleanFieldFunc,
+      chess
     } = this.props;
     return (
       <OnlinePage
@@ -55,6 +58,7 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
         cleanSlowFigureMove={cleanSlowFigureMoveFunc}
         onlineImage={image}
         cleanField={cleanFieldFunc}
+        chess={chess}
       />
     );
   }
@@ -64,6 +68,7 @@ const pushStateToProps = (state: any) => ({
   name: state.mainPageReducer.players.find((e: PlayerData) => e.id === 1).name,
   image: state.mainPageReducer.players.find((e: PlayerData) => e.id === 1).image,
   isGameProcessActive: state.mainPageReducer.game.isGameProcessActive,
+  chess: state.mainPageReducer.game.chess,
 });
 
 const mapDispatchToProps = {
@@ -74,7 +79,7 @@ const mapDispatchToProps = {
   increaseTimeFunc: increaseTime,
   slowFigureMoveFunc: slowFigureMove,
   cleanSlowFigureMoveFunc: cleanSlowFigureMove,
-  cleanFieldFunc:cleanField
+  cleanFieldFunc: cleanField,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(OnlinePageContainer);

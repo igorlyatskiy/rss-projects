@@ -11,6 +11,7 @@ import {
   setTimerFunc,
   checkAndRandomizeColors,
   setStore,
+  setPage,
 } from "../store/mainPage/actions";
 
 export interface NavContainerProps {
@@ -25,6 +26,8 @@ export interface NavContainerProps {
   areRandomSidesEnabled: boolean;
   gameType: string;
   setStoreFunc: (store: unknown, roomId: string | number) => void;
+  setPageFunc: (page: string) => void;
+  activePage: string;
 }
 
 class NavContainer extends React.PureComponent<NavContainerProps> {
@@ -39,6 +42,8 @@ class NavContainer extends React.PureComponent<NavContainerProps> {
       gameType,
       setStoreFunc,
       areRandomSidesEnabled,
+      setPageFunc,
+      activePage
     } = this.props;
     return (
       <Nav
@@ -51,6 +56,8 @@ class NavContainer extends React.PureComponent<NavContainerProps> {
         gameType={gameType}
         setStore={setStoreFunc}
         areRandomSidesEnabled={areRandomSidesEnabled}
+        setPage={setPageFunc}
+        activePage={activePage}
       />
     );
   }
@@ -61,6 +68,7 @@ const pushStateToProps = (state: any) => ({
   gameStatus: state.mainPageReducer.game.isGamePageActive,
   gameType: state.mainPageReducer.game.gameType,
   areRandomSidesEnabled: state.mainPageReducer.game.areRandomSidesEnabled,
+  activePage: state.mainPageReducer.gamePage,
 });
 
 const mapDispatchToProps = {
@@ -72,6 +80,7 @@ const mapDispatchToProps = {
   setTimerFunction: setTimerFunc,
   checkAndRandomizeColorsFunc: checkAndRandomizeColors,
   setStoreFunc: setStore,
+  setPageFunc: setPage,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(NavContainer);
