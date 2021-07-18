@@ -52,6 +52,7 @@ interface FigureContainerProps {
   setPageFunc: (page: string) => void;
   speed: number;
   boardRotationEnabled: boolean;
+  isAutopromotionEnabled: boolean;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -90,6 +91,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       setPageFunc,
       speed,
       boardRotationEnabled,
+      isAutopromotionEnabled,
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -136,6 +138,7 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         setPage={setPageFunc}
         speed={speed}
         boardRotationEnabled={boardRotationEnabled}
+        isAutopromotionEnabled={isAutopromotionEnabled}
       />
     );
   }
@@ -161,6 +164,7 @@ const pushStateToProps = (state: any) => {
     gamePage: mainPageReducer.gamePage,
     speed: mainPageReducer.replay.speed,
     boardRotationEnabled: mainPageReducer.game.boardRotationEnabled,
+    isAutopromotionEnabled: mainPageReducer.game.autopromotionEnabled,
   };
 };
 

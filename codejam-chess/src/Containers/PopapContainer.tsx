@@ -26,7 +26,9 @@ class PopapContainer extends React.PureComponent<PopapContainerProps> {
 const pushStateToProps = (state: any) => {
   const { mainPageReducer } = state;
   const { activePlayerId, popap } = mainPageReducer;
-  const player = mainPageReducer.players.find((e: PlayerData) => e.id === activePlayerId);
+  const player =
+    mainPageReducer.players.find((e: PlayerData) => e.id === activePlayerId) ||
+    mainPageReducer.players.find((e: PlayerData) => e.id === 1);
   return {
     name: player.name,
     id: player.id,

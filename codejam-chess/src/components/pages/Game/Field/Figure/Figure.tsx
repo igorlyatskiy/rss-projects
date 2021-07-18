@@ -1,5 +1,6 @@
 // import axios from "axios";
 // import axios, { AxiosResponse } from "axios";
+import { PieceSymbol } from "@lubert/chess.ts";
 import React from "react";
 import NewChess from "../../../../../chess.js/chess";
 import Constants, { FigureData, PlayerData, RequestMove } from "../../../../Constants";
@@ -47,10 +48,28 @@ interface FigureProps {
   setPage: (page: string) => void;
   speed: number;
   boardRotationEnabled: boolean;
+  isAutopromotionEnabled: boolean;
 }
 
-export default class Figure extends React.PureComponent<FigureProps> {
+interface FigureState {
+  isPromotionWaitingActive: boolean;
+}
+
+export default class Figure extends React.Component<FigureProps, FigureState> {
   public isFigureAlreadyMoved = false;
+  public promotionPosition: string = "";
+  public promotionNewPosition: string = "";
+  public currentTarget: HTMLElement | null = null;
+  public startTop: number = 0;
+  public startLeft: number = 0;
+
+  constructor(props: FigureProps) {
+    super(props);
+    this.state = {
+      isPromotionWaitingActive: false,
+    };
+  }
+
   getFigure = () => {
     const { elementNumber, rowNumber, element } = this.props;
     const unicId = `${elementNumber}, ${rowNumber}`;
@@ -79,10 +98,12 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   mouseDown = (e: any) => {
     const { currentTarget } = e;
+    const { isPromotionWaitingActive } = this.state;
     const leftMouseBtnCode = 0;
-    if (e.button !== leftMouseBtnCode) {
+    if (e.button !== leftMouseBtnCode || isPromotionWaitingActive === true) {
       return;
     }
+    this.setState({ isPromotionWaitingActive: false });
     const { checkValidMoves, position, activePlayerId, players } = this.props;
     checkValidMoves(position);
 
@@ -120,37 +141,80 @@ export default class Figure extends React.PureComponent<FigureProps> {
       currentTarget.style.top = `${startTop}px`;
       document.onmousemove = null;
       document.onmouseup = null;
+      this.setState({
+        isPromotionWaitingActive: false,
+      });
     };
 
-    document.onmouseup = () => {
+    document.onmouseup = async () => {
       const { cleanValidMoves } = this.props;
       this.checkFigurePosition(currentTarget, startLeft, startTop);
-      this.checkMove(currentTarget, startTop, startLeft);
+      await this.checkMove(currentTarget, startTop, startLeft);
       cleanValidMoves();
       document.onmousemove = null;
       document.onmouseup = null;
     };
   };
 
-  checkMove = (paramTarget: HTMLElement, startTop: number, startLeft: number) => {
+  checkMove = async (paramTarget: HTMLElement, startTop: number, startLeft: number) => {
     const currentTarget = paramTarget;
-    const { position, chess } = this.props;
+    const { position, chess, element, isAutopromotionEnabled } = this.props;
     const moveToBottom = (startTop - parseFloat(currentTarget.style.top)) / Constants.squareSize;
     const moveToRight = (startLeft - parseFloat(currentTarget.style.left)) / Constants.squareSize;
     const newPosition = `${Constants.letters[Constants.letters.indexOf(position[0]) - moveToRight]}${
       +position[1] + moveToBottom
     }`;
-
-    const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
-    if (moveStatus) {
-      this.makeMove(position, newPosition, chess);
+    const finalRow = chess.getSquareIndex(newPosition)[0];
+    if (
+      element.type === Constants.FIGURES_NAMES.PAWN &&
+      (finalRow === 0 || finalRow === 7) &&
+      !isAutopromotionEnabled
+    ) {
+      this.currentTarget = currentTarget;
+      this.startTop = startTop;
+      this.startLeft = startLeft;
+      this.promotionPosition = position;
+      this.promotionNewPosition = newPosition;
+      this.showPromotionFigure(position, newPosition);
     } else {
-      currentTarget.style.left = `${startLeft}px`;
-      currentTarget.style.top = `${startTop}px`;
+      const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
+      if (moveStatus) {
+        this.makeMove(position, newPosition, chess);
+      } else {
+        currentTarget.style.left = `${startLeft}px`;
+        currentTarget.style.top = `${startTop}px`;
+      }
     }
   };
 
-  makeMove = async (position: string, newPosition: string, chess: NewChess) => {
+  showPromotionFigure = async (position: string, newPosition: string) => {
+    const { chess, cleanValidMoves } = this.props;
+    if (chess.move({ from: position, to: newPosition, promotion: "q" }) !== null) {
+      document.onmousemove = null;
+      document.onmouseup = null;
+      this.setState({ isPromotionWaitingActive: true });
+      cleanValidMoves();
+    }
+    chess.chess.undo();
+  };
+
+  makePromotion = (piece: string) => {
+    const promotion = piece as PieceSymbol;
+    const position = this.promotionPosition;
+    const newPosition = this.promotionNewPosition;
+    const { chess } = this.props;
+    const moveStatus = chess.move({ from: position, to: newPosition, promotion });
+    const currentTarget = this.currentTarget as HTMLElement;
+    console.log(moveStatus);
+    if (moveStatus) {
+      this.makeMove(position, newPosition, chess, promotion);
+    } else {
+      currentTarget.style.left = `${this.startLeft}px`;
+      currentTarget.style.top = `${this.startTop}px`;
+    }
+  };
+
+  makeMove = async (position: string, newPosition: string, chess: NewChess, promotion: PieceSymbol = "q") => {
     const {
       drawField,
       wsConnection,
@@ -165,7 +229,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
     } = this.props;
     drawField();
     const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
-    const url = `${baseURL}/move?id=${roomId}&time=${time}`;
+    const url = `${baseURL}/move?id=${roomId}&time=${time}&promotion=${promotion}`;
     const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
     if (gameType === Constants.PVP_ONLINE_NAME) {
       const message = {
@@ -173,7 +237,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
         payload: {
           from: position,
           to: newPosition,
-          promotion: "q",
+          promotion,
           roomId,
           time,
           color: element.color,
@@ -293,7 +357,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
     chess.move({
       from: requestMove.move?.from as string,
       to: requestMove.move?.to as string,
-      promotion: "q",
+      promotion: requestMove.move?.promotion,
     });
     setTimeout(async () => {
       if (gamePage !== Constants.APP_PAGES.REPLAY) {
@@ -362,6 +426,7 @@ export default class Figure extends React.PureComponent<FigureProps> {
 
   render() {
     const { rowNumber, elementNumber, requestMove, position, speed, gamePage } = this.props;
+    const { isPromotionWaitingActive } = this.state;
     let newRowNumber = rowNumber;
     let newColNumber = elementNumber;
     if (requestMove.status === true && position === requestMove.move?.from) {
@@ -391,9 +456,31 @@ export default class Figure extends React.PureComponent<FigureProps> {
           top: `${Constants.squareSize * newRowNumber}px`,
           left: `${Constants.squareSize * newColNumber}px`,
           transition: `all linear ${FIGURE_MOVEMENT_TIME}ms`,
+          zIndex: this.getBlockedClassname().includes("blocked") ? 10 : 20,
         }}
         draggable
       >
+        {isPromotionWaitingActive === true && (
+          <div
+            className='figure-container__promotion'
+            style={{ transform: this.getReversedClassName().includes("reversed") ? "rotateY(180deg)" : "none" }}
+          >
+            {["Q", "N", "B", "R"].map((e) => (
+              <div
+                className='promotion-item'
+                role='presentation'
+                onClick={() => {
+                  this.setState({
+                    isPromotionWaitingActive: false,
+                  });
+                  this.makePromotion(e.toLowerCase());
+                }}
+              >
+                {e}
+              </div>
+            ))}
+          </div>
+        )}
         {this.getFigure()}
       </div>
     );

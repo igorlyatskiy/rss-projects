@@ -10,6 +10,8 @@ interface SettingsProps {
   areRandomSidesEnabled: boolean;
   AILevel: number;
   gameType: string;
+  autopromotionEnabled: boolean;
+  changeAutoPromotion: (value: boolean) => void;
 }
 
 export default class Settings extends React.PureComponent<SettingsProps> {
@@ -29,8 +31,14 @@ export default class Settings extends React.PureComponent<SettingsProps> {
     changeGameMode(type);
   };
 
+  changeAutoPromotion = (e: FormEvent) => {
+    const { changeAutoPromotion } = this.props;
+    const input = e.target as HTMLInputElement;
+    changeAutoPromotion(!input.checked);
+  };
+
   render() {
-    const { areRandomSidesEnabled, AILevel, gameType } = this.props;
+    const { areRandomSidesEnabled, AILevel, gameType, autopromotionEnabled } = this.props;
     return (
       <div className='settings'>
         <>
@@ -53,7 +61,13 @@ export default class Settings extends React.PureComponent<SettingsProps> {
           <div className='settings__block'>
             <h3 className='settings__heading'>Autopromotion into the queen</h3>
             <div className='form-check'>
-              <input className='form-check-input' type='checkbox' id='autopromotion' />
+              <input
+                className='form-check-input'
+                type='checkbox'
+                id='autopromotion'
+                onInput={this.changeAutoPromotion}
+                checked={autopromotionEnabled}
+              />
               <label className='form-check-label' htmlFor='autopromotion'>
                 Enabled
               </label>

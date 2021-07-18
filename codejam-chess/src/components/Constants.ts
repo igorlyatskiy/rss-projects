@@ -1,3 +1,4 @@
+import { PieceSymbol } from '@lubert/chess.ts';
 import defaultPlayerImage from '../img/svg/defaultUserImage.svg';
 
 export interface PlayerData extends Color {
@@ -33,7 +34,8 @@ export interface HistoryAction {
 
 interface HistoryMove {
   from: string,
-  to: string
+  to: string,
+  promotion: PieceSymbol
 }
 
 export interface PopapContainerProps {
@@ -130,4 +132,5 @@ export default class Constants {
   static squareSize = 91;
   static rowNumbers = 8;
   static BOARD_ROTATION_TIME = 1200
+  static PROMOTION_WAITING_TIME = 10000;
 }

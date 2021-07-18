@@ -33,6 +33,7 @@ export const REPLAY_START_REPLAY = 'REPLAY_START_REPLAY'
 export const REPLAY_TURN_MOVE = 'REPLAY_TURN_MOVE'
 export const REPLAY_CHANGE_SPEED = 'REPLAY_CHANGE_SPEED'
 export const REPLAY_CHANGE_WINNER = 'REPLAY_CHANGE_WINNER'
+export const SETTINGS_CHANGE_AUTOPROMOTION = 'SETTINGS_CHANGE_AUTOPROMOTION'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -210,3 +211,7 @@ export const changeReplayWinner = (id: number) => ({
   payload: id
 })
 
+export const changeAutoPromotion = (value: boolean) => ({
+  type: SETTINGS_CHANGE_AUTOPROMOTION,
+  payload: value
+})

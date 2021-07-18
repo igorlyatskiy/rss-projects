@@ -114,6 +114,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
                 url,
                 mode: "cors",
               });
+              console.log(roomInfo.data);
               const { history } = roomInfo.data.game;
               const historyArray = Object.values(history);
               const lastMove = historyArray[historyArray.length - 1] as HistoryAction;

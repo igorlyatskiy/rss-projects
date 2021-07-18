@@ -4,6 +4,7 @@ import React from "react";
 import NewChess from "../../../../chess.js/chess";
 import FigureContainer from "../../../../Containers/FigureContainer";
 import Constants, { FigureData, PlayerData } from "../../../Constants";
+import QueenSvg from "../../../Figures/svg/QueenSVG";
 import FieldMarkers from "./FieldMarkers/FieldMarkers";
 import "./GameField.sass";
 import Square from "./Square/Square";
@@ -201,6 +202,14 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
         )}
         {data.length <= 1 && gameType !== Constants.PVP_ONLINE_NAME && (
           <div className='error'>Game is not active. Please go to the main.</div>
+        )}
+        {data.length <= 1 && gameType === Constants.PVP_ONLINE_NAME && (
+          <>
+            <p className='waiting-text'>Waiting for the second player.</p>
+            <div className='waiting-loop'>
+              <QueenSvg color='w' />
+            </div>
+          </>
         )}
       </div>
     );

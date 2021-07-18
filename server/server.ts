@@ -85,7 +85,7 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         break;
 
       case 'move':
-        const { to, from, time, color, piece } = message.payload;
+        const { to, from, time, color, piece, promotion } = message.payload;
         const activeRoomId = message.payload.roomId;
         const moveAction = {
           event: 'move-figure',
@@ -95,7 +95,7 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         const moveFigure = ref.set({
           time,
           move: {
-            from, to, color, piece
+            from, to, color, piece, promotion
           }
         });
         db.ref(`rooms/${activeRoomId}/activePlayerId`).once('value', (item) => {
@@ -198,7 +198,7 @@ app.get('/history', (req, res) => {
         winner: room.game.winnerId,
         names: room.players,
         id,
-        headstart: Object.values(room.game.headstart)
+        headstart: room.game.headstart ? Object.values(room.game.headstart) : []
       }
       res.send(data);
     })
@@ -220,7 +220,6 @@ app.get('/history', (req, res) => {
           id: roomsIdArray[index]
         })
       })
-      console.log(resultArray);
       res.send(resultArray);
     })
   }
@@ -255,14 +254,15 @@ app.put('/room', (req, res) => {
 })
 
 app.post('/move', (req, res) => {
-  const { id, time } = req.query;
+  const { id, time, promotion } = req.query;
+  console.log(req.query);
   const { history } = req.body;
-  console.log(history);
   if (history !== undefined && id !== undefined && time !== undefined) {
     const ref = db.ref(`rooms/${id}/game/history`);
     const setMoveIntoHistory = ref.push({
       move: history[history.length - 1],
-      time
+      time,
+      promotion
     });
     const setActivePlayer = db.ref(`rooms/${id}/activePlayerId`).once('value', (item) => {
       const activePlayerId = item.val();
