@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import NewChess from "../chess.js/chess";
-import { PlayerData } from "../components/Constants";
+import { PlayerData, PreMove } from "../components/Constants";
 import OnlinePage from "../components/pages/Online/OnlinePage";
 import {
   cleanField,
@@ -26,7 +26,8 @@ export interface OnlinePageContainerProps {
   slowFigureMoveFunc: (data: unknown) => void;
   cleanSlowFigureMoveFunc: () => void;
   cleanFieldFunc: () => void;
-  chess:NewChess
+  chess: NewChess;
+  premove: PreMove;
 }
 
 class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> {
@@ -43,7 +44,8 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
       slowFigureMoveFunc,
       cleanSlowFigureMoveFunc,
       cleanFieldFunc,
-      chess
+      chess,
+      premove,
     } = this.props;
     return (
       <OnlinePage
@@ -59,17 +61,22 @@ class OnlinePageContainer extends React.PureComponent<OnlinePageContainerProps> 
         onlineImage={image}
         cleanField={cleanFieldFunc}
         chess={chess}
+        premove={premove}
       />
     );
   }
 }
 
-const pushStateToProps = (state: any) => ({
-  name: state.mainPageReducer.players.find((e: PlayerData) => e.id === 1).name,
-  image: state.mainPageReducer.players.find((e: PlayerData) => e.id === 1).image,
-  isGameProcessActive: state.mainPageReducer.game.isGameProcessActive,
-  chess: state.mainPageReducer.game.chess,
-});
+const pushStateToProps = (state: any) => {
+  const { mainPageReducer } = state;
+  return {
+    name: mainPageReducer.players.find((e: PlayerData) => e.id === 1).name,
+    image: mainPageReducer.players.find((e: PlayerData) => e.id === 1).image,
+    isGameProcessActive: mainPageReducer.game.isGameProcessActive,
+    chess: mainPageReducer.game.chess,
+    premove: mainPageReducer.game.preMove.move,
+  };
+};
 
 const mapDispatchToProps = {
   setStoreFunc: setStore,

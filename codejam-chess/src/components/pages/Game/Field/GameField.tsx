@@ -3,7 +3,7 @@ import React from "react";
 // import { Redirect } from "react-router-dom";
 import NewChess from "../../../../chess.js/chess";
 import FigureContainer from "../../../../Containers/FigureContainer";
-import Constants, { FigureData, PlayerData } from "../../../Constants";
+import Constants, { FigureData, PlayerData, PreMove } from "../../../Constants";
 import QueenSvg from "../../../Figures/svg/QueenSVG";
 import FieldMarkers from "./FieldMarkers/FieldMarkers";
 import "./GameField.sass";
@@ -34,6 +34,9 @@ interface GameFieldProps {
   boardRotationEnabled: boolean;
   gamePage: string;
   roomId: string;
+  premove: PreMove;
+  startSelectingPreMove?: () => void;
+  setPreMove?: (data: unknown) => void;
 }
 
 export default class GameField extends React.PureComponent<GameFieldProps> {
@@ -43,9 +46,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   getFieldClassName = (
     gameType: string,
     selectedPlayer: PlayerData,
-    activePlayer: PlayerData,
-    activePlayerId: number,
-    selectedPlayerId: number
+    activePlayer: PlayerData
+    // activePlayerId: number,
+    // selectedPlayerId: number
   ) => {
     const { isGameProcessActive } = this.props;
     let className = "";
@@ -55,9 +58,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     if (gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b") {
       className += " field_rotated";
     }
-    if (gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId) {
-      className += " field_blocked";
-    }
+    // if (gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId) {
+    //   className += " field_blocked";
+    // }
     if (isGameProcessActive === false) {
       className += " field_blocked";
     }
@@ -110,6 +113,14 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     return true;
   };
 
+  makePreMove = () => {
+    const { premove, startSelectingPreMove } = this.props;
+    console.log(premove);
+    if (startSelectingPreMove) {
+      startSelectingPreMove();
+    }
+  };
+
   render = () => {
     const {
       data,
@@ -124,6 +135,8 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       boardRotationEnabled,
       chess,
       gamePage,
+      premove,
+      setPreMove,
     } = this.props;
     const activePlayer = players.find((e) => e.id === activePlayerId) || { color: null, id: null };
     const selectedPlayer = players.find((e) => e.id === selectedPlayerId) || { color: null, id: null };
@@ -144,9 +157,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                 !this.getFieldClassName(
                   gameType,
                   selectedPlayer as PlayerData,
-                  activePlayer as PlayerData,
-                  activePlayerId,
-                  selectedPlayerId
+                  activePlayer as PlayerData
+                  // activePlayerId,
+                  // selectedPlayerId
                 ).includes("field_rotated")
               }
             />
@@ -154,9 +167,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               className={`field ${this.getFieldClassName(
                 gameType,
                 selectedPlayer as PlayerData,
-                activePlayer as PlayerData,
-                activePlayerId,
-                selectedPlayerId
+                activePlayer as PlayerData
+                // activePlayerId,
+                // selectedPlayerId
               )}`}
               style={{
                 transition: `${
@@ -177,6 +190,8 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                       position={this.getPositionKey(rowNumber, elementNumber)}
                       squaresThatMadeCheck={squaresThatMadeCheck}
                       squaresThatMadeCheckMate={squaresThatMadeCheckMate}
+                      premove={premove}
+                      setPreMove={setPreMove}
                     />
                   ))}
                 </div>
@@ -210,6 +225,11 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               <QueenSvg color='w' />
             </div>
           </>
+        )}
+        {gameType === Constants.PVP_ONLINE_NAME && (
+          <button type='button' className='premove-btn' onClick={() => this.makePreMove()}>
+            Make pre-move
+          </button>
         )}
       </div>
     );

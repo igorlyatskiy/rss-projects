@@ -175,7 +175,8 @@ app.get('/rooms', (req, res) => {
   const id = req.query.id;
   db.ref(`rooms/`).once('value', (item) => {
     if (id !== undefined) {
-      const room = Object.values(item.val()).find((e: any) => e.id === id) || {};
+      const value = item.val()
+      const room = value ? Object.values(value).find((e: any) => e.id === id) : {};
       res.send(JSON.stringify(
         room,
       ))
@@ -255,15 +256,18 @@ app.put('/room', (req, res) => {
 
 app.post('/move', (req, res) => {
   const { id, time, promotion } = req.query;
-  console.log(req.query);
   const { history } = req.body;
   if (history !== undefined && id !== undefined && time !== undefined) {
     const ref = db.ref(`rooms/${id}/game/history`);
-    const setMoveIntoHistory = ref.push({
-      move: history[history.length - 1],
-      time,
-      promotion
-    });
+    const move = history[history.length - 1]
+    let setMoveIntoHistory
+    if (move !== undefined && time !== undefined && promotion !== undefined) {
+      setMoveIntoHistory = ref.push({
+        move,
+        time,
+        promotion
+      });
+    }
     const setActivePlayer = db.ref(`rooms/${id}/activePlayerId`).once('value', (item) => {
       const activePlayerId = item.val();
       db.ref(`rooms/${id}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);

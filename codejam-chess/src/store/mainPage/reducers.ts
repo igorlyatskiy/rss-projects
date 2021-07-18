@@ -1,6 +1,6 @@
 import NewChess from '../../chess.js/chess';
-import Constants, { HistoryAction, PlayerData } from '../../components/Constants';
-import { APP_CHANGE_PLAYERS, APP_SET_PAGE, GAME_BREAK_GAME, GAME_CLEAN_FIELD, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, REPLAY_CHANGE_SPEED, REPLAY_CHANGE_WINNER, REPLAY_START_REPLAY, REPLAY_TURN_MOVE, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_AUTOPROMOTION, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
+import Constants, { HistoryAction, PlayerData, } from '../../components/Constants';
+import { APP_CHANGE_PLAYERS, APP_SET_PAGE, GAME_BREAK_GAME, GAME_CLEAN_FIELD, GAME_CLEAN_PREMOVE, GAME_CLEAN_SLOW_FIGURE_MOVE, GAME_CLEAN_VALID_MOVES, GAME_DRAW_FIELD, GAME_GET_HIGHLIGHTED_SQUARES, GAME_GET_VALID_MOVES, GAME_INCREASE_TIME, GAME_MAKE_FIELD_MARKERS_INVISIBLE, GAME_MAKE_FIELD_MARKERS_VISIBLE, GAME_RANDOMIZE_COLORS, GAME_SELECT_PREMOVE, GAME_SET_PREMOVE, GAME_SET_TIMER_FUNC, GAME_SET_WINNER, GAME_SLOW_MOVE_FIGURE, GAME_START_GAME, GAME_TURN_AI_MOVE, GAME_TURN_MOVE, MAIN_CHANGE_POPAP_INPUT_VALUE, MAIN_EDIT_NAME, MAIN_HIDE_POPAP, MAIN_SET_ACTIVE_PLAYER, MAIN_SHOW_POPAP, REPLAY_CHANGE_SPEED, REPLAY_CHANGE_WINNER, REPLAY_START_REPLAY, REPLAY_TURN_MOVE, SERVER_SET_SELECTED_PLAYER, SERVER_SET_STORE, SERVER_SET_WS_CONNECTION, SETTINGS_CHANGE_AI_LEVEL, SETTINGS_CHANGE_AUTOPROMOTION, SETTINGS_CHANGE_GAME_MODE, SETTINGS_CHANGE_RANDOM_PLAYER_SIDES } from "./actions"
 
 const defaultState = {
   players:
@@ -51,6 +51,14 @@ const defaultState = {
       status: false,
       move: null,
       promotion: 'q'
+    },
+    preMove: {
+      move: {
+        from: null,
+        to: null,
+        promotion: 'q',
+        isPreMoveSelecting: false
+      },
     },
     boardRotationEnabled: false,
     autopromotionEnabled: false
@@ -182,6 +190,15 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
           requestMove: {
             status: false,
             move: null
+          },
+          preMove: {
+            status: false,
+            move: {
+              from: null,
+              to: null,
+              promotion: "q",
+              isPreMoveSelecting: false
+            },
           }
         },
         activePlayerId: state.players.find((e) => e.color === Constants.FIGURES_COLORS_NAMES.white)?.id,
@@ -280,8 +297,11 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     case GAME_TURN_MOVE: {
       state.game.chess.turn();
       const { data } = action.payload;
-      let history = Object.values(data.game.history).filter((e) => e !== null) as HistoryAction[]
-      history = history.sort((a, b: HistoryAction) => a.time - b.time)
+      let history: HistoryAction[] = [];
+      if (data.game.history) {
+        history = Object.values(data.game.history).filter((e) => e !== null) as HistoryAction[]
+        history = history.sort((a, b) => a.time - b.time)
+      }
       if (!data.game.isGameProcessActive) {
         clearInterval(state.game.timerFunction);
         state.game.timerFunction = 0;
@@ -572,12 +592,71 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case SETTINGS_CHANGE_AUTOPROMOTION: {
-      console.log(action.payload);
       return {
         ...state,
         game: {
           ...state.game,
           autopromotionEnabled: action.payload
+        }
+      }
+    }
+
+    case GAME_SET_PREMOVE: {
+      const { preMove } = state.game;
+      let firstMove = preMove.move.from;
+      let secondMove = null;
+      if (firstMove === undefined || firstMove === null) {
+        firstMove = action.payload
+      } else {
+        secondMove = action.payload;
+      }
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          preMove: {
+            status: true,
+            move: {
+              from: firstMove,
+              to: secondMove,
+              promotion: "q",
+              isPreMoveSelecting: secondMove === null
+            },
+          }
+        }
+      }
+    }
+
+    case GAME_SELECT_PREMOVE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          preMove: {
+            move: {
+              from: null,
+              to: null,
+              promotion: "q",
+              isPreMoveSelecting: true
+            },
+          }
+        }
+      }
+    }
+
+    case GAME_CLEAN_PREMOVE: {
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          preMove: {
+            move: {
+              from: null,
+              to: null,
+              promotion: 'q',
+              isPreMoveSelecting: false
+            }
+          }
         }
       }
     }

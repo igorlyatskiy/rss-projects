@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { AxiosResponse } from "axios";
 import React from "react";
-import Constants, { GameRoom, HistoryAction } from "../../Constants";
+import Constants, { GameRoom, HistoryAction, PreMove } from "../../Constants";
 import "./OnlinePage.sass";
 import boardImage from "../../../img/chessboard.jpg";
 import NewChess from "../../../chess.js/chess";
@@ -30,6 +30,7 @@ interface OnlinePageProps {
   cleanSlowFigureMove: () => void;
   cleanField: () => void;
   chess: NewChess;
+  premove: PreMove;
 }
 
 const port = process.env.REACT_APP_SERVER_PORT;
@@ -75,6 +76,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
 
     wsConnection.onmessage = async (event) => {
       const { setStore, setSelectedPlayer, increaseTime, chess } = this.props;
+      const { slowFigureMove } = this.props;
       const message = JSON.parse(event.data);
       const { selectedPlayerId } = message;
       if (message.id === roomId) {
@@ -100,29 +102,25 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
                 url,
                 mode: "cors",
               });
-              console.log(responce.data);
               setStore(responce.data, roomId);
               startGame(Constants.PVP_ONLINE_NAME, roomId);
             }
             break;
-          case "move-figure":
-            {
-              const { slowFigureMove } = this.props;
-              const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
-              const roomInfo = await axios({
-                method: "get",
-                url,
-                mode: "cors",
-              });
-              console.log(roomInfo.data);
-              const { history } = roomInfo.data.game;
-              const historyArray = Object.values(history);
-              const lastMove = historyArray[historyArray.length - 1] as HistoryAction;
-              setTimeout(() => {
-                slowFigureMove(lastMove.move);
-              }, Constants.FIGURE_WAITING_TIME);
-            }
+          case "move-figure": {
+            const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
+            const roomInfo = await axios({
+              method: "get",
+              url,
+              mode: "cors",
+            });
+            const { history } = roomInfo.data.game;
+            const historyArray = Object.values(history);
+            const lastMove = historyArray[historyArray.length - 1] as HistoryAction;
+            setTimeout(() => {
+              slowFigureMove(lastMove.move);
+            }, Constants.FIGURE_WAITING_TIME);
             break;
+          }
 
           case "finish-game": {
             const baseURL = process.env.REACT_APP_FULL_SERVER_URL;

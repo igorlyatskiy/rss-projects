@@ -32,10 +32,14 @@ export interface HistoryAction {
   time: number
 }
 
-interface HistoryMove {
+export interface HistoryMove {
   from: string,
   to: string,
   promotion: PieceSymbol
+}
+
+export interface PreMove extends HistoryMove {
+  isPreMoveSelecting: boolean
 }
 
 export interface PopapContainerProps {

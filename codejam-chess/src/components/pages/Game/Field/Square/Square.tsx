@@ -1,4 +1,5 @@
 import React from "react";
+import { PreMove } from "../../../../Constants";
 
 interface SquareProps {
   rowNumber: number;
@@ -7,6 +8,8 @@ interface SquareProps {
   validMoves: string[];
   squaresThatMadeCheck: string[];
   squaresThatMadeCheckMate: string[];
+  premove: PreMove;
+  setPreMove?: (data: unknown) => void;
 }
 
 export default class Square extends React.PureComponent<SquareProps> {
@@ -20,8 +23,15 @@ export default class Square extends React.PureComponent<SquareProps> {
     return className;
   };
 
+  makePreMove = () => {
+    const { position, premove, setPreMove } = this.props;
+    if (premove.isPreMoveSelecting && setPreMove) {
+      setPreMove(position);
+    }
+  };
+
   render() {
-    const { validMoves, position, squaresThatMadeCheck, squaresThatMadeCheckMate } = this.props;
+    const { validMoves, position, squaresThatMadeCheck, squaresThatMadeCheckMate, premove } = this.props;
     return (
       <div
         className={`${this.checkClassName()}
@@ -37,7 +47,12 @@ export default class Square extends React.PureComponent<SquareProps> {
           ${squaresThatMadeCheckMate.includes(`${position}x`) ? " field__element_checkmated" : ""}
           ${squaresThatMadeCheckMate.includes(`${position}!`) ? " field__element_king-checkmated" : ""}
           ${validMoves.includes(`${position}x=`) ? " field__element_promotion" : ""}
+          ${premove.from === position ? " field__element_premove-from" : ""}
+          ${premove.to === position ? " field__element_premove-to" : ""}
           `}
+        style={{ cursor: premove.isPreMoveSelecting === true ? "pointer" : "auto" }}
+        onClick={this.makePreMove}
+        role='presentation'
       >
         <div className={validMoves.includes(`${position}x`) ? "field__dot field__dot_damaged" : "field__dot"} />
       </div>

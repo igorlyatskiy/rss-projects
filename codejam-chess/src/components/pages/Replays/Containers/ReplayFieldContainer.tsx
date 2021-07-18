@@ -91,6 +91,7 @@ class ReplayFieldContainer extends React.PureComponent<ReplayFieldContainerProps
         boardRotationEnabled={false}
         gamePage={Constants.APP_PAGES.REPLAY}
         roomId={String(Math.random())}
+        premove={{ from: "any value", to: "any value", promotion: "q", isPreMoveSelecting: false }}
       />
     );
   }

@@ -34,6 +34,9 @@ export const REPLAY_TURN_MOVE = 'REPLAY_TURN_MOVE'
 export const REPLAY_CHANGE_SPEED = 'REPLAY_CHANGE_SPEED'
 export const REPLAY_CHANGE_WINNER = 'REPLAY_CHANGE_WINNER'
 export const SETTINGS_CHANGE_AUTOPROMOTION = 'SETTINGS_CHANGE_AUTOPROMOTION'
+export const GAME_SET_PREMOVE = 'GAME_SET_PREMOVE'
+export const GAME_SELECT_PREMOVE = 'GAME_SELECT_PREMOVE'
+export const GAME_CLEAN_PREMOVE = 'GAME_CLEAN_PREMOVE'
 
 export const setPlayerName = (name: string, id: number) => ({
   type: MAIN_EDIT_NAME,
@@ -214,4 +217,19 @@ export const changeReplayWinner = (id: number) => ({
 export const changeAutoPromotion = (value: boolean) => ({
   type: SETTINGS_CHANGE_AUTOPROMOTION,
   payload: value
+})
+
+export const setPreMove = (data: unknown) => ({
+  type: GAME_SET_PREMOVE,
+  payload: data
+})
+
+export const startSelectingPreMove = () => ({
+  type: GAME_SELECT_PREMOVE,
+  payload: true
+})
+
+export const cleanPremove = () => ({
+  type: GAME_CLEAN_PREMOVE,
+  payload: true
 })

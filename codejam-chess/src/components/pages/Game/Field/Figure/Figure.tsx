@@ -3,7 +3,7 @@
 import { PieceSymbol } from "@lubert/chess.ts";
 import React from "react";
 import NewChess from "../../../../../chess.js/chess";
-import Constants, { FigureData, PlayerData, RequestMove } from "../../../../Constants";
+import Constants, { FigureData, PlayerData, PreMove, RequestMove } from "../../../../Constants";
 import Bishop from "../../../../Figures/Bishop/Bishop";
 import King from "../../../../Figures/King/King";
 import Knight from "../../../../Figures/Knight/Knight";
@@ -27,6 +27,7 @@ interface FigureProps {
   drawField: () => void;
   turnAiMove: () => void;
   turnMove: (data: unknown) => void;
+  setPreMove: (data: unknown) => void;
   slowFigureMove: (data: unknown) => void;
   makeFieldMarkersVisible: () => void;
   setWinner: (id: number) => void;
@@ -41,6 +42,7 @@ interface FigureProps {
   getHighlightedSquares: () => void;
   cleanSlowFigureMove: () => void;
   turnReplayMove: () => void;
+  cleanPremove: () => void;
   selectedPlayerId: number;
   requestMove: RequestMove;
   AILevel: number;
@@ -49,6 +51,7 @@ interface FigureProps {
   speed: number;
   boardRotationEnabled: boolean;
   isAutopromotionEnabled: boolean;
+  premove?: PreMove;
 }
 
 interface FigureState {
@@ -104,7 +107,7 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
       return;
     }
     this.setState({ isPromotionWaitingActive: false });
-    const { checkValidMoves, position, activePlayerId, players } = this.props;
+    const { checkValidMoves, position, players, activePlayerId, selectedPlayerId, gameType } = this.props;
     checkValidMoves(position);
 
     const coords = {
@@ -124,8 +127,19 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
     const startPageX = e.pageX;
     const startPageY = e.pageY;
 
-    const reverseCoef = players[activePlayerId - 1].color === "w" ? 1 : -1;
-
+    let reverseCoef = 1;
+    if (
+      gameType === Constants.PVP_OFFLINE_NAME &&
+      players.find((player) => player.id === activePlayerId)?.color === Constants.FIGURES_COLORS_NAMES.black
+    ) {
+      reverseCoef = -1;
+    }
+    if (
+      gameType === Constants.PVP_ONLINE_NAME &&
+      players.find((player) => player.id === selectedPlayerId)?.color === Constants.FIGURES_COLORS_NAMES.black
+    ) {
+      reverseCoef = -1;
+    }
     const moveAt = (event: MouseEvent) => {
       currentTarget.style.left = `${startPageX - reverseCoef * (startPageX - event.pageX) - shiftX - startX}px`;
       currentTarget.style.top = `${startPageY - reverseCoef * (startPageY - event.pageY) - shiftY - startY}px`;
@@ -165,16 +179,16 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
       +position[1] + moveToBottom
     }`;
     const finalRow = chess.getSquareIndex(newPosition)[0];
+    this.currentTarget = currentTarget;
+    this.startTop = startTop;
+    this.startLeft = startLeft;
+    this.promotionPosition = position;
+    this.promotionNewPosition = newPosition;
     if (
       element.type === Constants.FIGURES_NAMES.PAWN &&
       (finalRow === 0 || finalRow === 7) &&
       !isAutopromotionEnabled
     ) {
-      this.currentTarget = currentTarget;
-      this.startTop = startTop;
-      this.startLeft = startLeft;
-      this.promotionPosition = position;
-      this.promotionNewPosition = newPosition;
       this.showPromotionFigure(position, newPosition);
     } else {
       const moveStatus = chess.move({ from: position, to: newPosition, promotion: "q" });
@@ -205,7 +219,6 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
     const { chess } = this.props;
     const moveStatus = chess.move({ from: position, to: newPosition, promotion });
     const currentTarget = this.currentTarget as HTMLElement;
-    console.log(moveStatus);
     if (moveStatus) {
       this.makeMove(position, newPosition, chess, promotion);
     } else {
@@ -352,6 +365,7 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
       getHighlightedSquares,
       turnReplayMove,
       speed,
+      cleanPremove,
     } = this.props;
     const movementTimeCoef = gamePage === Constants.APP_PAGES.REPLAY ? speed : 1;
     chess.move({
@@ -364,7 +378,7 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
         await this.checkGameStatus(chess, process.env.REACT_APP_FULL_SERVER_URL as string, roomId as string);
         const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
         const { time } = this.props;
-        const moveUrl = `${baseURL}/move?id=${roomId}&time=${time}`;
+        const moveUrl = `${baseURL}/move?id=${roomId}&time=${time}&promotion=${requestMove.move?.promotion}`;
         const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
         if (gameType === Constants.PVP_ONLINE_NAME) {
           const data = await axios.get(getRoomUrl);
@@ -372,6 +386,8 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
           this.isFigureAlreadyMoved = false;
           cleanSlowFigureMove();
           getHighlightedSquares();
+          this.checkPremove();
+          cleanPremove();
         } else {
           const responce = await axios.post(moveUrl, { history: chess.history() });
           if (responce.status === 200) {
@@ -391,7 +407,7 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
   };
 
   getBlockedClassname = () => {
-    const { gameType, activePlayerId, element, selectedPlayerId, players } = this.props;
+    const { gameType, activePlayerId, element, players, selectedPlayerId } = this.props;
     const playerId = players.find((e) => e.color === element.color)?.id;
 
     switch (gameType) {
@@ -422,6 +438,34 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
   getReversedClassName = () => {
     const { element } = this.props;
     return element.color === Constants.FIGURES_COLORS_NAMES.black ? " figure-container_reversed" : "";
+  };
+
+  checkPremove = async () => {
+    const { chess, premove, slowFigureMove, roomId, time, element, wsConnection, cleanPremove } = this.props;
+    const { from, to, promotion } = premove as PreMove;
+    const move = chess.move({ from, to, promotion });
+    if (move !== null) {
+      const message = {
+        event: "move",
+        payload: {
+          from,
+          to,
+          promotion,
+          roomId,
+          time,
+          color: element.color,
+          piece: element.type,
+        },
+      };
+      const payload = {
+        from,
+        to,
+        promotion,
+      };
+      slowFigureMove(payload);
+      await wsConnection.send(JSON.stringify(message));
+    }
+    cleanPremove();
   };
 
   render() {

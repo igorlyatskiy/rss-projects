@@ -1,16 +1,18 @@
 import React from "react";
 import { connect } from "react-redux";
 import NewChess from "../chess.js/chess";
-import { FigureData, PlayerData, RequestMove } from "../components/Constants";
+import { FigureData, PlayerData, PreMove, RequestMove } from "../components/Constants";
 import Figure from "../components/pages/Game/Field/Figure/Figure";
 import {
   checkValidMoves,
+  cleanPremove,
   cleanSlowFigureMove,
   cleanValidMoves,
   drawField,
   getHighlightedSquares,
   makeFieldMarkersVisible,
   setPage,
+  setPreMove,
   setWinner,
   slowFigureMove,
   turnAiMove,
@@ -29,8 +31,10 @@ interface FigureContainerProps {
   checkValidMovesFunc: (square: string) => void;
   cleanValidMovesFunc: () => void;
   drawFieldFunc: () => void;
+  cleanPremoveFunc: () => void;
   turnAiMoveFunc: () => void;
   turnMoveFunc: (data: unknown) => void;
+  setPreMoveFunc: (data: unknown) => void;
   slowFigureMoveFunc: (data: unknown) => void;
   cleanSlowFigureMoveFunc: () => void;
   makeFieldMarkersVisibleFunc: () => void;
@@ -53,6 +57,7 @@ interface FigureContainerProps {
   speed: number;
   boardRotationEnabled: boolean;
   isAutopromotionEnabled: boolean;
+  premove?: PreMove;
 }
 
 class FigureContainer extends React.PureComponent<FigureContainerProps> {
@@ -89,9 +94,12 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       gamePage,
       turnReplayMoveFunc,
       setPageFunc,
+      setPreMoveFunc,
       speed,
       boardRotationEnabled,
       isAutopromotionEnabled,
+      premove,
+      cleanPremoveFunc
     } = this.props;
     if (
       isGameProcessActive === undefined ||
@@ -139,6 +147,9 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
         speed={speed}
         boardRotationEnabled={boardRotationEnabled}
         isAutopromotionEnabled={isAutopromotionEnabled}
+        setPreMove={setPreMoveFunc}
+        premove={premove}
+        cleanPremove={cleanPremoveFunc}
       />
     );
   }
@@ -165,6 +176,7 @@ const pushStateToProps = (state: any) => {
     speed: mainPageReducer.replay.speed,
     boardRotationEnabled: mainPageReducer.game.boardRotationEnabled,
     isAutopromotionEnabled: mainPageReducer.game.autopromotionEnabled,
+    premove: mainPageReducer.game.preMove.move,
   };
 };
 
@@ -181,6 +193,8 @@ const mapDispatchToProps = {
   cleanSlowFigureMoveFunc: cleanSlowFigureMove,
   turnReplayMoveFunc: turnReplayMove,
   setPageFunc: setPage,
+  setPreMoveFunc: setPreMove,
+  cleanPremoveFunc: cleanPremove
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(FigureContainer);

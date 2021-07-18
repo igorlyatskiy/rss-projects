@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import NewChess from "../chess.js/chess";
-import { FigureData, PlayerData } from "../components/Constants";
+import { FigureData, PlayerData, PreMove } from "../components/Constants";
 import GameField from "../components/pages/Game/Field/GameField";
 import {
   breakGame,
@@ -10,7 +10,9 @@ import {
   drawField,
   makeFieldMarkersVisible,
   setPage,
+  setPreMove,
   setWinner,
+  startSelectingPreMove,
   turnAiMove,
   turnMove,
 } from "../store/mainPage/actions";
@@ -40,6 +42,9 @@ interface GameFieldContainerProps {
   changeActivePageFunc: (page: string) => void;
   gamePage: string;
   roomId: string;
+  premove: PreMove;
+  startSelectingPreMoveFunc: () => void;
+  setPreMoveFunc: (data: unknown) => void;
 }
 
 class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
@@ -68,7 +73,10 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
       breakGameFunc,
       boardRotationEnabled,
       gamePage,
-      roomId
+      roomId,
+      premove,
+      startSelectingPreMoveFunc,
+      setPreMoveFunc,
     } = this.props;
     return (
       <GameField
@@ -96,6 +104,9 @@ class GameFieldContainer extends React.PureComponent<GameFieldContainerProps> {
         boardRotationEnabled={boardRotationEnabled}
         gamePage={gamePage}
         roomId={roomId}
+        premove={premove}
+        startSelectingPreMove={startSelectingPreMoveFunc}
+        setPreMove={setPreMoveFunc}
       />
     );
   }
@@ -119,6 +130,7 @@ const pushStateToProps = (state: any) => {
     boardRotationEnabled: mainPageReducer.game.boardRotationEnabled,
     gamePage: mainPageReducer.gamePage,
     roomId: mainPageReducer.game.roomId,
+    premove: mainPageReducer.game.preMove.move,
   };
 };
 
@@ -132,6 +144,8 @@ const mapDispatchToProps = {
   setWinnerFunc: setWinner,
   changeActivePageFunc: setPage,
   breakGameFunc: breakGame,
+  startSelectingPreMoveFunc: startSelectingPreMove,
+  setPreMoveFunc: setPreMove,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(GameFieldContainer);
