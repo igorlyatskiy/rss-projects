@@ -33,8 +33,6 @@ interface OnlinePageProps {
   premove: PreMove;
 }
 
-const port = process.env.REACT_APP_SERVER_PORT;
-
 export default class OnlinePage extends React.Component<OnlinePageProps, OnlinePageState> {
   public request = null;
   public selectedPlayerExists = false;
@@ -80,6 +78,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
       const { slowFigureMove } = this.props;
       const message = JSON.parse(event.data);
       const { selectedPlayerId } = message;
+      const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
       if (message.id === roomId) {
         switch (message.event) {
           case "set-selected-player":
@@ -97,7 +96,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           }
           case "start-game":
             {
-              const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
+              const url = `${baseURL}/rooms?id=${roomId}`;
               const responce = await axios({
                 method: "get",
                 url,
@@ -108,7 +107,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
             }
             break;
           case "move-figure": {
-            const url = `http://127.0.0.1:${port}/rooms?id=${roomId}`;
+            const url = `${baseURL}/rooms?id=${roomId}`;
             const roomInfo = await axios({
               method: "get",
               url,
@@ -124,7 +123,6 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           }
 
           case "finish-game": {
-            const baseURL = process.env.REACT_APP_FULL_SERVER_URL;
             const getRoomUrl = `${baseURL}/rooms?id=${roomId}`;
             const roomInfo = await axios.get(getRoomUrl);
             setStore(roomInfo.data, roomId);
@@ -140,7 +138,9 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
   };
 
   getRooms = () => {
-    const getGameRoomsUrl = `http://127.0.0.1:${port}/rooms`;
+    const url = process.env.REACT_APP_FULL_SERVER_URL || "";
+    console.log(url);
+    const getGameRoomsUrl = `${url}/rooms`;
     return axios({
       method: "get",
       url: getGameRoomsUrl,

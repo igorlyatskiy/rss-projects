@@ -31,7 +31,8 @@ export default class ReplaysPage extends React.PureComponent<ReplaysPageProps, R
   }
 
   getHistory = () => {
-    const url = `${process.env.REACT_APP_FULL_SERVER_URL}/history`;
+    const baseUrl = process.env.REACT_APP_FULL_SERVER_URL;
+    const url = `${baseUrl}/history`;
     return axios.get(url);
   };
 
