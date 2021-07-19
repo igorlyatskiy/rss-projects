@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 
 export interface TimerInfo {
   roomId: number,
@@ -56,4 +56,4 @@ export const fireBaseConfig = {
   messagingSenderId: process.env.REACT_APP_SID,
   appId: process.env.REACT_APP_APPID,
   measurementId: process.env.REACT_APP_MID,
-}
+};

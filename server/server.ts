@@ -1,14 +1,17 @@
-import { AI_NAME, fireBaseConfig, GameRoom, PlayerData, TimerInfo } from './Constants';
-import express from "express";
-import WebSocket from "ws";
-import http from 'http'
-import firebase from "firebase/app";
-import "firebase/database";
-import bodyParser from 'body-parser'
+import * as WebSocket from 'ws';
+import * as http from 'http';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import * as bodyParser from 'body-parser';
+import express = require('express');
+import {
+  AI_NAME, fireBaseConfig, GameRoom, PlayerData, TimerInfo,
+} from './Constants';
+
 const { v4: uuidv4 } = require('uuid');
 
-require('dotenv').config()
-const cors = require('cors')
+require('dotenv').config();
+const cors = require('cors');
 
 firebase.initializeApp(fireBaseConfig);
 const db = firebase.database();
@@ -18,16 +21,16 @@ const socketApp = express();
 const WEBSOCKET_PORT = process.env.REACT_APP_WEBSOCKET_PORT || 5001;
 socketApp.set('port', WEBSOCKET_PORT);
 const server = http.createServer(socketApp);
-const webSocketServer = new WebSocket.Server({ server, port: +WEBSOCKET_PORT }, () => console.log(`Websocket server started on port ${WEBSOCKET_PORT}`));
+const webSocketServer = new WebSocket.Server({ server, port: +WEBSOCKET_PORT });
 const timers: TimerInfo[] = [];
 
 webSocketServer.on('connection', (ws: WebSocket) => {
   ws.on('message', (data: string) => {
     const message = JSON.parse(data);
     switch (message.event) {
-      case "join-room":
+      case 'join-room': {
         const { roomId, name, image } = message.payload;
-        const url = `rooms/`;
+        const url = 'rooms/';
         db.ref(url).once('value', (item) => {
           const rooms = item.val();
           const activeRoom = Object.values(rooms).find((e: any) => e.id === roomId) as GameRoom;
@@ -38,65 +41,67 @@ webSocketServer.on('connection', (ws: WebSocket) => {
             if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
               color = Object.values(activeRoom.players)[0].color === 'w' ? 'b' : 'w';
             }
-            const playerId = players.length + 1
+            const playerId = players.length + 1;
             db.ref(`${url}${roomId}/players`).push({
               id: playerId,
               name,
               color,
-              image
+              image,
             });
             if (color === 'w') {
-              db.ref(`${url}${roomId}/activePlayerId`).set(playerId)
+              db.ref(`${url}${roomId}/activePlayerId`).set(playerId);
             }
             const selectPlayerMessage = {
               selectedPlayerId: playerId,
               event: 'set-selected-player',
-              id: roomId
-            }
+              id: roomId,
+            };
             webSocketServer.clients.forEach((client) => {
               client.send(JSON.stringify(selectPlayerMessage));
-            })
+            });
             if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
               const startGameMessage = {
                 event: 'start-game',
                 id: roomId,
-              }
+              };
               webSocketServer.clients.forEach((client) => {
-                client.send(JSON.stringify(startGameMessage))
-              })
+                client.send(JSON.stringify(startGameMessage));
+              });
+              const timerMessage = {
+                event: 'timer',
+                id: roomId,
+              };
               const timerInterval = setInterval(() => {
-                webSocketServer.clients.forEach((client) => client.send(JSON.stringify(timerMessage)))
-              }, 1000)
+                webSocketServer.clients.forEach((client) => {
+                  client.send(JSON.stringify(timerMessage));
+                });
+              }, 1000);
               timers.forEach((timer) => {
                 if (timer.roomId === roomId) {
                   clearInterval(timer.timerInterval);
                 }
               });
               timers.push({ roomId, timerInterval });
-              const timerMessage = {
-                event: 'timer',
-                id: roomId,
-              }
             }
-
           }
-        })
-
+        });
         break;
-
-      case 'move':
-        const { to, from, time, color, piece, promotion } = message.payload;
+      }
+      case 'move': {
+        const {
+          to, from, time, color, piece, promotion,
+        } = message.payload;
         const activeRoomId = message.payload.roomId;
         const moveAction = {
           event: 'move-figure',
           id: activeRoomId,
-        }
+        };
         const ref = db.ref(`rooms/${activeRoomId}/game/history/${time}`);
         const moveFigure = ref.set({
           time,
           move: {
-            from, to, color, piece, promotion
-          }
+            from, to, color, piece, promotion,
+          },
         });
         db.ref(`rooms/${activeRoomId}/activePlayerId`).once('value', (item) => {
           const activePlayerId = item.val();
@@ -104,17 +109,19 @@ webSocketServer.on('connection', (ws: WebSocket) => {
           Promise.all([moveFigure, changeActivePlayer]).then(() => {
             webSocketServer.clients.forEach((client) => {
               client.send(JSON.stringify(moveAction));
-            })
+            });
           });
-        })
+        });
         break;
+      }
 
-      case 'stop-timer':
+      case 'stop-timer': {
         const selectedTimer = timers.find((e) => e.roomId === message.payload);
         if (selectedTimer) {
-          clearInterval(selectedTimer?.timerInterval);
+          clearInterval(selectedTimer.timerInterval);
         }
         break;
+      }
 
       case 'finish-game': {
         const { winnerId, draw, roomId } = message.payload;
@@ -122,12 +129,12 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         ref.update({
           winnerId,
           isGameProcessActive: false,
-          draw: draw,
-        })
+          draw,
+        });
         const finishGameAction = {
           event: 'finish-game',
           id: roomId,
-        }
+        };
 
         timers.forEach((timer) => {
           if (timer.roomId === roomId) {
@@ -135,8 +142,8 @@ webSocketServer.on('connection', (ws: WebSocket) => {
           }
         });
         webSocketServer.clients.forEach((client) => {
-          client.send(JSON.stringify(finishGameAction))
-        })
+          client.send(JSON.stringify(finishGameAction));
+        });
         break;
       }
 
@@ -145,20 +152,19 @@ webSocketServer.on('connection', (ws: WebSocket) => {
         const giveHeadStartMessage = {
           event: 'give-headstart',
           square,
-          id: roomId
-        }
+          id: roomId,
+        };
         webSocketServer.clients.forEach((client) => {
-          client.send(JSON.stringify(giveHeadStartMessage))
-        })
+          client.send(JSON.stringify(giveHeadStartMessage));
+        });
         break;
       }
 
-      default: ws.send((new Error("Wrong query")).message);
+      default: ws.send((new Error('Wrong query')).message);
     }
   });
 
-  ws.once("error", e => ws.send(e));
-  ws.once('close', () => console.log('User has broken the network'));
+  ws.once('error', (e) => ws.send(e));
 });
 
 // server part
@@ -167,30 +173,29 @@ const app = express();
 const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
 app.set('port', SERVER_PORT);
 app.use(cors());
-app.use(bodyParser.json()) // handle json data
-app.use(bodyParser.urlencoded({ extended: true })) // handle URL-encoded data
-
+app.use(bodyParser.json()); // handle json data
+app.use(bodyParser.urlencoded({ extended: true })); // handle URL-encoded data
 
 app.get('/rooms', (req, res) => {
-  const id = req.query.id;
-  db.ref(`rooms/`).once('value', (item) => {
+  const { id } = req.query;
+  db.ref('rooms/').once('value', (item) => {
     if (id !== undefined) {
-      const value = item.val()
+      const value = item.val();
       const room = value ? Object.values(value).find((e: any) => e.id === id) : {};
       res.send(JSON.stringify(
         room,
-      ))
+      ));
     }
     if (JSON.stringify(req.query) === JSON.stringify({})) {
       res.send(JSON.stringify({
         rooms: item.val(),
-      }))
+      }));
     }
-  })
+  });
 });
 
 app.get('/history', (req, res) => {
-  const id = req.query.id;
+  const { id } = req.query;
   if (id !== undefined) {
     db.ref(`rooms/${id}`).once('value', (responce) => {
       const room = responce.val() as GameRoom;
@@ -199,16 +204,18 @@ app.get('/history', (req, res) => {
         winner: room.game.winnerId,
         names: room.players,
         id,
-        headstart: room.game.headstart ? Object.values(room.game.headstart) : []
-      }
+        headstart: room.game.headstart ? Object.values(room.game.headstart) : [],
+      };
       res.send(data);
-    })
+    });
   } else {
-
     db.ref('rooms/').once('value', (responce) => {
-      let rooms = Object.values(responce.val()) as GameRoom[]
-      rooms = (rooms.filter((e) => e.players !== undefined && e.game.isGameProcessActive === false && e.game.history !== undefined));
-      const history = (rooms.map((e) => e.game.history)).filter((e) => e !== undefined && e !== null).map((e) => Object.values(e));
+      let rooms = Object.values(responce.val()) as GameRoom[];
+      rooms = (rooms.filter((e) => e.players !== undefined
+        && e.game.isGameProcessActive === false && e.game.history !== undefined));
+      const history = (rooms.map((e) => e.game.history))
+        .filter((e) => e !== undefined && e !== null)
+        .map((e) => Object.values(e));
       const names = Object.values(rooms.map((e) => Object.values(e.players)));
       const roomsIdArray = rooms.map((e) => e.id);
       const resultArray: any = [];
@@ -218,17 +225,17 @@ app.get('/history', (req, res) => {
           history: history[index],
           winner: winnerIdArray[index],
           names: currentNames,
-          id: roomsIdArray[index]
-        })
-      })
+          id: roomsIdArray[index],
+        });
+      });
       res.send(resultArray);
-    })
+    });
   }
-})
+});
 
 app.put('/room', (req, res) => {
   const gameType = req.query.type;
-  const id = uuidv4()
+  const id = uuidv4();
   const ref = db.ref(`rooms/${id}`);
   const players = req.body.players !== undefined ? req.body.players : [{}];
   const whitePlayer = players.find((e: PlayerData) => e.color === 'w');
@@ -240,41 +247,41 @@ app.put('/room', (req, res) => {
     game: {
       history: [null],
       AILevel: 1,
-      gameType: gameType,
+      gameType,
       draw: false,
       winnerId: 0,
       isGameProcessActive: true,
-      selectedPlayerId: gameType === AI_NAME ? 1 : 0
+      selectedPlayerId: gameType === AI_NAME ? 1 : 0,
     },
-  }
+  };
   ref.set({
-    ...defaultState
+    ...defaultState,
   }).then(() => {
-    res.send(JSON.stringify({ status: true, roomId: id }))
-  }).catch(() => res.send(JSON.stringify({ status: false, roomId: null })))
-})
+    res.send(JSON.stringify({ status: true, roomId: id }));
+  }).catch(() => res.send(JSON.stringify({ status: false, roomId: null })));
+});
 
 app.post('/move', (req, res) => {
   const { id, time, promotion } = req.query;
   const { history } = req.body;
   if (history !== undefined && id !== undefined && time !== undefined) {
     const ref = db.ref(`rooms/${id}/game/history`);
-    const move = history[history.length - 1]
-    let setMoveIntoHistory
+    const move = history[history.length - 1];
+    let setMoveIntoHistory;
     if (move !== undefined && time !== undefined && promotion !== undefined) {
       setMoveIntoHistory = ref.push({
         move,
         time,
-        promotion
+        promotion,
       });
     }
     const setActivePlayer = db.ref(`rooms/${id}/activePlayerId`).once('value', (item) => {
       const activePlayerId = item.val();
       db.ref(`rooms/${id}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);
-    })
+    });
     Promise.all([setMoveIntoHistory, setActivePlayer]).then(() => res.send({ status: true }));
   }
-})
+});
 
 app.post('/room/winner', (req, res) => {
   const { id, winnerId } = req.query;
@@ -282,13 +289,12 @@ app.post('/room/winner', (req, res) => {
     const ref = db.ref(`rooms/${id}/game`);
     ref.update({
       winnerId: +winnerId,
-      isGameProcessActive: false
+      isGameProcessActive: false,
     }).then(() => {
-      res.send({ status: true })
+      res.send({ status: true });
     });
   }
-})
-
+});
 
 app.post('/room/draw', (req, res) => {
   const { id } = req.query;
@@ -297,12 +303,12 @@ app.post('/room/draw', (req, res) => {
     ref.update({
       winnerId: 0,
       isGameProcessActive: false,
-      draw: true
+      draw: true,
     }).then(() => {
-      res.send({ status: true })
+      res.send({ status: true });
     });
   }
-})
+});
 
 app.post('/game/headstart', (req, res) => {
   const { id } = req.query;
@@ -310,12 +316,12 @@ app.post('/game/headstart', (req, res) => {
   if (id !== undefined) {
     const ref = db.ref(`rooms/${id}/game/headstart`);
     ref.push({
-      color, square
+      color, square,
     }).then(() => {
-      res.send({ status: true })
+      res.send({ status: true });
     });
   }
-})
+});
 
 app.post('/game/break', (req, res) => {
   const { id } = req.query;
@@ -324,23 +330,19 @@ app.post('/game/break', (req, res) => {
     ref.update({
       winnerId: 0,
       isGameProcessActive: false,
-      draw: false
+      draw: false,
     }).then(() => {
-      res.send({ status: true })
+      res.send({ status: true });
     });
   }
-})
+});
 
 app.post('/game/clean', (req, res) => {
   const { id } = req.query;
   if (id !== undefined) {
     const ref = db.ref(`rooms/${id}/players`);
     ref.set([]).then(() => {
-      res.send({ status: true })
+      res.send({ status: true });
     });
   }
-})
-
-app.listen(SERVER_PORT, () => {
-  console.log(`Main server is running on port ${SERVER_PORT}`)
 });
