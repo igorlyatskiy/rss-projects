@@ -1,7 +1,7 @@
 {
   "name": "server",
   "scripts": {
-    "start": "cd server && npm start"
+    "start": "cd server && node server.ts"
   },
   "dependencies": {
     "@types/node": "^16.0.0",
