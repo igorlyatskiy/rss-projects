@@ -14,7 +14,6 @@ exports.__esModule = true;
 var http = require("http");
 var app_1 = require("firebase/app");
 require("firebase/database");
-var bodyParser = require("body-parser");
 var Constants_1 = require("./Constants");
 var uuidv4 = require('uuid').v4;
 require('dotenv').config();
@@ -23,13 +22,12 @@ var express = require('express');
 var WebSocket = require("ws");
 app_1["default"].initializeApp(Constants_1.fireBaseConfig);
 var db = app_1["default"].database();
-var SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
+var SERVER_PORT = process.env.PORT || 3002;
 var app = express();
 app.set('port', SERVER_PORT);
 var server = http.createServer(app);
 app.use(cors());
-app.use(bodyParser.json()); // handle json data
-app.use(bodyParser.urlencoded({ extended: true })); // handle URL-encoded data
+app.use(express.json());
 // server part
 app.get('/rooms', function (req, res) {
     var id = req.query.id;
@@ -327,5 +325,5 @@ webSocketServer.on('connection', function (ws) {
     ws.once('error', function (e) { return ws.send(e); });
 });
 server.listen(SERVER_PORT, function () {
-    console.log("Main server is running on port " + SERVER_PORT);
+    console.log("Server is running on port " + SERVER_PORT);
 });
