@@ -24,7 +24,7 @@ interface OnlinePageProps {
   startGame: (type: string, id: string) => void;
   increaseTime: () => void;
   setSelectedPlayer: (id: number) => void;
-  setWsConnection: (wsConnection: WebSocket) => void;
+  setWsConnection: (wsConnection: any) => void;
   isGameProcessActive: boolean;
   slowFigureMove: (data: unknown) => void;
   cleanSlowFigureMove: () => void;
@@ -59,6 +59,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
     const { onlineName, onlineImage, startGame, setWsConnection, cleanField } = this.props;
     const REACT_APP_WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || "";
     const wsConnection = new WebSocket(REACT_APP_WEBSOCKET_URL);
+
     setWsConnection(wsConnection);
     wsConnection.onopen = () => {
       const action = {
@@ -159,6 +160,54 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
       });
   };
 
+  findRandomGame = async () => {
+    const responce = await this.getRooms();
+    console.log(responce);
+    if (responce.status === 200) {
+      const roomsData: RoomsData = responce.data;
+      const cleanData = Object.values(roomsData.rooms).filter((e) => {
+        if (e.players !== undefined) {
+          return (
+            Object.values(e.players).length !== 2 &&
+            e.game.isGameProcessActive === true &&
+            e.game.gameType === Constants.PVP_ONLINE_NAME
+          );
+        }
+        return e.game.isGameProcessActive === true && e.game.gameType === Constants.PVP_ONLINE_NAME;
+      });
+      let room: null | GameRoom = null;
+      cleanData.forEach((e: GameRoom) => {
+        if (e.players !== undefined && Object.values(e.players).length === 1) {
+          room = e;
+        }
+      });
+      if (room !== null) {
+        const selectedRoom = room as GameRoom;
+        this.joinGame(selectedRoom.id as string);
+      } else {
+        this.createRoom();
+        const newResponce = await this.getRooms();
+        if (newResponce.status === 200) {
+          const newRoomsData: RoomsData = newResponce.data;
+          const newCleanData = Object.values(newRoomsData.rooms).filter((e) => {
+            if (e.players !== undefined) {
+              return (
+                Object.values(e.players).length !== 2 &&
+                e.game.isGameProcessActive === true &&
+                e.game.gameType === Constants.PVP_ONLINE_NAME
+              );
+            }
+            return e.game.isGameProcessActive === true && e.game.gameType === Constants.PVP_ONLINE_NAME;
+          });
+          const newRoom = newCleanData[0];
+          if (newRoom !== null) {
+            this.joinGame(newRoom.id);
+          }
+        }
+      }
+    }
+  };
+
   componentDidMount = () => {
     this.getNewRoomsData();
   };
@@ -203,7 +252,8 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
           </>
         )}
         <section className='interaction-menu'>
-          <button type='button' className='interaction-menu__random-game'>
+          <button type='button' className='interaction-menu__random-game' onClick={() => this.findRandomGame()}>
+            <Link to='/game' className='random-link' />
             Random game
           </button>
           <button type='button' className='interaction-menu__create-game' onClick={() => this.createRoom()}>

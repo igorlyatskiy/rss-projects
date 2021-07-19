@@ -11,166 +11,26 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 exports.__esModule = true;
-var WebSocket = require("ws");
 var http = require("http");
 var app_1 = require("firebase/app");
 require("firebase/database");
 var bodyParser = require("body-parser");
-var express = require("express");
 var Constants_1 = require("./Constants");
 var uuidv4 = require('uuid').v4;
 require('dotenv').config();
 var cors = require('cors');
+var express = require('express');
+var WebSocket = require("ws");
 app_1["default"].initializeApp(Constants_1.fireBaseConfig);
 var db = app_1["default"].database();
-// websocket part
-var socketApp = express();
-var WEBSOCKET_PORT = process.env.REACT_APP_WEBSOCKET_PORT || 5001;
-socketApp.set('port', WEBSOCKET_PORT);
-var server = http.createServer(socketApp);
-var webSocketServer = new WebSocket.Server({ server: server, port: +WEBSOCKET_PORT });
-var timers = [];
-webSocketServer.on('connection', function (ws) {
-    ws.on('message', function (data) {
-        var message = JSON.parse(data);
-        switch (message.event) {
-            case 'join-room': {
-                var _a = message.payload, roomId_1 = _a.roomId, name_1 = _a.name, image_1 = _a.image;
-                var url_1 = 'rooms/';
-                db.ref(url_1).once('value', function (item) {
-                    var rooms = item.val();
-                    var activeRoom = Object.values(rooms).find(function (e) { return e.id === roomId_1; });
-                    if (activeRoom !== undefined) {
-                        var players = activeRoom.players ? Object.values(activeRoom.players) : [];
-                        var MAX_PLAYERS_AT_ONE_ROOM = 2;
-                        var color = Math.random() - 0.5 > 0 ? 'w' : 'b';
-                        if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
-                            color = Object.values(activeRoom.players)[0].color === 'w' ? 'b' : 'w';
-                        }
-                        var playerId = players.length + 1;
-                        db.ref("" + url_1 + roomId_1 + "/players").push({
-                            id: playerId,
-                            name: name_1,
-                            color: color,
-                            image: image_1
-                        });
-                        if (color === 'w') {
-                            db.ref("" + url_1 + roomId_1 + "/activePlayerId").set(playerId);
-                        }
-                        var selectPlayerMessage_1 = {
-                            selectedPlayerId: playerId,
-                            event: 'set-selected-player',
-                            id: roomId_1
-                        };
-                        webSocketServer.clients.forEach(function (client) {
-                            client.send(JSON.stringify(selectPlayerMessage_1));
-                        });
-                        if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
-                            var startGameMessage_1 = {
-                                event: 'start-game',
-                                id: roomId_1
-                            };
-                            webSocketServer.clients.forEach(function (client) {
-                                client.send(JSON.stringify(startGameMessage_1));
-                            });
-                            var timerMessage_1 = {
-                                event: 'timer',
-                                id: roomId_1
-                            };
-                            var timerInterval = setInterval(function () {
-                                webSocketServer.clients.forEach(function (client) {
-                                    client.send(JSON.stringify(timerMessage_1));
-                                });
-                            }, 1000);
-                            timers.forEach(function (timer) {
-                                if (timer.roomId === roomId_1) {
-                                    clearInterval(timer.timerInterval);
-                                }
-                            });
-                            timers.push({ roomId: roomId_1, timerInterval: timerInterval });
-                        }
-                    }
-                });
-                break;
-            }
-            case 'move': {
-                var _b = message.payload, to = _b.to, from = _b.from, time = _b.time, color = _b.color, piece = _b.piece, promotion = _b.promotion;
-                var activeRoomId_1 = message.payload.roomId;
-                var moveAction_1 = {
-                    event: 'move-figure',
-                    id: activeRoomId_1
-                };
-                var ref = db.ref("rooms/" + activeRoomId_1 + "/game/history/" + time);
-                var moveFigure_1 = ref.set({
-                    time: time,
-                    move: {
-                        from: from, to: to, color: color, piece: piece, promotion: promotion
-                    }
-                });
-                db.ref("rooms/" + activeRoomId_1 + "/activePlayerId").once('value', function (item) {
-                    var activePlayerId = item.val();
-                    var changeActivePlayer = db.ref("rooms/" + activeRoomId_1 + "/activePlayerId").set(activePlayerId === 2 ? 1 : 2);
-                    Promise.all([moveFigure_1, changeActivePlayer]).then(function () {
-                        webSocketServer.clients.forEach(function (client) {
-                            client.send(JSON.stringify(moveAction_1));
-                        });
-                    });
-                });
-                break;
-            }
-            case 'stop-timer': {
-                var selectedTimer = timers.find(function (e) { return e.roomId === message.payload; });
-                if (selectedTimer) {
-                    clearInterval(selectedTimer.timerInterval);
-                }
-                break;
-            }
-            case 'finish-game': {
-                var _c = message.payload, winnerId = _c.winnerId, draw = _c.draw, roomId_2 = _c.roomId;
-                var ref = db.ref("rooms/" + roomId_2 + "/game");
-                ref.update({
-                    winnerId: winnerId,
-                    isGameProcessActive: false,
-                    draw: draw
-                });
-                var finishGameAction_1 = {
-                    event: 'finish-game',
-                    id: roomId_2
-                };
-                timers.forEach(function (timer) {
-                    if (timer.roomId === roomId_2) {
-                        clearInterval(timer.timerInterval);
-                    }
-                });
-                webSocketServer.clients.forEach(function (client) {
-                    client.send(JSON.stringify(finishGameAction_1));
-                });
-                break;
-            }
-            case 'give-headstart': {
-                var _d = message.payload, roomId = _d.roomId, square = _d.square;
-                var giveHeadStartMessage_1 = {
-                    event: 'give-headstart',
-                    square: square,
-                    id: roomId
-                };
-                webSocketServer.clients.forEach(function (client) {
-                    client.send(JSON.stringify(giveHeadStartMessage_1));
-                });
-                break;
-            }
-            default: ws.send((new Error('Wrong query')).message);
-        }
-    });
-    ws.once('error', function (e) { return ws.send(e); });
-});
-// server part
-var app = express();
 var SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
+var app = express();
 app.set('port', SERVER_PORT);
+var server = http.createServer(app);
 app.use(cors());
 app.use(bodyParser.json()); // handle json data
 app.use(bodyParser.urlencoded({ extended: true })); // handle URL-encoded data
+// server part
 app.get('/rooms', function (req, res) {
     var id = req.query.id;
     db.ref('rooms/').once('value', function (item) {
@@ -329,4 +189,143 @@ app.post('/game/clean', function (req, res) {
             res.send({ status: true });
         });
     }
+});
+var webSocketServer = new WebSocket.Server({ server: server });
+var timers = [];
+webSocketServer.on('connection', function (ws) {
+    ws.on('message', function (data) {
+        var message = JSON.parse(data);
+        switch (message.event) {
+            case 'join-room': {
+                var _a = message.payload, roomId_1 = _a.roomId, name_1 = _a.name, image_1 = _a.image;
+                var url_1 = 'rooms/';
+                db.ref(url_1).once('value', function (item) {
+                    var rooms = item.val();
+                    var activeRoom = Object.values(rooms).find(function (e) { return e.id === roomId_1; });
+                    if (activeRoom !== undefined) {
+                        var players = activeRoom.players ? Object.values(activeRoom.players) : [];
+                        var MAX_PLAYERS_AT_ONE_ROOM = 2;
+                        var color = Math.random() - 0.5 > 0 ? 'w' : 'b';
+                        if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
+                            color = Object.values(activeRoom.players)[0].color === 'w' ? 'b' : 'w';
+                        }
+                        var playerId = players.length + 1;
+                        db.ref("" + url_1 + roomId_1 + "/players").push({
+                            id: playerId,
+                            name: name_1,
+                            color: color,
+                            image: image_1
+                        });
+                        if (color === 'w') {
+                            db.ref("" + url_1 + roomId_1 + "/activePlayerId").set(playerId);
+                        }
+                        var selectPlayerMessage_1 = {
+                            selectedPlayerId: playerId,
+                            event: 'set-selected-player',
+                            id: roomId_1
+                        };
+                        webSocketServer.clients.forEach(function (client) {
+                            client.send(JSON.stringify(selectPlayerMessage_1));
+                        });
+                        if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
+                            var startGameMessage_1 = {
+                                event: 'start-game',
+                                id: roomId_1
+                            };
+                            webSocketServer.clients.forEach(function (client) {
+                                client.send(JSON.stringify(startGameMessage_1));
+                            });
+                            var timerMessage_1 = {
+                                event: 'timer',
+                                id: roomId_1
+                            };
+                            var timerInterval = setInterval(function () {
+                                webSocketServer.clients.forEach(function (client) {
+                                    client.send(JSON.stringify(timerMessage_1));
+                                });
+                            }, 1000);
+                            timers.forEach(function (timer) {
+                                if (timer.roomId === roomId_1) {
+                                    clearInterval(timer.timerInterval);
+                                }
+                            });
+                            timers.push({ roomId: roomId_1, timerInterval: timerInterval });
+                        }
+                    }
+                });
+                break;
+            }
+            case 'move': {
+                var _b = message.payload, to = _b.to, from = _b.from, time = _b.time, color = _b.color, piece = _b.piece, promotion = _b.promotion;
+                var activeRoomId_1 = message.payload.roomId;
+                var moveAction_1 = {
+                    event: 'move-figure',
+                    id: activeRoomId_1
+                };
+                var ref = db.ref("rooms/" + activeRoomId_1 + "/game/history/" + time);
+                var moveFigure_1 = ref.set({
+                    time: time,
+                    move: {
+                        from: from, to: to, color: color, piece: piece, promotion: promotion
+                    }
+                });
+                db.ref("rooms/" + activeRoomId_1 + "/activePlayerId").once('value', function (item) {
+                    var activePlayerId = item.val();
+                    var changeActivePlayer = db.ref("rooms/" + activeRoomId_1 + "/activePlayerId").set(activePlayerId === 2 ? 1 : 2);
+                    Promise.all([moveFigure_1, changeActivePlayer]).then(function () {
+                        webSocketServer.clients.forEach(function (client) {
+                            client.send(JSON.stringify(moveAction_1));
+                        });
+                    });
+                });
+                break;
+            }
+            case 'stop-timer': {
+                var selectedTimer = timers.find(function (e) { return e.roomId === message.payload; });
+                if (selectedTimer) {
+                    clearInterval(selectedTimer.timerInterval);
+                }
+                break;
+            }
+            case 'finish-game': {
+                var _c = message.payload, winnerId = _c.winnerId, draw = _c.draw, roomId_2 = _c.roomId;
+                var ref = db.ref("rooms/" + roomId_2 + "/game");
+                ref.update({
+                    winnerId: winnerId,
+                    isGameProcessActive: false,
+                    draw: draw
+                });
+                var finishGameAction_1 = {
+                    event: 'finish-game',
+                    id: roomId_2
+                };
+                timers.forEach(function (timer) {
+                    if (timer.roomId === roomId_2) {
+                        clearInterval(timer.timerInterval);
+                    }
+                });
+                webSocketServer.clients.forEach(function (client) {
+                    client.send(JSON.stringify(finishGameAction_1));
+                });
+                break;
+            }
+            case 'give-headstart': {
+                var _d = message.payload, roomId = _d.roomId, square = _d.square;
+                var giveHeadStartMessage_1 = {
+                    event: 'give-headstart',
+                    square: square,
+                    id: roomId
+                };
+                webSocketServer.clients.forEach(function (client) {
+                    client.send(JSON.stringify(giveHeadStartMessage_1));
+                });
+                break;
+            }
+            default: ws.send((new Error('Wrong query')).message);
+        }
+    });
+    ws.once('error', function (e) { return ws.send(e); });
+});
+server.listen(SERVER_PORT, function () {
+    console.log("Main server is running on port " + SERVER_PORT);
 });

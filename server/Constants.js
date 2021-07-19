@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.fireBaseConfig = exports.AI_NAME = void 0;
 require('dotenv').config();
 exports.AI_NAME = 'ai';
 exports.fireBaseConfig = {

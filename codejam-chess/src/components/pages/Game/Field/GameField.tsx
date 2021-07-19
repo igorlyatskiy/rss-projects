@@ -226,7 +226,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
             </div>
           </>
         )}
-        {gameType === Constants.PVP_ONLINE_NAME && (
+        {data.length > 1 && gameType === Constants.PVP_ONLINE_NAME && (
           <button type='button' className='premove-btn' onClick={() => this.makePreMove()}>
             Make pre-move
           </button>

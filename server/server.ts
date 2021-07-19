@@ -1,9 +1,6 @@
-import * as WebSocket from 'ws';
 import * as http from 'http';
 import firebase from 'firebase/app';
 import 'firebase/database';
-import * as bodyParser from 'body-parser';
-import express = require('express');
 import {
   AI_NAME, fireBaseConfig, GameRoom, PlayerData, TimerInfo,
 } from './Constants';
@@ -12,169 +9,22 @@ const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config();
 const cors = require('cors');
+const express = require('express');
+const WebSocket = require("ws");
 
 firebase.initializeApp(fireBaseConfig);
 const db = firebase.database();
-
-// websocket part
-const socketApp = express();
-const WEBSOCKET_PORT = process.env.REACT_APP_WEBSOCKET_PORT || 5001;
-socketApp.set('port', WEBSOCKET_PORT);
-const server = http.createServer(socketApp);
-const webSocketServer = new WebSocket.Server({ server, port: +WEBSOCKET_PORT });
-const timers: TimerInfo[] = [];
-
-webSocketServer.on('connection', (ws: WebSocket) => {
-  ws.on('message', (data: string) => {
-    const message = JSON.parse(data);
-    switch (message.event) {
-      case 'join-room': {
-        const { roomId, name, image } = message.payload;
-        const url = 'rooms/';
-        db.ref(url).once('value', (item) => {
-          const rooms = item.val();
-          const activeRoom = Object.values(rooms).find((e: any) => e.id === roomId) as GameRoom;
-          if (activeRoom !== undefined) {
-            const players = activeRoom.players ? Object.values(activeRoom.players) : [];
-            const MAX_PLAYERS_AT_ONE_ROOM = 2;
-            let color = Math.random() - 0.5 > 0 ? 'w' : 'b';
-            if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
-              color = Object.values(activeRoom.players)[0].color === 'w' ? 'b' : 'w';
-            }
-            const playerId = players.length + 1;
-            db.ref(`${url}${roomId}/players`).push({
-              id: playerId,
-              name,
-              color,
-              image,
-            });
-            if (color === 'w') {
-              db.ref(`${url}${roomId}/activePlayerId`).set(playerId);
-            }
-            const selectPlayerMessage = {
-              selectedPlayerId: playerId,
-              event: 'set-selected-player',
-              id: roomId,
-            };
-            webSocketServer.clients.forEach((client) => {
-              client.send(JSON.stringify(selectPlayerMessage));
-            });
-            if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
-              const startGameMessage = {
-                event: 'start-game',
-                id: roomId,
-              };
-              webSocketServer.clients.forEach((client) => {
-                client.send(JSON.stringify(startGameMessage));
-              });
-              const timerMessage = {
-                event: 'timer',
-                id: roomId,
-              };
-              const timerInterval = setInterval(() => {
-                webSocketServer.clients.forEach((client) => {
-                  client.send(JSON.stringify(timerMessage));
-                });
-              }, 1000);
-              timers.forEach((timer) => {
-                if (timer.roomId === roomId) {
-                  clearInterval(timer.timerInterval);
-                }
-              });
-              timers.push({ roomId, timerInterval });
-            }
-          }
-        });
-        break;
-      }
-      case 'move': {
-        const {
-          to, from, time, color, piece, promotion,
-        } = message.payload;
-        const activeRoomId = message.payload.roomId;
-        const moveAction = {
-          event: 'move-figure',
-          id: activeRoomId,
-        };
-        const ref = db.ref(`rooms/${activeRoomId}/game/history/${time}`);
-        const moveFigure = ref.set({
-          time,
-          move: {
-            from, to, color, piece, promotion,
-          },
-        });
-        db.ref(`rooms/${activeRoomId}/activePlayerId`).once('value', (item) => {
-          const activePlayerId = item.val();
-          const changeActivePlayer = db.ref(`rooms/${activeRoomId}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);
-          Promise.all([moveFigure, changeActivePlayer]).then(() => {
-            webSocketServer.clients.forEach((client) => {
-              client.send(JSON.stringify(moveAction));
-            });
-          });
-        });
-        break;
-      }
-
-      case 'stop-timer': {
-        const selectedTimer = timers.find((e) => e.roomId === message.payload);
-        if (selectedTimer) {
-          clearInterval(selectedTimer.timerInterval);
-        }
-        break;
-      }
-
-      case 'finish-game': {
-        const { winnerId, draw, roomId } = message.payload;
-        const ref = db.ref(`rooms/${roomId}/game`);
-        ref.update({
-          winnerId,
-          isGameProcessActive: false,
-          draw,
-        });
-        const finishGameAction = {
-          event: 'finish-game',
-          id: roomId,
-        };
-
-        timers.forEach((timer) => {
-          if (timer.roomId === roomId) {
-            clearInterval(timer.timerInterval);
-          }
-        });
-        webSocketServer.clients.forEach((client) => {
-          client.send(JSON.stringify(finishGameAction));
-        });
-        break;
-      }
-
-      case 'give-headstart': {
-        const { roomId, square } = message.payload;
-        const giveHeadStartMessage = {
-          event: 'give-headstart',
-          square,
-          id: roomId,
-        };
-        webSocketServer.clients.forEach((client) => {
-          client.send(JSON.stringify(giveHeadStartMessage));
-        });
-        break;
-      }
-
-      default: ws.send((new Error('Wrong query')).message);
-    }
-  });
-
-  ws.once('error', (e) => ws.send(e));
-});
-
-// server part
+const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
 
 const app = express();
-const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
 app.set('port', SERVER_PORT);
+
+const server = http.createServer(app);
+
 app.use(cors());
-app.use(bodyParser.json()); // handle json data
-app.use(bodyParser.urlencoded({ extended: true })); // handle URL-encoded data
+app.use(express.json());
+
+// server part
 
 app.get('/rooms', (req, res) => {
   const { id } = req.query;
@@ -345,4 +195,154 @@ app.post('/game/clean', (req, res) => {
       res.send({ status: true });
     });
   }
+});
+
+const webSocketServer = new WebSocket.Server({ server });
+const timers: TimerInfo[] = [];
+
+webSocketServer.on('connection', (ws) => {
+  ws.on('message', (data: string) => {
+    const message = JSON.parse(data);
+    switch (message.event) {
+      case 'join-room': {
+        const { roomId, name, image } = message.payload;
+        const url = 'rooms/';
+        db.ref(url).once('value', (item) => {
+          const rooms = item.val();
+          const activeRoom = Object.values(rooms).find((e: any) => e.id === roomId) as GameRoom;
+          if (activeRoom !== undefined) {
+            const players = activeRoom.players ? Object.values(activeRoom.players) : [];
+            const MAX_PLAYERS_AT_ONE_ROOM = 2;
+            let color = Math.random() - 0.5 > 0 ? 'w' : 'b';
+            if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
+              color = Object.values(activeRoom.players)[0].color === 'w' ? 'b' : 'w';
+            }
+            const playerId = players.length + 1;
+            db.ref(`${url}${roomId}/players`).push({
+              id: playerId,
+              name,
+              color,
+              image,
+            });
+            if (color === 'w') {
+              db.ref(`${url}${roomId}/activePlayerId`).set(playerId);
+            }
+            const selectPlayerMessage = {
+              selectedPlayerId: playerId,
+              event: 'set-selected-player',
+              id: roomId,
+            };
+            webSocketServer.clients.forEach((client) => {
+              client.send(JSON.stringify(selectPlayerMessage));
+            });
+            if (players.length + 1 === MAX_PLAYERS_AT_ONE_ROOM) {
+              const startGameMessage = {
+                event: 'start-game',
+                id: roomId,
+              };
+              webSocketServer.clients.forEach((client) => {
+                client.send(JSON.stringify(startGameMessage));
+              });
+              const timerMessage = {
+                event: 'timer',
+                id: roomId,
+              };
+              const timerInterval = setInterval(() => {
+                webSocketServer.clients.forEach((client) => {
+                  client.send(JSON.stringify(timerMessage));
+                });
+              }, 1000);
+              timers.forEach((timer) => {
+                if (timer.roomId === roomId) {
+                  clearInterval(timer.timerInterval);
+                }
+              });
+              timers.push({ roomId, timerInterval });
+            }
+          }
+        });
+        break;
+      }
+      case 'move': {
+        const {
+          to, from, time, color, piece, promotion,
+        } = message.payload;
+        const activeRoomId = message.payload.roomId;
+        const moveAction = {
+          event: 'move-figure',
+          id: activeRoomId,
+        };
+        const ref = db.ref(`rooms/${activeRoomId}/game/history/${time}`);
+        const moveFigure = ref.set({
+          time,
+          move: {
+            from, to, color, piece, promotion,
+          },
+        });
+        db.ref(`rooms/${activeRoomId}/activePlayerId`).once('value', (item) => {
+          const activePlayerId = item.val();
+          const changeActivePlayer = db.ref(`rooms/${activeRoomId}/activePlayerId`).set(activePlayerId === 2 ? 1 : 2);
+          Promise.all([moveFigure, changeActivePlayer]).then(() => {
+            webSocketServer.clients.forEach((client) => {
+              client.send(JSON.stringify(moveAction));
+            });
+          });
+        });
+        break;
+      }
+
+      case 'stop-timer': {
+        const selectedTimer = timers.find((e) => e.roomId === message.payload);
+        if (selectedTimer) {
+          clearInterval(selectedTimer.timerInterval);
+        }
+        break;
+      }
+
+      case 'finish-game': {
+        const { winnerId, draw, roomId } = message.payload;
+        const ref = db.ref(`rooms/${roomId}/game`);
+        ref.update({
+          winnerId,
+          isGameProcessActive: false,
+          draw,
+        });
+        const finishGameAction = {
+          event: 'finish-game',
+          id: roomId,
+        };
+
+        timers.forEach((timer) => {
+          if (timer.roomId === roomId) {
+            clearInterval(timer.timerInterval);
+          }
+        });
+        webSocketServer.clients.forEach((client) => {
+          client.send(JSON.stringify(finishGameAction));
+        });
+        break;
+      }
+
+      case 'give-headstart': {
+        const { roomId, square } = message.payload;
+        const giveHeadStartMessage = {
+          event: 'give-headstart',
+          square,
+          id: roomId,
+        };
+        webSocketServer.clients.forEach((client) => {
+          client.send(JSON.stringify(giveHeadStartMessage));
+        });
+        break;
+      }
+
+      default: ws.send((new Error('Wrong query')).message);
+    }
+  });
+
+  ws.once('error', (e) => ws.send(e));
+});
+
+server.listen(SERVER_PORT, () => {
+  console.log(`Server is running on port ${SERVER_PORT}`)
 });
