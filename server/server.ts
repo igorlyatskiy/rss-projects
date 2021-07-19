@@ -14,7 +14,7 @@ const WebSocket = require("ws");
 
 firebase.initializeApp(fireBaseConfig);
 const db = firebase.database();
-const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 5000;
+const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || process.env.PORT || 3002;
 
 const app = express();
 app.set('port', SERVER_PORT);
