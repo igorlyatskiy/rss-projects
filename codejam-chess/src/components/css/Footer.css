@@ -1,0 +1,46 @@
+.footer {
+  background: #E27D5F;
+  border: 5px solid #E27D5F;
+  border-radius: 0 0 5px 5px;
+  height: 84px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 0 75px; }
+  .footer__text {
+    font-family: Open Sans;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 33px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: #FFFFFF; }
+  .footer .self-review a,
+  .footer .about-me a {
+    font-family: Open Sans;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 33px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: #fff;
+    text-decoration: underline; }
+    .footer .self-review a img,
+    .footer .about-me a img {
+      margin-left: 20px;
+      width: 80px;
+      height: auto; }
+  .footer .about-me a img {
+    width: 50px; }

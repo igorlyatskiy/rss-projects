@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { Chess, PartialMove, Piece, } from '@lubert/chess.ts'
 import Constants, { FigureData } from '../components/Constants';
 import ChessConstants, { bishopEvalBlack, bishopEvalWhite, blackDebuts, evalQueen, kingEvalBlack, kingEvalWhite, knightEval, pawnEvalBlack, pawnEvalWhite, rookEvalBlack, rookEvalWhite, whiteDebuts } from "./Constants";
