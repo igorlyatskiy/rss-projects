@@ -298,7 +298,6 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
   checkGameStatus = async (chess: NewChess, baseURL: string, roomId: string) => {
     const { wsConnection, gameType, players } = this.props;
     if (!chess.isGameActive()) {
-      console.log("set winner");
       const loserColor = chess.turn();
       const winner = players.find((e) => e.color !== loserColor);
       if (gameType === Constants.PVP_ONLINE_NAME) {

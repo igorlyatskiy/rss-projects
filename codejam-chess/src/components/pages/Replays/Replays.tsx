@@ -42,8 +42,7 @@ export default class ReplaysPage extends React.PureComponent<ReplaysPageProps, R
         this.request = null;
         this.setState({ data: Object.values(responce.data) });
       })
-      .catch((e) => {
-        console.log(e);
+      .catch(() => {
         alert("Somebody has broken the database! 😠\nGo to the main page and start any offline game!");
       });
   };
@@ -56,7 +55,6 @@ export default class ReplaysPage extends React.PureComponent<ReplaysPageProps, R
   render() {
     const { data } = this.state;
     const { changeActivePage } = this.props;
-    console.log(data);
     return (
       <section className='replays'>
         {data?.map((e) => (

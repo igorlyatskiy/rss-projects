@@ -82,7 +82,6 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       color = players.find((e) => e.id === selectedPlayerId)?.color as string;
     }
     const square = chess.removeRandomFigure(color);
-    console.log(square);
     drawField();
     const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/headstart?id=${roomId}`;
     const responce = await axios.post(url, {
@@ -114,8 +113,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   };
 
   makePreMove = () => {
-    const { premove, startSelectingPreMove } = this.props;
-    console.log(premove);
+    const { startSelectingPreMove } = this.props;
     if (startSelectingPreMove) {
       startSelectingPreMove();
     }

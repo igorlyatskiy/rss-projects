@@ -139,7 +139,6 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
 
   getRooms = () => {
     const url = process.env.REACT_APP_FULL_SERVER_URL || "";
-    console.log(url);
     const getGameRoomsUrl = `${url}/rooms`;
     return axios({
       method: "get",
@@ -162,7 +161,6 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
 
   findRandomGame = async () => {
     const responce = await this.getRooms();
-    console.log(responce);
     if (responce.status === 200) {
       const roomsData: RoomsData = responce.data;
       const cleanData = Object.values(roomsData.rooms).filter((e) => {

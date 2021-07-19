@@ -377,7 +377,6 @@ const mainPageReducer = (paramState = defaultState, action: any) => {
     }
 
     case GAME_MAKE_FIELD_MARKERS_VISIBLE: {
-      console.log('making');
       return {
         ...state,
         game: {

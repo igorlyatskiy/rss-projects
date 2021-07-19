@@ -85,7 +85,6 @@ class Header extends React.PureComponent<HeaderProps> {
       };
       wsConnection.send(JSON.stringify(finishGame));
     } else {
-      console.log(roomId);
       const setWinnerUrl = `${process.env.REACT_APP_FULL_SERVER_URL}/room/winner?id=${roomId}&winnerId=${winnerId}`;
       const setWinnerResponce = await axios.post(setWinnerUrl);
       if (setWinnerResponce.status === 200) {
