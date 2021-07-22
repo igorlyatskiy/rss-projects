@@ -1,6 +1,5 @@
 import axios from "axios";
 import React from "react";
-// import { Redirect } from "react-router-dom";
 import NewChess from "../../../../chess.js/chess";
 import FigureContainer from "../../../../Containers/FigureContainer";
 import Constants, { FigureData, PlayerData, PreMove } from "../../../Constants";
@@ -47,8 +46,6 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     gameType: string,
     selectedPlayer: PlayerData,
     activePlayer: PlayerData
-    // activePlayerId: number,
-    // selectedPlayerId: number
   ) => {
     const { isGameProcessActive } = this.props;
     let className = "";
@@ -58,9 +55,6 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     if (gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b") {
       className += " field_rotated";
     }
-    // if (gameType !== Constants.PVP_OFFLINE_NAME && activePlayerId !== selectedPlayerId) {
-    //   className += " field_blocked";
-    // }
     if (isGameProcessActive === false) {
       className += " field_blocked";
     }

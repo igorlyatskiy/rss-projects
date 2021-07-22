@@ -1,12 +1,7 @@
 import React from "react";
 import "./Nav.sass";
 import {
-  // BrowserRouter as Router,
-  // Switch,
-  // Route,
   Link,
-  // Redirect,
-  // useLocation,
 } from "react-router-dom";
 import Constants, { PlayerData } from "../../../Constants";
 

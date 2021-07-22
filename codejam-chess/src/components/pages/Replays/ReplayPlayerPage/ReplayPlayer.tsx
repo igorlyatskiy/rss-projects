@@ -145,27 +145,8 @@ export default class ReplayPlayer extends React.PureComponent<ReplayPlayerProps,
     }
   };
 
-  // checkTimeout = () => {
-  //   const { gamePage, speed } = this.props;
-  //   const { timerSpeed, interval } = this.state;
-  //   const { data } = this.state;
-  //   console.log("timeout");
-  //   if (gamePage !== Constants.APP_PAGES.REPLAY) {
-  //     clearInterval(interval);
-  //   }
-  //   if (speed !== timerSpeed && gamePage === Constants.APP_PAGES.REPLAY) {
-  //     clearInterval(interval);
-  //     this.setState({ timerSpeed: speed });
-  //     if (data !== null) {
-  //       this.initInterval();
-  //     }
-  //   }
-  //   console.log(speed, timerSpeed);
-  // };
-
   render() {
     const { data } = this.state;
-    // this.checkTimeout();
     return data !== null ? (
       <section className='game-page'>
         <ReplayPlayerViewContainer propsColor='w' />

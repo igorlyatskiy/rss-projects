@@ -1,11 +1,6 @@
 import React from "react";
 import {
-  // BrowserRouter as Router,
-  // Switch,
-  // Route,
   Link,
-  // Redirect,
-  // useLocation,
 } from "react-router-dom";
 import "./Header.sass";
 import axios from "axios";
@@ -41,14 +36,6 @@ class Header extends React.PureComponent<HeaderProps> {
     if (isGameProcessActive && gameType === Constants.PVP_ONLINE_NAME) {
       this.admitLoss();
     }
-    // else if (isGameProcessActive && gameType !== Constants.PVP_ONLINE_NAME) {
-    //   const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/break?id=${roomId}`;
-    //   axios.post(url);
-    // }
-    // else {
-    //   const url = `${process.env.REACT_APP_FULL_SERVER_URL}/game/clean?id=${roomId}`;
-    //   axios.post(url);
-    // }
   };
 
   breakGameFunc = async () => {

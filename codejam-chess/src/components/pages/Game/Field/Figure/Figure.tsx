@@ -1,5 +1,3 @@
-// import axios from "axios";
-// import axios, { AxiosResponse } from "axios";
 import { PieceSymbol } from "@lubert/chess.ts";
 import React from "react";
 import NewChess from "../../../../../chess.js/chess";
