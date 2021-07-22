@@ -48,6 +48,7 @@ export default class NewChess {
     const moves = (data) ? this.chess.moves({ square: data }) : this.chess.moves();
     return moves
       .map((e) => {
+        console.log(e);
         const reg = /\w\d/g;
         const result: any = e.match(reg)?.filter((move) => move[0].toUpperCase() !== move[0]);
         if (e.includes('=Q')) {
@@ -56,7 +57,7 @@ export default class NewChess {
         if (e.includes('x')) {
           return `${result[0]}x`;
         }
-        if (result === null) {
+        if (result === null || result === undefined) {
           if (e === "O-O") {
             switch (this.activePlayer) {
               case ChessConstants.WHITE:
