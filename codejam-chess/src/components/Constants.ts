@@ -137,4 +137,5 @@ export default class Constants {
   static rowNumbers = 8;
   static BOARD_ROTATION_TIME = 1200
   static PROMOTION_WAITING_TIME = 10000;
+  static SUCCESS_RESPONCE_STATUS = 200;
 }

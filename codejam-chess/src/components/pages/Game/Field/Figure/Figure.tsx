@@ -268,7 +268,7 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
           history: chess.history(),
         },
       });
-      if (moveFigure.status === 200) {
+      if (moveFigure.status === Constants.SUCCESS_RESPONCE_STATUS) {
         await this.checkGameStatus(chess, baseURL as string, roomId as string);
         const getRoomInfo = await axios.get(getRoomUrl);
         turnMove(getRoomInfo);
@@ -387,7 +387,7 @@ export default class Figure extends React.Component<FigureProps, FigureState> {
           cleanPremove();
         } else {
           const responce = await axios.post(moveUrl, { history: chess.history() });
-          if (responce.status === 200) {
+          if (responce.status === Constants.SUCCESS_RESPONCE_STATUS) {
             const data = await axios.get(getRoomUrl);
             turnMove(data);
             this.isFigureAlreadyMoved = false;

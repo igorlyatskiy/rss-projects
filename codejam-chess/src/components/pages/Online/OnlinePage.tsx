@@ -161,7 +161,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
 
   findRandomGame = async () => {
     const responce = await this.getRooms();
-    if (responce.status === 200) {
+    if (responce.status === Constants.SUCCESS_RESPONCE_STATUS) {
       const roomsData: RoomsData = responce.data;
       const cleanData = Object.values(roomsData.rooms).filter((e) => {
         if (e.players !== undefined) {
@@ -185,10 +185,10 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
       } else {
         this.createRoom();
         const newResponce = await this.getRooms();
-        if (newResponce.status === 200) {
+        if (newResponce.status === Constants.SUCCESS_RESPONCE_STATUS) {
           const newRoomsData: RoomsData = newResponce.data;
           const newCleanData = Object.values(newRoomsData.rooms).filter((e) => {
-            if (e.players !== undefined) {
+            if (e.players) {
               return (
                 Object.values(e.players).length !== 2 &&
                 e.game.isGameProcessActive === true &&
@@ -198,7 +198,7 @@ export default class OnlinePage extends React.Component<OnlinePageProps, OnlineP
             return e.game.isGameProcessActive === true && e.game.gameType === Constants.PVP_ONLINE_NAME;
           });
           const newRoom = newCleanData[0];
-          if (newRoom !== null) {
+          if (newRoom) {
             this.joinGame(newRoom.id);
           }
         }

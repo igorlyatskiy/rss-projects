@@ -99,16 +99,9 @@ class FigureContainer extends React.PureComponent<FigureContainerProps> {
       boardRotationEnabled,
       isAutopromotionEnabled,
       premove,
-      cleanPremoveFunc
+      cleanPremoveFunc,
     } = this.props;
-    if (
-      isGameProcessActive === undefined ||
-      chess === undefined ||
-      activePlayerId === undefined ||
-      players === undefined ||
-      gameType === undefined ||
-      wsConnection === undefined
-    ) {
+    if (!isGameProcessActive || !chess || !activePlayerId || !players || !gameType || !wsConnection) {
       throw new Error("at the figure container");
     }
     return (
@@ -194,7 +187,7 @@ const mapDispatchToProps = {
   turnReplayMoveFunc: turnReplayMove,
   setPageFunc: setPage,
   setPreMoveFunc: setPreMove,
-  cleanPremoveFunc: cleanPremove
+  cleanPremoveFunc: cleanPremove,
 };
 
 export default connect(pushStateToProps, mapDispatchToProps)(FigureContainer);

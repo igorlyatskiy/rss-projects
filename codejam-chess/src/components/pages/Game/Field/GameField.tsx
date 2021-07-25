@@ -42,17 +42,16 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
   public markersClassName: string = "";
   public keyNumber = 0;
 
-  getFieldClassName = (
-    gameType: string,
-    selectedPlayer: PlayerData,
-    activePlayer: PlayerData
-  ) => {
+  getFieldClassName = (gameType: string, selectedPlayer: PlayerData, activePlayer: PlayerData) => {
     const { isGameProcessActive } = this.props;
     let className = "";
-    if ((gameType === Constants.PVP_ONLINE_NAME || gameType === Constants.AI_NAME) && selectedPlayer.color === "b") {
+    if (
+      (gameType === Constants.PVP_ONLINE_NAME || gameType === Constants.AI_NAME) &&
+      selectedPlayer.color === Constants.FIGURES_COLORS_NAMES.black
+    ) {
       className += " field_rotated";
     }
-    if (gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === "b") {
+    if (gameType === Constants.PVP_OFFLINE_NAME && activePlayer.color === Constants.FIGURES_COLORS_NAMES.black) {
       className += " field_rotated";
     }
     if (isGameProcessActive === false) {
@@ -82,7 +81,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       color,
       square,
     });
-    if (responce.status === 200 && gameType === Constants.PVP_ONLINE_NAME) {
+    if (responce.status === Constants.SUCCESS_RESPONCE_STATUS && gameType === Constants.PVP_ONLINE_NAME) {
       const data = {
         event: "give-headstart",
         payload: {
@@ -93,7 +92,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
       };
       wsConnection.send(JSON.stringify(data));
     }
-    if (responce.status !== 200) {
+    if (responce.status !== Constants.SUCCESS_RESPONCE_STATUS) {
       throw new Error("at the remove random figure");
     }
   };
@@ -135,7 +134,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
     return (
       <div className='field-container'>
         {data.length > 1 && (
-          <>
+          <React.Fragment>
             {chess.history().length <= 1 && gamePage === Constants.APP_PAGES.GAME && this.isHeadstartBtnShowed() && (
               <button type='button' className='field-container__head-start' onClick={() => this.removeRandomFigure()}>
                 Give a head start
@@ -146,13 +145,9 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               players={players}
               areFieldMarkersVisible={areFieldMarkersVisible}
               rotated={
-                !this.getFieldClassName(
-                  gameType,
-                  selectedPlayer as PlayerData,
-                  activePlayer as PlayerData
-                  // activePlayerId,
-                  // selectedPlayerId
-                ).includes("field_rotated")
+                !this.getFieldClassName(gameType, selectedPlayer as PlayerData, activePlayer as PlayerData).includes(
+                  "field_rotated"
+                )
               }
             />
             <div
@@ -160,8 +155,6 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                 gameType,
                 selectedPlayer as PlayerData,
                 activePlayer as PlayerData
-                // activePlayerId,
-                // selectedPlayerId
               )}`}
               style={{
                 transition: `${
@@ -190,7 +183,7 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
               ))}
 
               {data.map((row, rowNumber) => (
-                <>
+                <React.Fragment>
                   {row.map(
                     (element, elementNumber) =>
                       element !== null && (
@@ -202,21 +195,21 @@ export default class GameField extends React.PureComponent<GameFieldProps> {
                         />
                       )
                   )}
-                </>
+                </React.Fragment>
               ))}
             </div>
-          </>
+          </React.Fragment>
         )}
         {data.length <= 1 && gameType !== Constants.PVP_ONLINE_NAME && (
           <div className='error'>Game is not active. Please go to the main.</div>
         )}
         {data.length <= 1 && gameType === Constants.PVP_ONLINE_NAME && (
-          <>
+          <React.Fragment>
             <p className='waiting-text'>Waiting for the second player.</p>
             <div className='waiting-loop'>
               <QueenSvg color='w' />
             </div>
-          </>
+          </React.Fragment>
         )}
         {data.length > 1 && gameType === Constants.PVP_ONLINE_NAME && (
           <button type='button' className='premove-btn' onClick={() => this.makePreMove()}>
